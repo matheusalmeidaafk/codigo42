@@ -5,7 +5,7 @@ use PDO;
 
 class Database {
     private string $host = "localhost";
-    private string $database = "teste";
+    private string $database = "codigo42";
     private string $username = "root";
     private string $password = "";
 
