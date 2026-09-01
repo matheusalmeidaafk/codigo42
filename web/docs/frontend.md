@@ -10,26 +10,47 @@
 
 ## Nomenclatura
 
-- Variáveis: camelCase
+camelCase EX:
     - $nomeProduto;
     - $precoProduto;
     - $quantidadeEstoque;
-
-- Funções: camelCase
     - calcularTotal();
     - adicionarProduto();
-
-- Componentes: camelCase
     - productCard.php
     - navbar.php
     - footer.php
 
-- Classes: PascalCase
+PascalCase EX:
     - class Produto {}
+
+
+- Variáveis: camelCase
+
+- Funções: camelCase
+
+- Componentes: camelCase
+
+- Classes: PascalCase
+
+- Pastas: camelCase
+
+- arquivos: 
+    - back: PascalCase
+    - front: camelCase
 
 ## Framework
 
-O projeto utiliza Bootstrap para estruturação visual,
+O projeto utiliza Bootstrap 5.3 para estruturação visual,
+
+link Bootstrap:
+https://getbootstrap.com/docs/5.3/getting-started/introduction/
+
+- Bootstrap
+
+    - 1° Bootstrap primeiro = Se o Bootstrap já possui uma solução adequada, utiliza a solução existente.
+
+    - 2° De segundo = fazer um .css próprio para a customização especifica.
+
 
 ## Componentes
 
@@ -41,11 +62,5 @@ Não colocar regra de negócio dentro dos componentes visuais.
 
 Por exemplo, productCard.php apresenta um produto. Ele não deveria decidir coisas como:
 "Se estoque for menor que 5, descontar R$ 10."
-
-## Bootstrap
-
-1° Bootstrap primeiro = Se o Bootstrap já possui uma solução adequada, utiliza a solução existente.
-
-2° De segundo = fazer um .css próprio para a customização especifica.
 
 ## 
