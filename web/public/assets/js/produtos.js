@@ -20,7 +20,7 @@ async function carregarProdutos() {
 
     try {
 
-        const resposta = await fetch("http://localhost:8000/produtos");
+        const resposta = await fetch("http://localhost:8080/produtos");
 
         if (!resposta.ok) {
             throw new Error(`Erro HTTP: ${resposta.status}`);

@@ -14,3 +14,18 @@ services:
       - ./backend/.env
 
     restart: unless-stopped
+
+
+  frontend:
+    build:
+      context: ./web
+
+    container_name: codigo42-frontend
+
+    ports:
+      - "8081:8080"
+
+    volumes:
+      - ./web:/app
+
+    restart: unless-stopped
