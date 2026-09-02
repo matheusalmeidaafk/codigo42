@@ -5,3 +5,8 @@
     --codigo42-dark: #202328;
     --codigo42-input: #24272b;
 }
+.logo {
+    width: 150px;
+    height: 60px;
+    object-fit: cover;
+}

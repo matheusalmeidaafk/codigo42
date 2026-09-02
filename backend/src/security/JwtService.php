@@ -25,7 +25,7 @@ class JwtService
         $agora = time();
 
         $payload = [
-            'sub' => $idUsuario,
+            'id' => $idUsuario,
             'email' => $email,
             'iat' => $agora,
             'exp' => $agora + $this->expiration

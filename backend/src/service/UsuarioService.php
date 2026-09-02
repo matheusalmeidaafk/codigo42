@@ -2,21 +2,23 @@
 
 namespace App\Service;
 
-use App\Config\Database;
 use App\Config\OnlineDB;
 use App\Model\Usuario;
 use Exception;
 use PDO;
 
-class UsuarioService {
+class UsuarioService
+{
     private PDO $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $database = new OnlineDB();
         $this->db = $database->conectar();
     }
 
-    public function listar() : array {
+    public function listar(): array
+    {
         $sql = "SELECT * FROM usuario";
 
         $stmt = $this->db->prepare($sql);
@@ -24,8 +26,9 @@ class UsuarioService {
 
         return $stmt->fetchAll();
     }
-    
-    public function findByEmail(string $email) {
+
+    public function findByEmail(string $email)
+    {
         $sql = "SELECT * FROM usuario WHERE email = ?";
 
         $stmt = $this->db->prepare($sql);
@@ -34,24 +37,25 @@ class UsuarioService {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function criar(?string $imgperfilurl = null, string $nomeCompleto, string $email, string $telefone, string $cpf, string $senha) : Usuario {
-        if(empty($nomeCompleto)) {
+    public function criar(?string $imgperfilurl = null, string $nomeCompleto, string $email, string $telefone, string $cpf, string $senha): Usuario
+    {
+        if (empty($nomeCompleto)) {
             throw new Exception("Nome precisa ser informado.");
         }
-            
-        if(empty($email)) {
+
+        if (empty($email)) {
             throw new Exception("Email precisa ser informado.");
         }
-           
-        if(empty($telefone)) {
+
+        if (empty($telefone)) {
             throw new Exception("Telefone precisa ser informado.");
         }
-           
-        if(empty($cpf)) {
+
+        if (empty($cpf)) {
             throw new Exception("CPF precisa ser informado.");
         }
 
-        if(empty($senha)) {
+        if (empty($senha)) {
             throw new Exception("senha precisa ser informada.");
         }
 
@@ -65,6 +69,16 @@ class UsuarioService {
         $id = (int) $this->db->lastInsertId();
 
         return new Usuario($id, $imgperfilurl, $nomeCompleto, $email, $telefone, $cpf, $senha, true);
+    }
+
+    public function deletar(int $id): bool {
+        $sql = "DELETE FROM usuario WHERE id_usuario = ?";
+
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->execute([$id]);
+
+        return $stmt->rowCount() > 0;
     }
 
 }
