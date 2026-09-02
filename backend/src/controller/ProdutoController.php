@@ -5,15 +5,17 @@ namespace App\Controller;
 use App\Service\ProdutoService;
 use Exception;
 
-class ProdutoController {
+class ProdutoController
+{
     private ProdutoService $service;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->service = new ProdutoService();
     }
 
-    public function criarProduto() : void {
-        
+    public function criarProduto(): void
+    {
         try {
             $dados = json_decode(
                 file_get_contents("php://input"),
@@ -21,11 +23,11 @@ class ProdutoController {
             );
 
             $produto = $this->service->criar(
-                $dados["imagemUrl"],
                 $dados["nome"],
                 $dados["descricao"],
                 $dados["preco"],
-                true
+                true,
+                $dados["imagemUrl"] ?? null
             );
 
             http_response_code(201);
@@ -39,7 +41,6 @@ class ProdutoController {
                 "ativo" => $produto->ativo,
             ]);
 
-
         } catch (Exception $e) {
             http_response_code(400);
 
@@ -49,12 +50,13 @@ class ProdutoController {
         }
     }
 
-    public function listar() : void {
+    public function listar(): void
+    {
         try {
             $produtos = $this->service->listar();
 
             http_response_code(200);
-            
+
             echo json_encode($produtos);
 
         } catch (Exception $e) {
@@ -65,5 +67,4 @@ class ProdutoController {
             ]);
         }
     }
-
 }
