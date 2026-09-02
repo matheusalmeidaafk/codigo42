@@ -32,6 +32,8 @@ require_once __DIR__ . '/../../components/inputPassword.php';
 
 <body class="auth-body">
 
+    <?php require_once __DIR__ . '/../../components/header.php'; ?>
+
     <main class="auth-main d-flex align-items-center justify-content-center py-5 px-3">
 
         <section
@@ -311,6 +313,8 @@ require_once __DIR__ . '/../../components/inputPassword.php';
         </section>
 
     </main>
+
+    <?php require_once __DIR__ . '/../../components/footer.php'; ?>
 
     <script src="../assets/js/config/apiConfig.js"></script>
     <script src="../assets/js/utils/authStorage.js"></script>
