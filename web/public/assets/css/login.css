@@ -1,0 +1,226 @@
+.auth-body {
+    min-height: 100vh;
+    background: #fff;
+}
+
+.auth-main {
+    min-height: 805px;
+}
+
+.auth-card {
+    position: relative;
+    height: 600px;
+    background: var(--codigo42-gray);
+    overflow: hidden;
+}
+
+.auth-form-panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: var(--codigo42-gray);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-panel {
+    left: 0;
+}
+
+.register-panel {
+    left: 50%;
+    visibility: hidden;
+}
+
+.auth-card:not(.register-mode) .login-panel {
+    visibility: visible;
+}
+
+.auth-card.register-mode .login-panel {
+    visibility: hidden;
+}
+
+.auth-card.register-mode .register-panel {
+    visibility: visible;
+}
+
+.banner-panel {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    z-index: 10;
+    background: var(--codigo42-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: left 0.65s ease-in-out;
+}
+
+.auth-card.register-mode .banner-panel {
+    left: 0;
+}
+
+.auth-title h1,
+.banner-content h2 {
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    line-height: 0.85;
+    text-transform: uppercase;
+}
+
+.auth-title h1 {
+    font-size: 39px;
+}
+
+.auth-title p,
+.banner-content p,
+.banner-button {
+    font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+.auth-title p {
+    font-size: 18px;
+}
+
+.codigo42-input {
+    height: 45px;
+    border: 0 ;
+    background: var(--codigo42-input) ;
+    color: #eee ;
+    font-size: 17px ;
+    font-weight: 700;
+}
+
+.codigo42-input::placeholder {
+    color: #d7d7d7 ;
+}
+
+.password-toggle {
+    color: #ddd ;
+}
+
+.auth-button {
+    background: var(--codigo42-green) ;
+    border-color: var(--codigo42-green) ;
+    font-family: "Arial Narrow", Arial, sans-serif;
+    font-size: 20px;
+}
+
+.auth-button:hover,
+.auth-button:focus {
+    background: var(--codigo42-green-dark) ;
+    border-color: var(--codigo42-green-dark) ;
+}
+
+.banner-content {
+    max-width: 300px;
+}
+
+.banner-line {
+    width: 200px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.banner-content h2 {
+    font-size: 37px;
+}
+
+.banner-description {
+    line-height: 1.1;
+}
+
+.banner-button {
+    color: #062013 ;
+    border: 2px solid #0b1711 ;
+    background: transparent ;
+    font-size: 18px;
+}
+
+.banner-button:hover {
+    background: rgba(255, 255, 255, 0.12) ;
+}
+
+.banner-watermark {
+    color: rgba(35, 181, 112, 0.42);
+    font-size: 55px;
+    font-weight: 900;
+    letter-spacing: -5px;
+    white-space: nowrap;
+}
+
+.auth-message {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.auth-message.success {
+    color: #0d7047;
+}
+
+.auth-message.error {
+    color: #b32034;
+}
+
+.profile-upload-circle {
+    width: 76px;
+    height: 76px;
+    border: 2px solid #111;
+    cursor: pointer;
+    font-size: 35px;
+}
+
+@media (max-width: 767.98px) {
+    .auth-main {
+        min-height: auto;
+    }
+
+    .auth-card {
+        height: auto;
+    }
+
+    .auth-form-panel,
+    .banner-panel {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        min-height: 500px;
+    }
+
+    .login-panel {
+        display: flex;
+    }
+
+    .register-panel {
+        display: none;
+    }
+
+    .auth-card.register-mode .login-panel {
+        display: none;
+    }
+
+    .auth-card.register-mode .register-panel {
+        display: flex;
+    }
+
+    .banner-panel {
+        min-height: 280px;
+        order: -1;
+    }
+
+    .auth-card.register-mode .banner-panel {
+        left: auto;
+    }
+}
+
+@media (max-width: 560px) {
+    .auth-title h1 {
+        font-size: 34px;
+    }
+}

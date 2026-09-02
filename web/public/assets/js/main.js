@@ -1,151 +1,129 @@
 document.addEventListener("DOMContentLoaded", () => {
-  inicializarLogin();
-  inicializarCadastro();
+    inicializarAlternanciaAuth();
+    inicializarLogin();
+    inicializarCadastro();
 });
 
+function inicializarAlternanciaAuth() {
+    const authCard = document.querySelector("#authCard");
+    const loginBanner = document.querySelector("#loginBanner");
+    const cadastroBanner = document.querySelector("#cadastroBanner");
+    const btnIrCadastro = document.querySelector("#btnIrCadastro");
+    const btnIrLogin = document.querySelector("#btnIrLogin");
+
+    if (!authCard || !btnIrCadastro || !btnIrLogin) return;
+
+    btnIrCadastro.addEventListener("click", () => {
+        authCard.classList.add("register-mode");
+        loginBanner.hidden = true;
+        cadastroBanner.hidden = false;
+        limparMensagensAuth();
+    });
+
+    btnIrLogin.addEventListener("click", () => {
+        authCard.classList.remove("register-mode");
+        loginBanner.hidden = false;
+        cadastroBanner.hidden = true;
+        limparMensagensAuth();
+    });
+}
+
 function inicializarLogin() {
-  const formLogin = document.querySelector("#formLogin");
+    const form = document.querySelector("#loginForm");
 
-  if (!formLogin) {
-    return;
-  }
+    if (!form) return;
 
-  formLogin.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-    const email = document.querySelector("#loginEmail").value.trim();
-    const senha = document.querySelector("#loginSenha").value;
+        const email = document.querySelector("#loginEmail")?.value.trim();
+        const senha = document.querySelector("#loginSenha")?.value;
 
-    limparMensagem("loginMensagem");
+        if (!email || !senha) {
+            mostrarMensagemAuth("Preencha todos os campos.", "danger");
+            return;
+        }
 
-    if (!email || !senha) {
-      exibirMensagem(
-        "loginMensagem",
-        "Informe seu e-mail e sua senha.",
-        "danger",
-      );
-      return;
-    }
+        try {
+            await login(email, senha);
+            mostrarMensagemAuth("Login realizado com sucesso.", "success");
 
-    alterarEstadoBotao("btnLogin", true, "Entrando...");
-
-    try {
-      await login(email, senha);
-
-      exibirMensagem(
-        "loginMensagem",
-        "Login realizado com sucesso!",
-        "success",
-      );
-
-      setTimeout(() => {
-        window.location.href = "../index.php";
-      }, 700);
-    } catch (error) {
-      console.error(error);
-
-      exibirMensagem("loginMensagem", error.message, "danger");
-    } finally {
-      alterarEstadoBotao("btnLogin", false, "Entrar");
-    }
-  });
+            setTimeout(() => {
+                window.location.href = "index.php";
+            }, 800);
+        } catch (error) {
+            mostrarMensagemAuth(error.message, "danger");
+        }
+    });
 }
 
 function inicializarCadastro() {
-  const formCadastro = document.querySelector("#formCadastro");
+    const form = document.querySelector("#cadastroForm");
 
-  if (!formCadastro) {
-    return;
-  }
+    if (!form) return;
 
-  formCadastro.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-    limparMensagem("cadastroMensagem");
+        const usuario = {
+            imgperfilurl: document.querySelector("#cadastroImgPerfilUrl")?.value.trim() || "",
+            nomeCompleto: document.querySelector("#cadastroNome")?.value.trim(),
+            email: document.querySelector("#cadastroEmail")?.value.trim(),
+            telefone: document.querySelector("#cadastroTelefone")?.value.trim(),
+            cpf: document.querySelector("#cadastroCpf")?.value.trim(),
+            senha: document.querySelector("#cadastroSenha")?.value
+        };
 
-    const usuario = {
-      imgperfilurl: null,
-      nomeCompleto: document.querySelector("#nomeCompleto").value.trim(),
-      email: document.querySelector("#cadastroEmail").value.trim(),
-      telefone: document.querySelector("#telefone").value.trim(),
-      cpf: document.querySelector("#cpf").value.trim(),
-      senha: document.querySelector("#cadastroSenha").value,
-    };
+        if (
+            !usuario.nomeCompleto ||
+            !usuario.email ||
+            !usuario.telefone ||
+            !usuario.cpf ||
+            !usuario.senha
+        ) {
+            mostrarMensagemAuth("Preencha todos os campos obrigatórios.", "danger");
+            return;
+        }
 
-    const confirmarSenha = document.querySelector("#confirmarSenha").value;
+        try {
+            await cadastrarUsuario(usuario);
 
-    if (
-      !usuario.nomeCompleto ||
-      !usuario.email ||
-      !usuario.telefone ||
-      !usuario.cpf ||
-      !usuario.senha
-    ) {
-      exibirMensagem(
-        "cadastroMensagem",
-        "Preencha todos os campos obrigatórios.",
-        "danger",
-      );
-      return;
-    }
+            mostrarMensagemAuth(
+                "Cadastro realizado com sucesso. Agora faça login.",
+                "success"
+            );
 
-    if (usuario.senha !== confirmarSenha) {
-      exibirMensagem("cadastroMensagem", "As senhas não conferem.", "danger");
-      return;
-    }
+            form.reset();
 
-    alterarEstadoBotao("btnCadastro", true, "Cadastrando...");
+            const authCard = document.querySelector("#authCard");
+            const loginBanner = document.querySelector("#loginBanner");
+            const cadastroBanner = document.querySelector("#cadastroBanner");
 
-    try {
-      await cadastrarUsuario(usuario);
+            authCard?.classList.remove("register-mode");
 
-      exibirMensagem(
-        "cadastroMensagem",
-        "Cadastro realizado com sucesso! Agora você pode entrar.",
-        "success",
-      );
-
-      formCadastro.reset();
-    } catch (error) {
-      console.error(error);
-
-      exibirMensagem("cadastroMensagem", error.message, "danger");
-    } finally {
-      alterarEstadoBotao("btnCadastro", false, "Cadastrar");
-    }
-  });
+            if (loginBanner) loginBanner.hidden = false;
+            if (cadastroBanner) cadastroBanner.hidden = true;
+        } catch (error) {
+            mostrarMensagemAuth(error.message, "danger");
+        }
+    });
 }
 
-function exibirMensagem(elementId, mensagem, tipo) {
-  const elemento = document.querySelector(`#${elementId}`);
+function mostrarMensagemAuth(mensagem, tipo) {
+    const container = document.querySelector("#authMessage");
 
-  if (!elemento) {
-    return;
-  }
+    if (!container) return;
 
-  elemento.className = `alert alert-${tipo}`;
-  elemento.textContent = mensagem;
-  elemento.classList.remove("d-none");
+    container.className = `alert alert-${tipo}`;
+    container.textContent = mensagem;
+    container.hidden = false;
 }
 
-function limparMensagem(elementId) {
-  const elemento = document.querySelector(`#${elementId}`);
+function limparMensagensAuth() {
+    const container = document.querySelector("#authMessage");
 
-  if (!elemento) {
-    return;
-  }
+    if (!container) return;
 
-  elemento.className = "alert d-none";
-  elemento.textContent = "";
-}
-
-function alterarEstadoBotao(buttonId, disabled, texto) {
-  const button = document.querySelector(`#${buttonId}`);
-
-  if (!button) {
-    return;
-  }
-
-  button.disabled = disabled;
-  button.textContent = texto;
+    container.hidden = true;
+    container.textContent = "";
 }
