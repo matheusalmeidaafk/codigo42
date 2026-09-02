@@ -66,4 +66,8 @@ class UsuarioController {
             ]);
         }
     }
+
+    public function deletar(int $id) : bool {
+        return $this->service->deletar($id);
+    }
 }
