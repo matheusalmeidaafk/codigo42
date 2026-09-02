@@ -17,7 +17,7 @@ class ProdutoService
         $this->db = $database->conectar();
     }
 
-    public function criar(?string $imagemUrl = null, string $nome, string $descricao, string $tamanho, float $preco, int $estoque, bool $ativo) {
+   public function criar(?string $imagemUrl, string $nome, string $descricao, string $tamanho, float $preco, int $estoque, bool $ativo) {
         if (empty($nome)) {
             throw new Exception("Nome do produto é obrigatório.");
         }

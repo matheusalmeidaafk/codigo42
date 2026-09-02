@@ -10,31 +10,7 @@ services:
     volumes:
       - ./backend:/var/www/html
 
-    depends_on:
-      - db
-
     env_file:
       - ./backend/.env
 
-
-  db:
-    image: mysql:8.4
-    container_name: codigo42-db
-
     restart: unless-stopped
-
-    environment:
-      MYSQL_DATABASE: codigo42
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: codigo42
-      MYSQL_PASSWORD: codigo42
-
-    ports:
-      - "3306:3306"
-
-    volumes:
-      - mysql_data:/var/lib/mysql
-
-
-volumes:
-  mysql_data:
