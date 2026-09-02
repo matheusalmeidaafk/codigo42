@@ -7,6 +7,7 @@ use App\Controller\AuthController;
 use App\Controller\UsuarioController;
 use Dotenv\Dotenv;
 
+
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
@@ -75,7 +76,7 @@ if ($method === "GET" && $uri === "/usuarios") {
 
     $produtoController->criarProduto();
 
-}elseif ($method === "GET" && $uri === "/produtos") {
+} elseif ($method === "GET" && $uri === "/produtos") {
 
     $produtoController->listar();
 
@@ -88,13 +89,10 @@ if ($method === "GET" && $uri === "/usuarios") {
     ]);
 
 
+}
+function exigirAutenticacao(): object
+{
+    $middleware = new AuthMiddleware();
 
-
-
-    function exigirAutenticacao(): object
-    {
-        $middleware = new AuthMiddleware();
-
-        return $middleware->autenticar();
-    }
+    return $middleware->autenticar();
 }
