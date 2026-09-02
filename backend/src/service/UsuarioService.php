@@ -37,7 +37,7 @@ class UsuarioService
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function criar(?string $imgperfilurl = null, string $nomeCompleto, string $email, string $telefone, string $cpf, string $senha): Usuario
+    public function criar(?string $imgperfilurl, string $nomeCompleto, string $email, string $telefone, string $cpf, string $senha): Usuario
     {
         if (empty($nomeCompleto)) {
             throw new Exception("Nome precisa ser informado.");

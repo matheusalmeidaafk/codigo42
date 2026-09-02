@@ -85,6 +85,20 @@ if ($method === "GET" && $uri === "/usuarios") {
 
     $produtoController->listar();
 
+} elseif ($method === "GET" && $uri === "/docs") {
+
+    $docs = file_get_contents(__DIR__ . '/../../docs/index.html');
+    
+    header('Content-Type: text/html; charset=UTF-8');
+
+    echo $docs;
+
+} elseif ($method === "GET" && $uri === "/docs/openapi.yaml") {
+
+    header('Content-Type: application/yaml; charset=UTF-8');
+
+    readfile(__DIR__ . '/../../docs/openapi.yaml');
+
 } else {
 
     http_response_code(404);

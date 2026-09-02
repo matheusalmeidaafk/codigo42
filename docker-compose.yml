@@ -1,0 +1,16 @@
+services:
+
+  app:
+    build: .
+    container_name: codigo42-app
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ./backend:/var/www/html
+
+    env_file:
+      - ./backend/.env
+
+    restart: unless-stopped

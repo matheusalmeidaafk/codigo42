@@ -37,7 +37,12 @@ class ComposerStaticInitb8c7d7594ab71311c67cc3adb4f69e8b
         ),
         'A' =>
         array (
-            'App\\' => 4,
+            'App\\Service\\' => 12,
+            'App\\Security\\' => 13,
+            'App\\Model\\' => 10,
+            'App\\Middleware\\' => 15,
+            'App\\Controller\\' => 15,
+            'App\\Config\\' => 11,
         ),
     );
 
@@ -70,9 +75,29 @@ class ComposerStaticInitb8c7d7594ab71311c67cc3adb4f69e8b
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
         ),
-        'App\\' =>
+        'App\\Service\\' =>
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/../..' . '/src/service',
+        ),
+        'App\\Security\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src/security',
+        ),
+        'App\\Model\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src/model',
+        ),
+        'App\\Middleware\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src/middleware',
+        ),
+        'App\\Controller\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src/controller',
+        ),
+        'App\\Config\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/src/config',
         ),
     );
 

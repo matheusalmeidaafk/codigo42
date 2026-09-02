@@ -13,5 +13,10 @@ return array(
     'GrahamCampbell\\ResultType\\' => array($vendorDir . '/graham-campbell/result-type/src'),
     'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
     'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
-    'App\\' => array($baseDir . '/src'),
+    'App\\Service\\' => array($baseDir . '/src/service'),
+    'App\\Security\\' => array($baseDir . '/src/security'),
+    'App\\Model\\' => array($baseDir . '/src/model'),
+    'App\\Middleware\\' => array($baseDir . '/src/middleware'),
+    'App\\Controller\\' => array($baseDir . '/src/controller'),
+    'App\\Config\\' => array($baseDir . '/src/config'),
 );

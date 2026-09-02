@@ -24,9 +24,7 @@ class ProdutoController {
                 $dados["imagemUrl"],
                 $dados["nome"],
                 $dados["descricao"],
-                $dados["tamanho"],
                 $dados["preco"],
-                $dados["estoque"],
                 true
             );
 
@@ -38,7 +36,6 @@ class ProdutoController {
                 "nome" => $produto->nome,
                 "descricao" => $produto->descricao,
                 "preco" => $produto->preco,
-                "estoque" => $produto->estoque,
                 "ativo" => $produto->ativo,
             ]);
 

@@ -1,7 +1,12 @@
 {
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\Config\\": "src/config/",
+            "App\\Controller\\": "src/controller/",
+            "App\\Middleware\\": "src/middleware/",
+            "App\\Model\\": "src/model/",
+            "App\\Security\\": "src/security/",
+            "App\\Service\\": "src/service/"
         }
     },
     "require": {
