@@ -19,7 +19,7 @@ async function apiRequest(endpoint, options = {}) {
     });
   } catch (error) {
     throw new Error(
-      "Não foi possível conectar ao servidor. Verifique se o backend está disponível.",
+      "Nao foi possivel conectar no servidor. Verifique-se o backend esta disponivel.",
     );
   }
 
@@ -32,7 +32,7 @@ async function apiRequest(endpoint, options = {}) {
   if (!response.ok) {
     throw new Error(
       data?.erro ||
-        `Erro na comunicação com a API. Código: ${response.status}.`,
+        `Erro na comunicacaoo com a API. Codigo: ${response.status}.`,
     );
   }
 

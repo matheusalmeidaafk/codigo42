@@ -1,19 +1,19 @@
-const AUTH_TOKEN_KEY = "jwtToken";
+const authTokenKey = "jwtToken";
 
 function salvarToken(token) {
   if (!token) {
-    throw new Error("Token de autenticação não informado.");
+    throw new Error("Token de autenticacao nao informado.");
   }
 
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
+  localStorage.setItem(authTokenKey, token);
 }
 
 function obterToken() {
-  return localStorage.getItem(AUTH_TOKEN_KEY);
+  return localStorage.getItem(authTokenKey);
 }
 
 function removerToken() {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(authTokenKey);
 }
 
 function estaAutenticado() {
