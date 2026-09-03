@@ -81,7 +81,7 @@ require_once __DIR__ . '/../../components/inputPassword.php';
                         renderInputPassword([
                             'id' => 'loginSenha',
                             'label' => 'Senha',
-                            'placeholder' => '*******',
+                            'placeholder' => '.........',
                             'autocomplete' => 'current-password',
                             'required' => true,
                             'wrapperClass' => 'mb-1'
@@ -191,7 +191,7 @@ require_once __DIR__ . '/../../components/inputPassword.php';
                                 'id' => 'telefone',
                                 'label' => 'Telefone',
                                 'type' => 'tel',
-                                'placeholder' => '(99) 99999-9999',
+                                'placeholder' => 'Seu telefone',
                                 'autocomplete' => 'tel',
                                 'inputmode' => 'numeric',
                                 'required' => true,
@@ -203,7 +203,7 @@ require_once __DIR__ . '/../../components/inputPassword.php';
                             renderInputText([
                                 'id' => 'cpf',
                                 'label' => 'CPF',
-                                'placeholder' => '999.999.999-99',
+                                'placeholder' => 'Seu CPF',
                                 'autocomplete' => 'off',
                                 'inputmode' => 'numeric',
                                 'required' => true,
