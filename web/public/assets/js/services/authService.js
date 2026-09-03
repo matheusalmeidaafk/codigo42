@@ -1,5 +1,5 @@
 async function login(email, senha) {
-  const data = await apiRequest(API_ENDPOINTS.login, {
+  const data = await apiRequest(apiEndpoints.login, {
     method: "POST",
     body: JSON.stringify({ email, senha }),
   });
@@ -14,7 +14,7 @@ async function login(email, senha) {
 }
 
 async function cadastrarUsuario(usuario) {
-  return await apiRequest(API_ENDPOINTS.cadastro, {
+  return await apiRequest(apiEndpoints.cadastro, {
     method: "POST",
     body: JSON.stringify(usuario),
   });

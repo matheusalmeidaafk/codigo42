@@ -1,6 +1,6 @@
-const API_BASE_URL = "http://localhost:8080";
+const apiBaseUrl = "http://localhost:8080";
 
-const API_ENDPOINTS = {
+const apiEndpoints = {
   login: "/login",
   cadastro: "/cadastro",
   usuarios: "/usuarios",
