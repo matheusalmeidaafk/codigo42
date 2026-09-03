@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-12 col-md-5 mb-4 mb-md-0">
 
-                <img src="../public/assets/images/logo.png" alt="Código 42" class="img-fluid logo mb-0">
+                <img src="../assets/images/logo.png" alt="Código 42" class="img-fluid logo mb-0">
 
                 <p class="col-6 mb-0">
                     Camisetas, canecas e adesivos com identidade.

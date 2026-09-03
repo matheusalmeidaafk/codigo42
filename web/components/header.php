@@ -4,7 +4,7 @@
 
             <div class="col-4 col-md-3">
                 <a href="../index.php">
-                    <img src="../public/assets/images/logo.png" alt="Código 42" class="img-fluid logo">
+                    <img src="../assets/images/logo.png" alt="Código 42" class="img-fluid logo">
                 </a>
             </div>
 
