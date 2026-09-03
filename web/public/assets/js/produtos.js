@@ -47,6 +47,8 @@ async function carregarProdutos() {
 
             const coluna = document.createElement("div");
 
+            console.log(produto);
+
             coluna.className = "col-12 col-sm-6 col-lg-3 col-xl-2";
 
             coluna.innerHTML = `
@@ -57,7 +59,7 @@ async function carregarProdutos() {
                     <!-- Imagem mockada -->
 
                         <img
-                            src="assets/images/imagem.png"
+                            src="${produto.imagem_url}"
                             alt="${produto.nome}"
                             class="card-produto-img"
                         >
