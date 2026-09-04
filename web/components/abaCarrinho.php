@@ -1,224 +1,102 @@
 <?php
 /**
- * abaCarrinho.php
+ * componentesCarrinho.php (versão Bootstrap)
  * ------------------------------------------------------------
- * Componente de FRONT-END responsável pela aba/painel do
- * carrinho (área branca lateral), igual à imagem de referência.
+ * Componente de FRONT-END responsável por renderizar um item
+ * dentro do carrinho (imagem + nome + descrição + preços +
+ * controles de quantidade + remover), usando classes do
+ * Bootstrap 5 em vez de CSS customizado.
  *
  * IMPORTANTE:
- * - Este arquivo NÃO mexe em back-end. Os valores abaixo
- *   ($itensDoCarrinho, totais, etc.) são apenas placeholders
- *   estáticos para montar o front-end.
- * - Quando o back-end estiver pronto, basta substituir o array
- *   $itensDoCarrinho e as variáveis de totais pelos dados reais.
- * - O painel foi feito para comportar MAIS itens do que os dois
- *   mostrados na imagem de exemplo — por isso a lista de itens
- *   tem rolagem (scroll) própria, sem quebrar o layout do
- *   cabeçalho e do rodapé de totais.
+ * - Este arquivo não busca nem recebe dados de back-end.
+ * - A função abaixo tem valores padrão (placeholders) apenas
+ *   para que o componente já "nasça" visualmente pronto.
+ * - Requer que o Bootstrap 5 (CSS) esteja carregado na página
+ *   que inclui este componente. Se for usar este arquivo
+ *   sozinho, adicione o <link> do Bootstrap no <head> da página.
  * ------------------------------------------------------------
  */
 
-require_once __DIR__ . '/componentesCarrinho.php';
+/**
+ * Renderiza (retorna em HTML) um item do carrinho.
+ *
+ * @param string $imagem         Caminho/URL da imagem do produto.
+ * @param string $nome           Nome do produto.
+ * @param string $descricao      Descrição curta do produto.
+ * @param string $precoOriginal  Preço original (sem desconto), ex: "50,00".
+ * @param string $precoDesconto  Preço com desconto aplicado, ex: "40,00".
+ * @param int    $quantidade     Quantidade selecionada do item.
+ * @param string $idItem         Identificador do item (usado nos botões, ex: data-id).
+ *
+ * @return string HTML do componente pronto para ser ecoado (echo).
+ */
+function renderItemCarrinho(
+    string $imagem = 'https://via.placeholder.com/80',
+    string $nome = 'Nome do Produto',
+    string $descricao = 'Descrição do produto',
+    string $precoOriginal = '0,00',
+    string $precoDesconto = '0,00',
+    int $quantidade = 1,
+    string $idItem = ''
+): string {
+    ob_start();
+    ?>
+    <div class="d-flex gap-3 py-3 border-bottom item-carrinho" data-item-id="<?php echo htmlspecialchars($idItem); ?>">
 
-// ------------------------------------------------------------
-// DADOS DE EXEMPLO (placeholder) — viriam do back-end no futuro
-// ------------------------------------------------------------
-$itensDoCarrinho = [
-    [
-        'id'             => '1',
-        'imagem'         => 'https://via.placeholder.com/80?text=Caneca',
-        'nome'           => 'Caneca chococat',
-        'descricao'      => 'Caneca Ceramica Hello Kitty Azul',
-        'precoOriginal'  => '50,00',
-        'precoDesconto'  => '40,00',
-        'quantidade'     => 2,
-    ],
-    [
-        'id'             => '2',
-        'imagem'         => 'https://via.placeholder.com/80?text=Camiseta',
-        'nome'           => 'Camiseta Samurai',
-        'descricao'      => 'Camiseta Samurai Cyberpunk Preta',
-        'precoOriginal'  => '200,00',
-        'precoDesconto'  => '150,00',
-        'quantidade'     => 1,
-    ],
-    // Mais itens podem ser adicionados aqui — a lista tem rolagem
-    // própria para não quebrar o layout do cabeçalho/rodapé.
-];
-
-$totalItens = count($itensDoCarrinho);
-$totalDosItens = '300,00'; // placeholder
-$descontos     = '70,00';  // placeholder
-$subtotal      = '230,00'; // placeholder
-?>
-<style>
-    .carrinho-painel {
-        width: 320px;
-        max-width: 100%;
-        background: #fff;
-        border-radius: 6px;
-        box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
-        display: flex;
-        flex-direction: column;
-        font-family: Arial, Helvetica, sans-serif;
-        color: #222;
-    }
-
-    .carrinho-painel .carrinho-cabecalho {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 18px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .carrinho-painel .carrinho-cabecalho h3 {
-        margin: 0;
-        font-size: 17px;
-        font-weight: 700;
-    }
-
-    .carrinho-painel .btn-fechar-carrinho {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: none;
-        background: #e6e6e6;
-        color: #333;
-        font-size: 13px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .carrinho-painel .btn-fechar-carrinho:hover {
-        background: #d8d8d8;
-    }
-
-    .carrinho-painel .carrinho-lista-itens {
-        padding: 4px 18px;
-        max-height: 360px;
-        overflow-y: auto;
-        flex: 1;
-    }
-
-    .carrinho-painel .carrinho-lista-itens:empty::after {
-        content: "Seu carrinho está vazio.";
-        display: block;
-        text-align: center;
-        color: #999;
-        font-size: 13px;
-        padding: 24px 0;
-    }
-
-    .carrinho-painel .carrinho-rodape {
-        padding: 16px 18px 18px 18px;
-        border-top: 1px solid #eee;
-    }
-
-    .carrinho-painel .linha-total {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 14px;
-        margin-bottom: 6px;
-    }
-
-    .carrinho-painel .linha-total .rotulo {
-        font-weight: 700;
-    }
-
-    .carrinho-painel .linha-total.desconto .valor {
-        color: #d9534f;
-    }
-
-    .carrinho-painel .linha-total.subtotal {
-        margin-top: 8px;
-        font-size: 15px;
-    }
-
-    .carrinho-painel .linha-total.subtotal .rotulo,
-    .carrinho-painel .linha-total.subtotal .valor {
-        color: #2e8b57;
-        font-weight: 700;
-    }
-
-    .carrinho-painel .btn-finalizar-pedido {
-        width: 100%;
-        margin-top: 14px;
-        padding: 12px 0;
-        border: none;
-        border-radius: 6px;
-        background: #2e8b57;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    .carrinho-painel .btn-finalizar-pedido:hover {
-        background: #276d46;
-    }
-
-    .carrinho-painel .link-saiba-mais {
-        display: block;
-        margin-top: 10px;
-        text-align: center;
-        font-size: 12px;
-    }
-
-    .carrinho-painel .link-saiba-mais a {
-        color: #2b6cb0;
-        text-decoration: underline;
-    }
-</style>
-
-<div class="carrinho-painel">
-
-    <!-- Cabeçalho -->
-    <div class="carrinho-cabecalho">
-        <h3>Carrinho (<?php echo (int) $totalItens; ?> <?php echo $totalItens === 1 ? 'item' : 'itens'; ?>)</h3>
-        <button type="button" class="btn-fechar-carrinho" id="btnFecharCarrinho">✕</button>
-    </div>
-
-    <!-- Lista de itens (usa o componente de componentesCarrinho.php) -->
-    <div class="carrinho-lista-itens" id="listaItensCarrinho">
-        <?php foreach ($itensDoCarrinho as $item): ?>
-            <?php
-            echo renderItemCarrinho(
-                $item['imagem'],
-                $item['nome'],
-                $item['descricao'],
-                $item['precoOriginal'],
-                $item['precoDesconto'],
-                $item['quantidade'],
-                $item['id']
-            );
-            ?>
-        <?php endforeach; ?>
-    </div>
-
-    <!-- Totais / rodapé -->
-    <div class="carrinho-rodape">
-        <div class="linha-total">
-            <span class="rotulo">Total dos itens</span>
-            <span class="valor">R$ <?php echo htmlspecialchars($totalDosItens); ?></span>
-        </div>
-        <div class="linha-total desconto">
-            <span class="rotulo">Descontos</span>
-            <span class="valor">- R$ <?php echo htmlspecialchars($descontos); ?></span>
-        </div>
-        <div class="linha-total subtotal">
-            <span class="rotulo">Subtotal</span>
-            <span class="valor">R$ <?php echo htmlspecialchars($subtotal); ?></span>
+        <!-- Imagem -->
+        <div class="flex-shrink-0" style="width: 80px; height: 80px;">
+            <img
+                src="<?php echo htmlspecialchars($imagem); ?>"
+                alt="<?php echo htmlspecialchars($nome); ?>"
+                class="rounded w-100 h-100"
+                style="object-fit: cover;"
+            >
         </div>
 
-        <button type="button" class="btn-finalizar-pedido" id="btnFinalizarPedido">Finalizar Pedido</button>
+        <!-- Informações -->
+        <div class="flex-grow-1">
+            <p class="fw-bold mb-0"><?php echo htmlspecialchars($nome); ?></p>
+            <p class="text-muted small mb-2"><?php echo htmlspecialchars($descricao); ?></p>
 
-        <span class="link-saiba-mais">
-            <a href="#" id="linkSaibaMais">Descubra como sua compra ajuda artistas parceiros</a>
-        </span>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <?php if ($precoOriginal !== $precoDesconto): ?>
+                    <span class="text-muted small text-decoration-line-through">
+                        R$ <?php echo htmlspecialchars($precoOriginal); ?>
+                    </span>
+                <?php endif; ?>
+                <span class="fw-bold">
+                    R$ <?php echo htmlspecialchars($precoDesconto); ?>
+                </span>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Quantidade">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-menos"
+                        data-item-id="<?php echo htmlspecialchars($idItem); ?>"
+                    >-</button>
+                    <button type="button" class="btn btn-outline-secondary disabled qtd-numero">
+                        <?php echo (int) $quantidade; ?>
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-mais"
+                        data-item-id="<?php echo htmlspecialchars($idItem); ?>"
+                    >+</button>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-link text-danger ms-auto p-0 btn-remover"
+                    data-item-id="<?php echo htmlspecialchars($idItem); ?>"
+                    title="Remover item"
+                >
+                    <i class="bi bi-trash"></i>&#128465;
+                </button>
+            </div>
+        </div>
     </div>
-
-</div>
+    <?php
+    return ob_get_clean();
+}
