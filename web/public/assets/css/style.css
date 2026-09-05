@@ -1,0 +1,198 @@
+.menu-header {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    position: relative;
+}
+
+
+/* =========================
+   CATEGORIA
+========================= */
+
+.categoria-menu {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 25px;
+    position: relative;
+    z-index: 1;
+
+    transition:
+        flex 0.3s ease,
+        height 0.3s ease;
+
+    overflow: hidden;
+}
+
+
+/* =========================
+   CATEGORIA SELECIONADA
+========================= */
+
+.categoria-menu:hover {
+    /*
+       A categoria selecionada ocupa 50%.
+       As outras se ajustam automaticamente.
+    */
+    flex: 0 0 50%;
+
+    /*
+       25px do título
+       + 75px do submenu
+       = 100px
+    */
+    height: 100px;
+
+    z-index: 10;
+}
+
+
+/* =========================
+   LINK DA CATEGORIA
+========================= */
+
+.categoria-link {
+    width: 100%;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #212529;
+    text-decoration: none;
+    font-weight: 500;
+
+    box-sizing: border-box;
+}
+
+/*
+   NÃO aumente o link no hover.
+   Quem aumenta é a categoria inteira.
+*/
+.categoria-link:hover {
+    height: 25px;
+}
+
+
+/* =========================
+   CORES
+========================= */
+
+.categoria-menu:nth-child(1) .categoria-link {
+    background-color: #198754;
+}
+
+.categoria-menu:nth-child(2) .categoria-link {
+    background-color: #ffc107;
+}
+
+.categoria-menu:nth-child(3) .categoria-link {
+    background-color: #dc3545;
+}
+
+
+/* =========================
+   SUBCATEGORIAS
+========================= */
+
+.subcategorias {
+    width: 100%;
+
+    /*
+       3 linhas de 25px
+    */
+    height: 75px;
+
+    display: grid;
+
+    /*
+       3 itens por coluna
+    */
+    grid-template-rows: repeat(3, 25px);
+
+    /*
+       Preenche de cima para baixo
+       e depois cria outra coluna.
+    */
+    grid-auto-flow: column;
+
+    /*
+       Largura mínima de cada coluna
+    */
+    grid-auto-columns: minmax(100px, 1fr);
+
+    column-gap: 20px;
+
+    align-items: center;
+
+    padding: 5px 30px;
+
+    background-color: #212529;
+
+    box-sizing: border-box;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+
+/* =========================
+   MOSTRAR SUBCATEGORIAS
+========================= */
+
+.categoria-menu:hover .subcategorias {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =========================
+   LINK DA SUBCATEGORIA
+========================= */
+
+.subcategoria-link {
+    color: #f8f9fa;
+    text-decoration: none;
+
+    font-size: 14px;
+    white-space: nowrap;
+
+    position: relative;
+
+    padding-left: 12px;
+
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   PONTINHO
+========================= */
+
+.subcategoria-link::before {
+    content: "•";
+
+    position: absolute;
+    left: 0;
+
+    color: #f8f9fa;
+}
+
+
+/* =========================
+   HOVER SUBCATEGORIA
+========================= */
+
+.subcategoria-link:hover {
+    color: #ffc107;
+}

@@ -1,58 +1,116 @@
 async function carregarCategorias() {
 
-    const listaProdutos = document.getElementById("menu-header");
+    const listaCategorias = document.getElementById("menu-header");
 
     try {
 
-        const resposta = await fetch("http://localhost:8080/categorias");
+        // const resposta = await fetch("http://localhost:8080/categorias");
 
-        if (!resposta.ok) {
-            throw new Error(`Erro HTTP: ${resposta.status}`);
-        }
+        // if (!resposta.ok) {
+        //     throw new Error(`Erro HTTP: ${resposta.status}`);
+        // }
 
-        const categorias = await resposta.json();
+
+        const categorias = [
+            {
+                id_categoria: 1,
+                nome: "Eletrônicos",
+                id_categoria_pai: null
+            },
+            {
+                id_categoria: 2,
+                nome: "Roupas",
+                id_categoria_pai: null
+            },
+            {
+                id_categoria: 3,
+                nome: "Acessórios",
+                id_categoria_pai: null
+            }
+        ]
+
 
         if (!categorias || categorias.length === 0) {
-
-            listaProdutos.innerHTML = `
+            listaCategorias.innerHTML = `
                 <div class="col-12">
-                    <div class="alert alert-secondary text-center" role="alert">
-                        Nenhum produto disponível no momento.
+                    <div class="alert alert-secondary text-center">
+                        Nenhuma categoria disponível no momento.
                     </div>
                 </div>
             `;
-
             return;
         }
 
-        listaProdutos.innerHTML = "";
+        listaCategorias.innerHTML = "";
+        const subcategoriasTeste = [
+            [
+                "Celulares",
+                "Computadores",
+                "Televisores",
+                "Monitores",
+                "Notebooks",
+                "Tablets",
+                "Fones",
+                "Teclados",
+                "Mouse",
+                "Impressoras"
+            ],
 
-        categorias.forEach(categoria => {
+            [
+                "Camisetas",
+                "Calças",
+                "Tênis",
+                "Jaquetas",
+                "Moletons",
+                "Bonés",
+                "Bermudas",
+                "Meias",
+                "Vestidos"
+            ],
+
+            [
+                "Parafusos",
+                "Molas",
+                "Ímãs",
+                "Núcleos",
+                "Porcas",
+                "Arruelas",
+                "Ferramentas"
+            ]
+        ];
+
+        categorias.forEach((categoria, index) => {
 
             const coluna = document.createElement("div");
 
-            console.log(categoria);
+            coluna.className = "categoria-menu";
 
-            coluna.className = "col-12 col-sm-6 col-lg-3 col-xl-2";
+            const subcategorias = subcategoriasTeste[index] || [];
 
             coluna.innerHTML = `
-                <div class="col-4">
-                    <a href="" class="d-block py-1 bg-danger text-dark text-decoration-none">
-                        ${categoria.nome}
-                    </a>
+                <a href="#" class="categoria-link">
+                    ${categoria.nome}
+                </a>
+
+                <div class="subcategorias">
+                    ${subcategorias.map(subcategoria => `
+                        <a href="#" class="subcategoria-link">
+                            ${subcategoria}
+                        </a>
+                    `).join("")}
                 </div>
             `;
 
-            listaProdutos.appendChild(coluna);
+            listaCategorias.appendChild(coluna);
         });
 
     } catch (erro) {
 
         console.error("Erro ao carregar categorias:", erro);
 
-        listaProdutos.innerHTML = `
+        listaCategorias.innerHTML = `
             <div class="col-12">
-                <div class="alert alert-danger text-center" role="alert">
+                <div class="alert alert-danger text-center">
                     <strong>Categorias indisponíveis.</strong><br>
                     Não foi possível carregar as categorias no momento.
                 </div>
@@ -61,4 +119,4 @@ async function carregarCategorias() {
     }
 }
 
-carregarProdutos();
+carregarCategorias();
