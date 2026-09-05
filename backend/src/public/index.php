@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use App\Controller\CategoriaController;
 use App\Controller\ProdutoController;
 use App\Middleware\AuthMiddleware;
 use App\Controller\AuthController;
@@ -45,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 $usuarioController = new UsuarioController();
 $authController = new AuthController();
 $produtoController = new ProdutoController();
+$categoriaController = new CategoriaController();
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +153,16 @@ elseif ($method === "POST" && $uri === "/produtos") {
 
     $produtoController->listar();
 
+}
+
+/*
+|--------------------------------------------------------------------------
+| CATEGORIA
+|--------------------------------------------------------------------------
+*/
+
+elseif ($method === "GET" && $uri === "/categorias") {
+    $categoriaController->listar();
 }
 
 /*
