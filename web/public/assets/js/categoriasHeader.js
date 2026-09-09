@@ -88,18 +88,18 @@ async function carregarCategorias() {
             const subcategorias = subcategoriasTeste[index] || [];
 
             coluna.innerHTML = `
-                <a href="#" class="categoria-link">
-                    ${categoria.nome}
-                </a>
+        <a href="#" class="categoria-link">
+            ${categoria.nome}
+        </a>
 
-                <div class="subcategorias">
-                    ${subcategorias.map(subcategoria => `
-                        <a href="#" class="subcategoria-link">
-                            ${subcategoria}
-                        </a>
-                    `).join("")}
-                </div>
-            `;
+        <div class="subcategorias">
+            ${subcategorias.map(subcategoria => `
+                <a href="#" class="subcategoria-link">
+                    ${subcategoria}
+                </a>
+            `).join("")}
+        </div>
+    `;
 
             listaCategorias.appendChild(coluna);
         });
