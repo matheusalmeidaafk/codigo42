@@ -54,50 +54,10 @@
 </header>
 
 <script>
-    async function carregarCategorias() {
-
+    function renderizarCategorias(categorias) {
     const listaCategorias = document.getElementById("menu-header");
-
-    try {
-
-        // const resposta = await fetch("http://localhost:8080/categorias");
-
-        // if (!resposta.ok) {
-        //     throw new Error(`Erro HTTP: ${resposta.status}`);
-        // }
-
-
-        const categorias = [
-            {
-                id_categoria: 1,
-                nome: "Eletrônicos",
-                id_categoria_pai: null
-            },
-            {
-                id_categoria: 2,
-                nome: "Roupas",
-                id_categoria_pai: null
-            },
-            {
-                id_categoria: 3,
-                nome: "Acessórios",
-                id_categoria_pai: null
-            }
-        ]
-
-
-        if (!categorias || categorias.length === 0) {
-            listaCategorias.innerHTML = `
-                <div class="col-12">
-                    <div class="alert alert-secondary text-center">
-                        Nenhuma categoria disponível no momento.
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        listaCategorias.innerHTML = "";
+    
+    listaCategorias.innerHTML = ""; 
         const subcategoriasTeste = [
             [
                 "Celulares",
@@ -134,6 +94,121 @@
                 "Ferramentas"
             ]
         ];
+
+        categorias.forEach((categoria, index) => {
+
+            const coluna = document.createElement("div");
+
+            coluna.className = "categoria-menu";
+
+            const subcategorias = subcategoriasTeste[index] || [];
+
+            coluna.innerHTML = `
+        <a href="#" class="categoria-link">
+            ${categoria.nome}
+        </a>
+
+        <div class="subcategorias">
+            ${subcategorias.map(subcategoria => `
+                <a href="#" class="subcategoria-link">
+                    ${subcategoria}
+                </a>
+            `).join("")}
+        </div>
+    `;
+
+            listaCategorias.appendChild(coluna);
+        });
+
+}
+    async function carregarCategorias() {
+
+    const listaCategorias = document.getElementById("menu-header");
+
+    const categoriasEstaticas = [
+        {
+            id_categoria: 1,
+            nome: "Canecas",
+            id_categoria_pai: null
+        },
+        {
+            id_categoria: 2,
+            nome: "Adesivos",
+            id_categoria_pai: null
+        },
+        {
+            id_categoria: 3,
+            nome: "Camisetas",
+            id_categoria_pai: null
+        }
+    ]
+
+    renderizarCategorias(categoriasEstaticas);
+    
+    try {
+
+        const resposta = await fetch("http://localhost:8080/categorias");
+
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP: ${resposta.status}`);
+        }
+
+
+        const subcategoriasTeste = [
+            [
+                "Celulares",
+                "Computadores",
+                "Televisores",
+                "Monitores",
+                "Notebooks",
+                "Tablets",
+                "Fones",
+                "Teclados",
+                "Mouse",
+                "Impressoras"
+            ],
+
+            [
+                "Camisetas",
+                "Calças",
+                "Tênis",
+                "Jaquetas",
+                "Moletons",
+                "Bonés",
+                "Bermudas",
+                "Meias",
+                "Vestidos"
+            ],
+
+            [
+                "Parafusos",
+                "Molas",
+                "Ímãs",
+                "Núcleos",
+                "Porcas",
+                "Arruelas",
+                "Ferramentas"
+            ]
+        ];
+
+
+        const categorias = await resposta.json();
+
+        console.log(categorias);
+        
+
+        if (!categorias || categorias.length === 0) {
+            listaCategorias.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-secondary text-center">
+                        Nenhuma categoria disponível no momento.
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        listaCategorias.innerHTML = "";
 
         categorias.forEach((categoria, index) => {
 
