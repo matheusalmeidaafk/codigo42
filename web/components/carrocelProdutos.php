@@ -22,27 +22,38 @@ function renderCarrocelProdutos()
 
     <section class="container py-4">
 
+        <h2 class="mb-3">
+            Produtos
+        </h2>
+
         <div
             id="carrocelProdutos"
-            class="carousel slide"
-        >
+            class="carousel slide">
 
             <div class="row g-0 align-items-stretch">
 
+                <!-- Botão anterior -->
                 <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
-                        class="btn border-0 fs-2 text-body"
+                        class="btn border-0 p-0"
                         type="button"
                         data-bs-target="#carrocelProdutos"
-                        data-bs-slide="prev"
-                        aria-label="Produto anterior"
-                    >
-                        X
+                        data-bs-slide="prev">
+                        <img
+                            src="./assets/images/banner/arrow.png"
+                            class="seta"
+                            alt="Previous">
+
+                        <span class="visually-hidden">
+                            Previous
+                        </span>
                     </button>
 
                 </div>
 
+
+                <!-- Área dos produtos -->
                 <div class="col">
 
                     <div class="carousel-inner">
@@ -71,16 +82,23 @@ function renderCarrocelProdutos()
 
                 </div>
 
+
+                <!-- Botão próximo -->
                 <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
-                        class="btn border-0 fs-2 text-body"
+                        class="btn border-0 p-0"
                         type="button"
                         data-bs-target="#carrocelProdutos"
-                        data-bs-slide="next"
-                        aria-label="Próximo produto"
-                    >
-                        X
+                        data-bs-slide="next">
+                        <img
+                            src="./assets/images/banner/arrow.png"
+                            class="seta proximo"
+                            alt="Next">
+
+                        <span class="visually-hidden">
+                            Next
+                        </span>
                     </button>
 
                 </div>
