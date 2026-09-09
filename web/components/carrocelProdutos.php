@@ -22,17 +22,12 @@ function renderCarrocelProdutos()
 
     <section class="container py-4">
 
-        <h2 class="mb-3">
-            Produtos
-        </h2>
-
         <div
             id="carrocelProdutos"
             class="carousel slide">
 
             <div class="row g-0 align-items-stretch">
 
-                <!-- Botão anterior -->
                 <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
@@ -52,8 +47,6 @@ function renderCarrocelProdutos()
 
                 </div>
 
-
-                <!-- Área dos produtos -->
                 <div class="col">
 
                     <div class="carousel-inner">
@@ -82,8 +75,6 @@ function renderCarrocelProdutos()
 
                 </div>
 
-
-                <!-- Botão próximo -->
                 <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
