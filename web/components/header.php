@@ -1,15 +1,3 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Código 42</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="./assets/css/style.css">
-</head>
-
 <header class="bg-dark text-light">
     <div class="container-fluid px-5 py-3">
         <div class="row align-items-center">
@@ -59,10 +47,8 @@
         </div>
     </div>
 
-    <div id="menu-header" class="row g-0 text-center">
+    <div class="row g-0 text-center menu-header">
 
     </div>
 
 </header>
-
-<script src="./assets/js/categoriasHeader.js"></script>

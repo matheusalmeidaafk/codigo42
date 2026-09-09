@@ -294,3 +294,8 @@
 .categoria-menu:hover .categoria-link {
     height: 50px;
 }
+.logo {
+    width: 150px;
+    height: 60px;
+    object-fit: cover;
+}
