@@ -101,8 +101,6 @@
     /* Fundo do mega menu */
     background-color: #212529;
 
-    /* Espaçamento interno */
-    padding: 25px 50px 30px;
 
     /* Caixa */
     box-sizing: border-box;
@@ -112,9 +110,7 @@
 
     /* Fica acima dos outros elementos */
     z-index: 2000;
-
-    /* Sombra */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+    
 }
 
 
@@ -123,23 +119,18 @@
 ======================================== */
 
 .categoria-menu:hover .subcategorias {
-
     display: grid;
 
-    /*
-        Cada coluna tem 3 itens.
-        Depois dos 3 primeiros,
-        começa uma nova coluna.
-    */
     grid-auto-flow: column;
-
     grid-template-rows: repeat(3, auto);
+    grid-auto-columns: 200px;
 
-    grid-auto-columns: minmax(160px, 1fr);
+    width: 100%;
 
-    column-gap: 35px;
-
+    column-gap: 8px;
     row-gap: 8px;
+
+    box-sizing: border-box;
 }
 
 
@@ -150,23 +141,17 @@
 .subcategoria-link {
 
     display: block;
-
     min-width: 0;
+    width: 200px;
 
-    padding: 6px 10px;
+    padding: 3px 8px;
 
     color: #f8f9fa;
-
     text-decoration: none;
-
     font-size: 14px;
-
     text-align: left;
-
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 
     border-radius: 4px;
