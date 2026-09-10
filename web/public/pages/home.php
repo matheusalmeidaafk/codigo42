@@ -13,9 +13,9 @@
 <body>
 
     <?php
-    require_once __DIR__ . '/../../components/carrocelProdutos.php';
+    require_once __DIR__ . '/../../components/carrosselProdutos.php';
 
-    renderCarrocelProdutos();
+    renderCarrosselProdutos();
     ?>
 
 </body>

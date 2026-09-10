@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/cardTeste.php';
 
-function renderCarrocelProdutos()
+function renderCarrosselProdutos()
 {
     $produtosTeste = [
         'Produto 1',
@@ -23,7 +23,7 @@ function renderCarrocelProdutos()
     <section class="container py-4">
 
         <div
-            id="carrocelProdutos"
+            id="carrosselProdutos"
             class="carousel slide">
 
             <div class="row g-0 align-items-stretch">
@@ -33,7 +33,7 @@ function renderCarrocelProdutos()
                     <button
                         class="btn border-0 p-0"
                         type="button"
-                        data-bs-target="#carrocelProdutos"
+                        data-bs-target="#carrosselProdutos"
                         data-bs-slide="prev">
                         <img
                             src="./assets/images/banner/arrow.png"
@@ -75,12 +75,13 @@ function renderCarrocelProdutos()
 
                 </div>
 
+
                 <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
                         class="btn border-0 p-0"
                         type="button"
-                        data-bs-target="#carrocelProdutos"
+                        data-bs-target="#carrosselProdutos"
                         data-bs-slide="next">
                         <img
                             src="./assets/images/banner/arrow.png"
