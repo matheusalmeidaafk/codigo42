@@ -14,7 +14,12 @@ function renderCarrosselProdutos()
         'Produto 7',
         'Produto 8',
         'Produto 9',
-        'Produto 10'
+        'Produto 10',
+        'Produto 11',
+        'Produto 12',
+        'Produto 13',
+        'Produto 14',
+        'Produto 15'
     ];
 
     $gruposProdutos = array_chunk($produtosTeste, 5);
