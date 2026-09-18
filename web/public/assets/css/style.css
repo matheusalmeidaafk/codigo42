@@ -1,106 +1,131 @@
 body {
-  background-color: #ffffff;
+  background-color: #fff;
 }
+
+/* Cabeçalho das vitrines */
 
 .vitrine-titulo {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 300;
-  letter-spacing: 1px;
-  color: #2c2c2c;
-  text-transform: uppercase;
+  line-height: 1;
 }
 
-.vitrine-box {
-  position: relative;
-  border: 1px solid #cfcfcf;
-  background: #fff;
-  padding: 10px 28px;
+/* Botões dos filtros */
+
+.filtros-produto .btn {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
 }
 
-.vitrine-lista {
+/* Área onde ficam os produtos */
+
+.vitrine-conteudo {
+  padding: 0.5rem 2rem;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.vitrine-track {
   display: flex;
-  gap: 8px;
+  gap: 0.4rem;
   overflow-x: auto;
+  scroll-behavior: smooth;
   scrollbar-width: none;
 }
 
-.vitrine-lista::-webkit-scrollbar {
+.vitrine-track::-webkit-scrollbar {
   display: none;
 }
 
-.vitrine-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: #d1d1d1;
-  font-size: 1.8rem;
-  z-index: 2;
+/* Card */
+
+.vitrine-track .produto-item {
+  flex: 0 0 145px;
+  width: 145px;
 }
 
-.vitrine-arrow-left {
-  left: 4px;
+.produto-card {
+  border: 1px solid #aaa;
+  font-size: 0.75rem;
 }
 
-.vitrine-arrow-right {
-  right: 4px;
-}
-
-.filtroProduto {
-  border: 1px solid #9d9d9d;
-  background: #fff;
-  color: #4a4a4a;
-  font-size: 0.65rem;
-  line-height: 1;
-  padding: 4px 8px;
-  text-transform: uppercase;
-}
-
-.filtroProduto.ativo {
-  background: #222;
-  color: #fff;
-  border-color: #222;
-}
-
-.produto-mini-card {
-  flex: 0 0 95px;
-  border: 1px solid #bdbdbd;
-  background: #fff;
-}
-
-.produto-thumb {
+.produto-imagem-container {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
-.produto-thumb img {
+.produto-imagem {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
-}
-
-.produto-info {
-  padding: 4px;
-  font-size: 0.56rem;
-  line-height: 1.2;
 }
 
 .produto-nome {
-  font-weight: 700;
-  color: #222;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.1;
 }
 
 .produto-descricao {
-  color: #555;
-  min-height: 20px;
+  font-size: 0.6rem;
+  line-height: 1.1;
 }
 
 .produto-preco {
-  margin-top: 3px;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #00a86b;
+  color: #198754;
+}
+
+.produto-comprar {
+  font-size: 0.58rem;
+  padding: 0.2rem 0.25rem;
+}
+
+/* Setas */
+
+.vitrine-seta {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+
+  border: 0;
+  padding: 0.4rem;
+
+  font-size: 1.2rem;
+
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.vitrine-anterior {
+  left: 0;
+}
+
+.vitrine-proximo {
+  right: 0;
+}
+
+/* Responsividade */
+
+@media (max-width: 576px) {
+  .vitrine-titulo {
+    font-size: 1.3rem;
+  }
+
+  .vitrine-track .produto-item {
+    flex-basis: 125px;
+    width: 125px;
+  }
+
+  .filtros-produto {
+    width: 100%;
+  }
+
+  .filtros-produto .btn {
+    flex: 1;
+    font-size: 0.58rem;
+  }
 }

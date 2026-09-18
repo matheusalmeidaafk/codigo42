@@ -2,60 +2,84 @@
 
 function renderProductCard(array $produto): void
 {
-    $nomeProduto = htmlspecialchars($produto['nome']);
-    $descricaoProduto = htmlspecialchars($produto['descricao']);
-    $precoProduto = number_format((float) $produto['preco'], 2, ',', '.');
-    $imagemProduto = htmlspecialchars($produto['imagem_url']);
-    $categoriaProduto = htmlspecialchars($produto['categoria']);
+    $nomeProduto = htmlspecialchars(
+        $produto['nome'] ?? '',
+        ENT_QUOTES,
+        'UTF-8'
+    );
+
+    $descricaoProduto = htmlspecialchars(
+        $produto['descricao'] ?? '',
+        ENT_QUOTES,
+        'UTF-8'
+    );
+
+    $precoProduto = (float) ($produto['preco'] ?? 0);
+
+    $imagemProduto = htmlspecialchars(
+        $produto['imagem_url']
+            ?? $produto['imagem']
+            ?? 'https://placehold.co/300x300?text=Produto',
+        ENT_QUOTES,
+        'UTF-8'
+    );
+
+    $categoriaProduto = htmlspecialchars(
+        strtolower($produto['categoria'] ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 ?>
 
-    <div class="produto-mini-card produtoItem" data-categoria="<?= $categoriaProduto ?>">
-        <div class="produto-thumb">
-            <img src="<?= $imagemProduto ?>" alt="<?= $nomeProduto ?>">
-        </div>
+    <div
+        class="produto-item"
+        data-categoria="<?= $categoriaProduto ?>">
 
-        <div class="produto-info">
-            <div class="produto-nome"><?= $nomeProduto ?></div>
-            <div class="produto-descricao"><?= $descricaoProduto ?></div>
-            <div class="produto-preco">Por R$ <?= $precoProduto ?></div>
-        </div>
+        <article class="card produto-card h-100 rounded-0">
+
+            <div class="produto-imagem-container">
+
+                <img
+                    src="<?= $imagemProduto ?>"
+                    class="card-img-top produto-imagem rounded-0"
+                    alt="<?= $nomeProduto ?>">
+
+            </div>
+
+            <div class="card-body p-2 d-flex flex-column">
+
+                <h3 class="card-title produto-nome mb-1">
+                    <?= $nomeProduto ?>
+                </h3>
+
+                <p class="card-text produto-descricao text-secondary mb-1">
+                    <?= $descricaoProduto ?>
+                </p>
+
+                <div class="mt-auto">
+
+                    <p class="produto-preco mb-1">
+                        R$ <?= number_format(
+                                $precoProduto,
+                                2,
+                                ',',
+                                '.'
+                            ) ?>
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn btn-success btn-sm rounded-0 w-100 produto-comprar">
+                        Adicionar ao carrinho
+                    </button>
+
+                </div>
+
+            </div>
+
+        </article>
+
     </div>
 
-<?php
-}
-
-function renderProductSection(string $titulo, string $secaoId, array $produtos): void
-{
-?>
-    <section class="vitrine-section mb-5">
-
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
-            <h2 class="vitrine-titulo mb-0"><?= $titulo ?></h2>
-
-            <div class="d-flex gap-1 flex-wrap">
-                <button type="button" class="filtroProduto ativo" data-secao="<?= $secaoId ?>" data-categoria="todos">TUDO</button>
-                <button type="button" class="filtroProduto" data-secao="<?= $secaoId ?>" data-categoria="camiseta">CAMISETAS</button>
-                <button type="button" class="filtroProduto" data-secao="<?= $secaoId ?>" data-categoria="caneca">CANECAS</button>
-                <button type="button" class="filtroProduto" data-secao="<?= $secaoId ?>" data-categoria="adesivo">ADESIVOS</button>
-            </div>
-        </div>
-
-        <div class="vitrine-box">
-            <button class="vitrine-arrow vitrine-arrow-left" type="button" aria-label="Anterior">
-                <i class="bi bi-chevron-left"></i>
-            </button>
-
-            <div class="vitrine-lista" id="<?= $secaoId ?>">
-                <?php foreach ($produtos as $produto): ?>
-                    <?php renderProductCard($produto); ?>
-                <?php endforeach; ?>
-            </div>
-
-            <button class="vitrine-arrow vitrine-arrow-right" type="button" aria-label="Próximo">
-                <i class="bi bi-chevron-right"></i>
-            </button>
-        </div>
-
-    </section>
 <?php
 }
