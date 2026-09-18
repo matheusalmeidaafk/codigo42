@@ -6,6 +6,7 @@ use App\Controller\ProdutoController;
 use App\Middleware\AuthMiddleware;
 use App\Controller\AuthController;
 use App\Controller\UsuarioController;
+use App\Controller\FooterController;
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
@@ -45,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 $usuarioController = new UsuarioController();
 $authController = new AuthController();
 $produtoController = new ProdutoController();
+$footerController = new FooterController();
 
 /*
 |--------------------------------------------------------------------------
@@ -150,6 +152,24 @@ elseif ($method === "POST" && $uri === "/produtos") {
 } elseif ($method === "GET" && $uri === "/produtos") {
 
     $produtoController->listar();
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
+
+elseif ($method === "GET" && $uri === "/footer") {
+
+    $footerController->obter();
+
+} elseif ($method === "POST" && $uri === "/footer") {
+
+    exigirAutenticacao();
+
+    $footerController->salvar();
 
 }
 
