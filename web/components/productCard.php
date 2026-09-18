@@ -24,8 +24,20 @@ function renderProductCard(array $produto): void
         'UTF-8'
     );
 
-    $categoriaProduto = htmlspecialchars(
-        strtolower($produto['categoria'] ?? ''),
+    $categoriaIds = [];
+
+    foreach (($produto['categorias'] ?? []) as $categoria) {
+        $categoriaId = (int) ($categoria['id_categoria'] ?? 0);
+
+        if ($categoriaId > 0) {
+            $categoriaIds[] = $categoriaId;
+        }
+    }
+
+    $categoriaIds = array_values(array_unique($categoriaIds));
+
+    $categoriasProduto = htmlspecialchars(
+        implode(',', $categoriaIds),
         ENT_QUOTES,
         'UTF-8'
     );
@@ -33,17 +45,16 @@ function renderProductCard(array $produto): void
 
     <div
         class="produto-item"
-        data-categoria="<?= $categoriaProduto ?>">
+        data-categorias="<?= $categoriasProduto ?>">
 
         <article class="card produto-card h-100 rounded-0">
 
             <div class="produto-imagem-container">
-
                 <img
                     src="<?= $imagemProduto ?>"
                     class="card-img-top produto-imagem rounded-0"
-                    alt="<?= $nomeProduto ?>">
-
+                    alt="<?= $nomeProduto ?>"
+                    loading="lazy">
             </div>
 
             <div class="card-body p-2 d-flex flex-column">
@@ -60,11 +71,11 @@ function renderProductCard(array $produto): void
 
                     <p class="produto-preco mb-1">
                         R$ <?= number_format(
-                                $precoProduto,
-                                2,
-                                ',',
-                                '.'
-                            ) ?>
+                            $precoProduto,
+                            2,
+                            ',',
+                            '.'
+                        ) ?>
                     </p>
 
                     <button

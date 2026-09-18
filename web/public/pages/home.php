@@ -1,159 +1,120 @@
 <?php
 
+require_once __DIR__ . '/../../services/produtoApi.php';
 require_once __DIR__ . '/../../components/productCard.php';
 
-$novidades = [
-    [
-        'nome' => 'Camiseta Dev',
-        'descricao' => 'Camiseta personalizada.',
-        'preco' => 59.90,
-        'imagem_url' => 'https://placehold.co/300x300/181818/ffffff?text=Camiseta+Dev',
-        'categoria' => 'camiseta'
-    ],
-    [
-        'nome' => 'Camiseta Rock',
-        'descricao' => 'Estampa exclusiva.',
-        'preco' => 64.90,
-        'imagem_url' => 'https://placehold.co/300x300/222222/ffffff?text=Camiseta+Rock',
-        'categoria' => 'camiseta'
-    ],
-    [
-        'nome' => 'Caneca Dev',
-        'descricao' => 'Caneca para programadores.',
-        'preco' => 39.90,
-        'imagem_url' => 'https://placehold.co/300x300/f1f1f1/222222?text=Caneca+Dev',
-        'categoria' => 'caneca'
-    ],
-    [
-        'nome' => 'Adesivo Código 42',
-        'descricao' => 'Adesivo para notebook.',
-        'preco' => 9.90,
-        'imagem_url' => 'https://placehold.co/300x300/eeeeee/222222?text=Adesivo',
-        'categoria' => 'adesivo'
-    ],
-    [
-        'nome' => 'Camiseta Samurai',
-        'descricao' => 'Camiseta estampada.',
-        'preco' => 69.90,
-        'imagem_url' => 'https://placehold.co/300x300/202020/ffffff?text=Samurai',
-        'categoria' => 'camiseta'
-    ],
-    [
-        'nome' => 'Caneca Código 42',
-        'descricao' => 'Caneca personalizada.',
-        'preco' => 42.90,
-        'imagem_url' => 'https://placehold.co/300x300/e8e8e8/222222?text=Caneca+42',
-        'categoria' => 'caneca'
-    ],
-    [
-        'nome' => 'Adesivo Dev',
-        'descricao' => 'Adesivo programação.',
-        'preco' => 7.90,
-        'imagem_url' => 'https://placehold.co/300x300/ededed/222222?text=Dev',
-        'categoria' => 'adesivo'
-    ]
-];
+$produtos = [];
+$categorias = [];
+$erroApi = null;
 
-$favoritos = [
-    [
-        'nome' => 'Camiseta Branca',
-        'descricao' => 'Modelo clássico.',
-        'preco' => 59.90,
-        'imagem_url' => 'https://placehold.co/300x300/f4f4f4/222222?text=Camiseta',
-        'categoria' => 'camiseta'
-    ],
-    [
-        'nome' => 'Caneca Code',
-        'descricao' => 'Caneca personalizada.',
-        'preco' => 44.90,
-        'imagem_url' => 'https://placehold.co/300x300/eeeeee/222222?text=Caneca',
-        'categoria' => 'caneca'
-    ],
-    [
-        'nome' => 'Camiseta Skull',
-        'descricao' => 'Estampa exclusiva.',
-        'preco' => 69.90,
-        'imagem_url' => 'https://placehold.co/300x300/171717/ffffff?text=Skull',
-        'categoria' => 'camiseta'
-    ],
-    [
-        'nome' => 'Camiseta Samurai',
-        'descricao' => 'Modelo premium.',
-        'preco' => 72.90,
-        'imagem_url' => 'https://placehold.co/300x300/202020/ffffff?text=Samurai',
-        'categoria' => 'camiseta'
-    ],
-    [
-        'nome' => 'Caneca Verde',
-        'descricao' => 'Caneca Código 42.',
-        'preco' => 39.90,
-        'imagem_url' => 'https://placehold.co/300x300/dfeee5/222222?text=Caneca+Verde',
-        'categoria' => 'caneca'
-    ],
-    [
-        'nome' => 'Adesivo PHP',
-        'descricao' => 'Adesivo para notebook.',
-        'preco' => 8.90,
-        'imagem_url' => 'https://placehold.co/300x300/eeeeee/222222?text=PHP',
-        'categoria' => 'adesivo'
-    ]
-];
+try {
+    $produtos = buscarProdutosApi();
+    $categorias = buscarCategoriasApi();
+} catch (Throwable $e) {
+    $erroApi = 'Não foi possível carregar os produtos agora.';
+}
+
+$novidades = $produtos;
+
+$favoritos = [];
+
+function normalizarTexto(string $texto): string
+{
+    $texto = mb_strtolower(trim($texto), 'UTF-8');
+
+    $semAcento = iconv(
+        'UTF-8',
+        'ASCII//TRANSLIT//IGNORE',
+        $texto
+    );
+
+    return $semAcento !== false
+        ? strtolower($semAcento)
+        : $texto;
+}
+
+function obterCategoriasFiltro(array $categorias): array
+{
+    $ordemDesejada = [
+        'camisetas' => 'CAMISETAS',
+        'canecas' => 'CANECAS',
+        'adesivos' => 'ADESIVOS',
+    ];
+
+    $categoriasPorNome = [];
+
+    foreach ($categorias as $categoria) {
+        if (($categoria['id_categoria_pai'] ?? null) !== null) {
+            continue;
+        }
+
+        $idCategoria = (int) ($categoria['id_categoria'] ?? 0);
+        $nomeCategoria = (string) ($categoria['nome'] ?? '');
+        $nomeNormalizado = normalizarTexto($nomeCategoria);
+
+        if ($idCategoria <= 0 || !isset($ordemDesejada[$nomeNormalizado])) {
+            continue;
+        }
+
+        $categoriasPorNome[$nomeNormalizado] = [
+            'id' => $idCategoria,
+            'label' => $ordemDesejada[$nomeNormalizado],
+        ];
+    }
+
+    $resultado = [];
+
+    foreach ($ordemDesejada as $nome => $label) {
+        if (isset($categoriasPorNome[$nome])) {
+            $resultado[] = $categoriasPorNome[$nome];
+        }
+    }
+
+    return $resultado;
+}
+
+$categoriasFiltro = obterCategoriasFiltro($categorias);
 
 function renderVitrine(
     string $titulo,
     string $id,
-    array $produtos
+    array $produtos,
+    array $categoriasFiltro,
+    string $mensagemVazia = 'Nenhum produto disponível.'
 ): void {
 ?>
 
     <section
         class="vitrine mb-5"
-        data-vitrine="<?= htmlspecialchars($id) ?>">
+        data-vitrine="<?= htmlspecialchars($id, ENT_QUOTES, 'UTF-8') ?>">
 
         <div
-            class="d-flex
-                   justify-content-between
-                   align-items-end
-                   flex-wrap
-                   gap-2
-                   mb-2">
+            class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-2">
 
             <h2 class="vitrine-titulo mb-0">
-                <?= htmlspecialchars($titulo) ?>
+                <?= htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') ?>
             </h2>
 
             <div
                 class="btn-group btn-group-sm filtros-produto"
                 role="group"
-                aria-label="Filtros de <?= htmlspecialchars($titulo) ?>">
+                aria-label="Filtros de <?= htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') ?>">
 
                 <button
                     type="button"
                     class="btn btn-dark filtro-produto"
-                    data-categoria="todos">
+                    data-categoria-id="todos">
                     TUDO
                 </button>
 
-                <button
-                    type="button"
-                    class="btn btn-outline-dark filtro-produto"
-                    data-categoria="camiseta">
-                    CAMISETAS
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-outline-dark filtro-produto"
-                    data-categoria="caneca">
-                    CANECAS
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-outline-dark filtro-produto"
-                    data-categoria="adesivo">
-                    ADESIVOS
-                </button>
+                <?php foreach ($categoriasFiltro as $categoria): ?>
+                    <button
+                        type="button"
+                        class="btn btn-outline-dark filtro-produto"
+                        data-categoria-id="<?= (int) $categoria['id'] ?>">
+                        <?= htmlspecialchars($categoria['label'], ENT_QUOTES, 'UTF-8') ?>
+                    </button>
+                <?php endforeach; ?>
 
             </div>
 
@@ -170,11 +131,19 @@ function renderVitrine(
 
             <div class="vitrine-track">
 
-                <?php foreach ($produtos as $produto): ?>
+                <?php if ($produtos !== []): ?>
 
-                    <?php renderProductCard($produto); ?>
+                    <?php foreach ($produtos as $produto): ?>
+                        <?php renderProductCard($produto); ?>
+                    <?php endforeach; ?>
 
-                <?php endforeach; ?>
+                <?php else: ?>
+
+                    <p class="text-secondary small mb-0 py-4 px-2 vitrine-vazia">
+                        <?= htmlspecialchars($mensagemVazia, ENT_QUOTES, 'UTF-8') ?>
+                    </p>
+
+                <?php endif; ?>
 
             </div>
 
@@ -194,13 +163,10 @@ function renderVitrine(
 ?>
 
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0">
@@ -218,15 +184,12 @@ function renderVitrine(
     <link
         rel="stylesheet"
         href="../assets/css/style.css">
-
 </head>
 
 <body>
 
     <header class="border-bottom">
-
         <nav class="navbar navbar-expand-lg bg-white">
-
             <div class="container">
 
                 <a
@@ -236,7 +199,6 @@ function renderVitrine(
                 </a>
 
                 <div class="d-flex gap-3 align-items-center">
-
                     <a
                         href="#"
                         class="text-dark text-decoration-none">
@@ -256,30 +218,27 @@ function renderVitrine(
                         aria-label="Carrinho">
                         <i class="bi bi-cart"></i>
                     </a>
-
                 </div>
 
             </div>
-
         </nav>
-
     </header>
 
     <main class="container py-4">
+
+        <?php if ($erroApi !== null): ?>
+            <div class="alert alert-warning" role="alert">
+                <?= htmlspecialchars($erroApi, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
 
         <?php
         renderVitrine(
             'NOVIDADES',
             'novidades',
-            $novidades
-        );
-        ?>
-
-        <?php
-        renderVitrine(
-            'FAVORITOS',
-            'favoritos',
-            $favoritos
+            $novidades,
+            $categoriasFiltro,
+            'Nenhum produto ativo foi encontrado.'
         );
         ?>
 
