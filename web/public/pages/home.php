@@ -198,27 +198,7 @@ function renderVitrine(
                     &lt;/Código42&gt;
                 </a>
 
-                <div class="d-flex gap-3 align-items-center">
-                    <a
-                        href="#"
-                        class="text-dark text-decoration-none">
-                        Sobre
-                    </a>
-
-                    <a
-                        href="#"
-                        class="text-dark fs-5"
-                        aria-label="Minha conta">
-                        <i class="bi bi-person"></i>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="text-dark fs-5"
-                        aria-label="Carrinho">
-                        <i class="bi bi-cart"></i>
-                    </a>
-                </div>
+                
 
             </div>
         </nav>
