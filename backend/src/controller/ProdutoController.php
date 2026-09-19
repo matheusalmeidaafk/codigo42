@@ -51,7 +51,20 @@ class ProdutoController {
 
     public function listar() : void {
         try {
-            $produtos = $this->service->listar();
+            $categorias = $_GET['categorias'] ?? '';
+
+            $categorias = array_filter(
+                array_map('intval', explode(',', $categorias))
+            );
+
+            $precoMin = $_GET['precoMin'] ?? '';
+            $precoMax = $_GET['precoMax'] ?? '';
+            
+            $isAutoral = $_GET['autoral'] ?? null;
+
+
+
+            $produtos = $this->service->filtrarCategoria($precoMin, $precoMax, $isAutoral, $categorias);
 
             http_response_code(200);
             

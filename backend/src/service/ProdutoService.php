@@ -17,7 +17,8 @@ class ProdutoService
         $this->db = $database->conectar();
     }
 
-   public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo) {
+    public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo)
+    {
         if (empty($nome)) {
             throw new Exception("Nome do produto é obrigatório.");
         }
@@ -38,12 +39,65 @@ class ProdutoService
         return new Produto($id, $imagemUrl, $nome, $descricao, $preco, $ativo);
     }
 
-    public function listar() : array {
+    public function listar(): array
+    {
         $sql = "SELECT * FROM produto";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+    public function filtrarCategoria($precoMin, $precoMax, $isAutoral, array $categorias = []): array
+    {
+        $sql = "
+        SELECT p.*
+        FROM produto p
+        INNER JOIN produto_categoria pc
+            ON pc.id_produto = p.id_produto
+        WHERE p.ativo = TRUE
+    ";
+
+        $params = [];
+
+        if (!empty($categorias)) {
+            $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+
+            $sql .= "
+            AND pc.id_categoria IN ($placeholders)
+        ";
+
+            $params = $categorias;
+        }
+        if (!empty($precoMin)) {
+            $sql .= "AND p.preco >= ?";
+
+            array_push($params, (float) $precoMin);
+        }
+        if (!empty($precoMax)) {
+            $sql .= "AND p.preco <= ?";
+
+            array_push($params, (float) $precoMax);
+        }
+        if ($isAutoral !== null) {
+            $sql .= " AND p.is_autoral = ?";
+            
+            $isAutoral = filter_var(
+                $isAutoral,
+                FILTER_VALIDATE_BOOLEAN,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            array_push($params, (bool) $isAutoral);
+        } else if (empty($params)) {
+            return $this->listar();
+        }
+
+        $sql .= " ORDER BY p.id_produto DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
