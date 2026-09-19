@@ -66,4 +66,22 @@ class ProdutoController {
         }
     }
 
+    public function pesquisar(string $pesquisa) : void {
+        
+        try {
+            $produtos = $this->service->pesquisar($pesquisa);
+
+            http_response_code(200);
+            
+            echo json_encode($produtos);
+
+        } catch (Exception $e) {
+            http_response_code(400);
+
+            echo json_encode([
+                "erro" => $e->getMessage()
+            ]);
+        }
+    }
+
 }

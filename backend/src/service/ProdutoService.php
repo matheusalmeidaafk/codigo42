@@ -46,4 +46,13 @@ class ProdutoService
 
         return $stmt->fetchAll();
     }
+
+    public function pesquisar(string $pesquisa) : array {
+        $sql = "SELECT * FROM produto WHERE nome LIKE ?";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(["%".$pesquisa."%"]);
+
+        return $stmt->fetchAll();
+    }
 }

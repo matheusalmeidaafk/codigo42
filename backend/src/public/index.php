@@ -152,6 +152,15 @@ elseif ($method === "POST" && $uri === "/produtos") {
     $produtoController->listar();
 
 }
+elseif (
+    $method === "GET"
+    && preg_match("#^/produtos/([^/]+)$#", $uri, $matches)
+) {
+    $pesquisa = $matches[1];
+
+    $produtoController->pesquisar($pesquisa);
+
+}
 
 /*
 |--------------------------------------------------------------------------
