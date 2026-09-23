@@ -8,7 +8,11 @@ function renderCarrosselProdutos(array $produtos): void
         return;
     }
 
-    $gruposProdutos = array_chunk($produtos, 5);
+    $cardsPorSlide = 5;
+    $larguraCard = 260;
+    $larguraCarrossel = $cardsPorSlide * $larguraCard;
+
+    $gruposProdutos = array_chunk($produtos, $cardsPorSlide);
 ?>
 
     <section class="container-fluid py-4">
@@ -17,10 +21,11 @@ function renderCarrosselProdutos(array $produtos): void
             id="carrosselProdutos"
             class="carousel slide">
 
-            <div class="row g-0 align-items-stretch">
+            <div class="d-flex justify-content-center align-items-stretch">
 
+                <!-- Seta esquerda -->
                 <div
-                    class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
+                    class="d-flex align-items-center justify-content-center bg-white px-1">
 
                     <button
                         class="btn border-0 p-0"
@@ -41,7 +46,9 @@ function renderCarrosselProdutos(array $produtos): void
 
                 </div>
 
-                <div class="col">
+                <!-- Área fixa do carrossel -->
+                <div
+                    style="width: <?= $larguraCarrossel ?>px;">
 
                     <div class="carousel-inner">
 
@@ -49,11 +56,11 @@ function renderCarrosselProdutos(array $produtos): void
 
                             <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
 
-                                <div class="d-flex flex-wrap justify-content-center">
+                                <div class="d-flex flex-nowrap justify-content-start">
 
                                     <?php foreach ($grupo as $produto): ?>
 
-                                        <div class="d-flex justify-content-center">
+                                        <div class="flex-shrink-0">
 
                                             <?php
                                             CardProduto(
@@ -78,8 +85,9 @@ function renderCarrosselProdutos(array $produtos): void
 
                 </div>
 
+                <!-- Seta direita -->
                 <div
-                    class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
+                    class="d-flex align-items-center justify-content-center bg-white px-1">
 
                     <button
                         class="btn border-0 p-0"
