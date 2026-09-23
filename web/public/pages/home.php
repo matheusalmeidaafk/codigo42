@@ -1,27 +1,44 @@
-<!doctype html>
-<html lang="en">
+<?php
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Código 42</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+require_once __DIR__ . '/../../components/carrosselProdutos.php';
 
-<body>
+$produtos = [
+    [
+        'nome' => 'Camiseta Código 42',
+        'estrelas' => 5,
+        'preco' => 89.90,
+        'imagem_url' => 'https://placehold.co/600x600?text=Camiseta'
+    ],
+    [
+        'nome' => 'Caneca Código 42',
+        'estrelas' => 4,
+        'preco' => 49.90,
+        'imagem_url' => 'https://placehold.co/600x600?text=Caneca'
+    ],
+    [
+        'nome' => 'Moletom Código 42',
+        'estrelas' => 5,
+        'preco' => 159.90,
+        'imagem_url' => 'https://placehold.co/600x600?text=Moletom'
+    ],
+    [
+        'nome' => 'Boné Código 42',
+        'estrelas' => 3,
+        'preco' => 69.90,
+        'imagem_url' => 'https://placehold.co/600x600?text=Bone'
+    ],
+    [
+        'nome' => 'Adesivo Código 42',
+        'estrelas' => 4,
+        'preco' => 9.90,
+        'imagem_url' => 'https://placehold.co/600x600?text=Adesivo'
+    ],
+    [
+        'nome' => 'Mousepad Código 42',
+        'estrelas' => 5,
+        'preco' => 39.90,
+        'imagem_url' => 'https://placehold.co/600x600?text=Mousepad'
+    ],
+];
 
-    <?php
-    require_once __DIR__ . '/../../components/carrosselProdutos.php';
-
-    renderCarrosselProdutos();
-    ?>
-
-</body>
-
-<script
-
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-</html>
+renderCarrosselProdutos($produtos);

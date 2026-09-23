@@ -1,32 +1,17 @@
 <?php
 
-require_once __DIR__ . '/cardTeste.php';
+require_once __DIR__ . '/cardProduto.php';
 
-function renderCarrosselProdutos()
+function renderCarrosselProdutos(array $produtos): void
 {
-    $produtosTeste = [
-        'Produto 1',
-        'Produto 2',
-        'Produto 3',
-        'Produto 4',
-        'Produto 5',
-        'Produto 6',
-        'Produto 7',
-        'Produto 8',
-        'Produto 9',
-        'Produto 10',
-        'Produto 11',
-        'Produto 12',
-        'Produto 13',
-        'Produto 14',
-        'Produto 15',
-        'Produto 16',
-    ];
+    if (empty($produtos)) {
+        return;
+    }
 
-    $gruposProdutos = array_chunk($produtosTeste, 5);
+    $gruposProdutos = array_chunk($produtos, 5);
 ?>
 
-    <section class="container py-4">
+    <section class="container-fluid py-4">
 
         <div
             id="carrosselProdutos"
@@ -34,21 +19,24 @@ function renderCarrosselProdutos()
 
             <div class="row g-0 align-items-stretch">
 
-                <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
+                <div
+                    class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
                         class="btn border-0 p-0"
                         type="button"
                         data-bs-target="#carrosselProdutos"
                         data-bs-slide="prev">
+
                         <img
-                            src="./assets/images/banner/arrow.png"
+                            src="../assets/images/banner/arrow.png"
                             class="seta"
-                            alt="Previous">
+                            alt="Anterior">
 
                         <span class="visually-hidden">
-                            Previous
+                            Anterior
                         </span>
+
                     </button>
 
                 </div>
@@ -61,12 +49,21 @@ function renderCarrosselProdutos()
 
                             <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
 
-                                <div class="row row-cols-5 g-2">
+                                <div class="d-flex flex-wrap justify-content-center">
 
                                     <?php foreach ($grupo as $produto): ?>
 
-                                        <div class="col">
-                                            <?php renderCardTeste($produto); ?>
+                                        <div class="d-flex justify-content-center">
+
+                                            <?php
+                                            CardProduto(
+                                                $produto['nome'],
+                                                (int) $produto['estrelas'],
+                                                (float) $produto['preco'],
+                                                $produto['imagem_url'] ?? 'https://placehold.co/600x600?text=Sem+Imagem'
+                                            );
+                                            ?>
+
                                         </div>
 
                                     <?php endforeach; ?>
@@ -81,22 +78,24 @@ function renderCarrosselProdutos()
 
                 </div>
 
-
-                <div class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
+                <div
+                    class="col-auto d-flex align-items-center justify-content-center bg-white px-2">
 
                     <button
                         class="btn border-0 p-0"
                         type="button"
                         data-bs-target="#carrosselProdutos"
                         data-bs-slide="next">
+
                         <img
-                            src="./assets/images/banner/arrow.png"
+                            src="../assets/images/banner/arrow.png"
                             class="seta proximo"
-                            alt="Next">
+                            alt="Próximo">
 
                         <span class="visually-hidden">
-                            Next
+                            Próximo
                         </span>
+
                     </button>
 
                 </div>
