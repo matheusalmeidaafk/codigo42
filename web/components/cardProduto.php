@@ -7,7 +7,7 @@ function CardProduto(
     string $imagem
 ): void {
 
-    $estrelas = max(1, min(5, $estrelas));
+    $estrelas = max(0, min(5, $estrelas));
     ?>
 
     <article class="card border-0 rounded-0 overflow-hidden" style="width: 260px;">
