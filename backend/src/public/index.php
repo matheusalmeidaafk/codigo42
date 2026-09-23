@@ -2,11 +2,11 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use App\Controller\AuthController;
 use App\Controller\CategoriaController;
 use App\Controller\ProdutoController;
-use App\Controller\UsuarioController;
 use App\Middleware\AuthMiddleware;
+use App\Controller\AuthController;
+use App\Controller\UsuarioController;
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
@@ -145,6 +145,16 @@ elseif ($method === 'POST' && $uri === '/produtos') {
 */
 
 elseif ($method === 'GET' && $uri === '/categorias') {
+    $categoriaController->listar();
+}
+
+/*
+|--------------------------------------------------------------------------
+| CATEGORIA
+|--------------------------------------------------------------------------
+*/
+
+elseif ($method === "GET" && $uri === "/categorias") {
     $categoriaController->listar();
 }
 
