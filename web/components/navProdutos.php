@@ -76,14 +76,15 @@ function renderNavProdutos(
 ?>
 
     <nav
-        class="btn-group btn-group-sm filtros-produto"
+        class="d-flex align-items-center gap-2 filtros-produto"
         aria-label="Categorias de produtos">
 
         <a
             href="/"
-            class="btn <?= $categoriaSelecionada === null
-                            ? 'btn-dark'
-                            : 'btn-outline-dark' ?>">
+            data-categoria-id="todos"
+            class="btn btn-sm filtro-produto <?= $categoriaSelecionada === null
+                                                    ? 'btn-dark'
+                                                    : 'btn-outline-dark' ?>">
             TUDO
         </a>
 
@@ -96,9 +97,10 @@ function renderNavProdutos(
 
             <a
                 href="/?categoriaId=<?= (int) $categoria['id'] ?>"
-                class="btn <?= $categoriaAtiva
-                                ? 'btn-dark'
-                                : 'btn-outline-dark' ?>">
+                data-categoria-id="<?= (int) $categoria['id'] ?>"
+                class="btn btn-sm filtro-produto <?= $categoriaAtiva
+                                                        ? 'btn-dark'
+                                                        : 'btn-outline-dark' ?>">
 
                 <?= htmlspecialchars(
                     $categoria['label'],

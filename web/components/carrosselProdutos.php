@@ -10,109 +10,106 @@ function renderCarrosselProdutos(array $produtos): void
 
     $cardsPorSlide = 5;
     $larguraCard = 260;
-    $larguraCarrossel = $cardsPorSlide * $larguraCard;
+    $gapEntreCards = 4;
 
-    $gruposProdutos = array_chunk($produtos, $cardsPorSlide);
+    $larguraCarrossel =
+        ($cardsPorSlide * $larguraCard)
+        + (($cardsPorSlide - 1) * $gapEntreCards);
+
+    $gruposProdutos =
+        array_chunk(
+            $produtos,
+            $cardsPorSlide
+        );
 ?>
 
-    <section class="container-fluid py-4">
+    <div class="py-2">
 
         <div
             id="carrosselProdutos"
             class="carousel slide">
 
-            <div class="d-flex justify-content-center align-items-stretch">
+            <div
+                class="position-relative mx-auto"
+                style="width: <?= $larguraCarrossel ?>px; max-width: 100%;">
 
-                <!-- Seta esquerda -->
-                <div
-                    class="d-flex align-items-center justify-content-center bg-white px-1">
+                <button
+                    class="btn border-0 p-0 position-absolute top-50 translate-middle-y z-3"
+                    style="left: -60px;"
+                    type="button"
+                    data-bs-target="#carrosselProdutos"
+                    data-bs-slide="prev">
 
-                    <button
-                        class="btn border-0 p-0"
-                        type="button"
-                        data-bs-target="#carrosselProdutos"
-                        data-bs-slide="prev">
+                    <img
+                        src="/assets/images/banner/arrow.png"
+                        class="seta"
+                        alt="Anterior">
 
-                        <img
-                            src="../assets/images/banner/arrow.png"
-                            class="seta"
-                            alt="Anterior">
+                    <span class="visually-hidden">
+                        Anterior
+                    </span>
 
-                        <span class="visually-hidden">
-                            Anterior
-                        </span>
+                </button>
 
-                    </button>
+                <div class="carousel-inner overflow-hidden">
 
-                </div>
+                    <?php foreach ($gruposProdutos as $indice => $grupo): ?>
 
-                <!-- Área fixa do carrossel -->
-                <div
-                    style="width: <?= $larguraCarrossel ?>px;">
+                        <div
+                            class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
 
-                    <div class="carousel-inner">
+                            <div
+                                class="d-flex flex-nowrap justify-content-start gap-1">
 
-                        <?php foreach ($gruposProdutos as $indice => $grupo): ?>
+                                <?php foreach ($grupo as $produto): ?>
 
-                            <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
+                                    <div class="flex-shrink-0">
 
-                                <div class="d-flex flex-nowrap justify-content-start">
+                                        <?php
+                                        CardProduto(
+                                            $produto['nome'],
+                                            (int) $produto['estrelas'],
+                                            (float) $produto['preco'],
+                                            $produto['imagem_url']
+                                                ?? 'https://placehold.co/600x600?text=Sem+Imagem'
+                                        );
+                                        ?>
 
-                                    <?php foreach ($grupo as $produto): ?>
+                                    </div>
 
-                                        <div class="flex-shrink-0">
-
-                                            <?php
-                                            CardProduto(
-                                                $produto['nome'],
-                                                (int) $produto['estrelas'],
-                                                (float) $produto['preco'],
-                                                $produto['imagem_url'] ?? 'https://placehold.co/600x600?text=Sem+Imagem'
-                                            );
-                                            ?>
-
-                                        </div>
-
-                                    <?php endforeach; ?>
-
-                                </div>
+                                <?php endforeach; ?>
 
                             </div>
 
-                        <?php endforeach; ?>
+                        </div>
 
-                    </div>
-
-                </div>
-
-                <!-- Seta direita -->
-                <div
-                    class="d-flex align-items-center justify-content-center bg-white px-1">
-
-                    <button
-                        class="btn border-0 p-0"
-                        type="button"
-                        data-bs-target="#carrosselProdutos"
-                        data-bs-slide="next">
-
-                        <img
-                            src="../assets/images/banner/arrow.png"
-                            class="seta proximo"
-                            alt="Próximo">
-
-                        <span class="visually-hidden">
-                            Próximo
-                        </span>
-
-                    </button>
+                    <?php endforeach; ?>
 
                 </div>
+
+                <button
+                    class="btn border-0 p-0 position-absolute top-50 translate-middle-y z-3"
+                    style="right: -60px;"
+                    type="button"
+                    data-bs-target="#carrosselProdutos"
+                    data-bs-slide="next">
+
+                    <img
+                        src="/assets/images/banner/arrow.png"
+                        class="seta proximo"
+                        alt="Próximo">
+
+                    <span class="visually-hidden">
+                        Próximo
+                    </span>
+
+                </button>
 
             </div>
 
         </div>
 
-    </section>
+    </div>
 
 <?php
 }

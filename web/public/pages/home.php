@@ -61,47 +61,61 @@ try {
 
 <body>
 
-    <main class="container-fluid py-4">
+    <main class="py-4">
 
-        <div
-            class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-2">
+        <section class="container-xxl px-0">
 
-            <h2 class="vitrine-titulo mb-0">
-                NOVIDADES
-            </h2>
+            <div
+                class="mx-auto w-100"
+                style="max-width: 1316px;">
 
-            <?php
-            renderNavProdutos(
-                $categorias,
-                $categoriaSelecionada
-            );
-            ?>
+                <div
+                    class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
 
-        </div>
+                    <h2 class="fs-2 fw-normal lh-1 mb-0">
+                        PRODUTOS
+                    </h2>
 
-        <?php if ($erroApi !== null): ?>
+                    <?php
+                    renderNavProdutos(
+                        $categorias,
+                        $categoriaSelecionada
+                    );
+                    ?>
 
-            <div class="alert alert-danger">
+                </div>
 
-                <?= htmlspecialchars(
-                    $erroApi,
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>
+                <div id="produtos-container">
+
+                    <?php if ($erroApi !== null): ?>
+
+                        <div class="alert alert-danger">
+
+                            <?= htmlspecialchars(
+                                $erroApi,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+
+                        </div>
+
+                    <?php elseif (empty($produtos)): ?>
+
+                        <div class="alert alert-warning">
+                            Nenhum produto encontrado.
+                        </div>
+
+                    <?php else: ?>
+
+                        <?php renderCarrosselProdutos($produtos); ?>
+
+                    <?php endif; ?>
+
+                </div>
 
             </div>
 
-        <?php elseif (empty($produtos)): ?>
-
-            <div class="alert alert-warning">
-                Nenhum produto encontrado.
-            </div>
-
-        <?php else: ?>
-
-            <?php renderCarrosselProdutos($produtos); ?>
-
-        <?php endif; ?>
+        </section>
 
     </main>
 
@@ -110,6 +124,8 @@ try {
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
+
+    <script src="/assets/js/main.js"></script>
 
 </body>
 
