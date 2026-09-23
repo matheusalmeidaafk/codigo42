@@ -62,9 +62,15 @@ function requisitarApi(string $rota): array
     return $dados;
 }
 
-function buscarProdutosApi(): array
+function buscarProdutosApi(?int $categoriaId = null): array
 {
-    return requisitarApi('/produtos');
+    $rota = '/produtos';
+
+    if ($categoriaId !== null) {
+        $rota .= '?categoriaId=' . $categoriaId;
+    }
+
+    return requisitarApi($rota);
 }
 
 function buscarCategoriasApi(): array

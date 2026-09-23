@@ -120,55 +120,73 @@ class ProdutoService
         ?string $categoria = null,
         ?int $categoriaId = null
     ): array {
+
         $params = [];
 
         $sql = <<<'SQL'
-            SELECT
-                p.id_produto,
-                p.imagem_url,
-                p.nome,
-                p.descricao,
-                p.preco,
-                p.is_autoral,
-                p.ativo
-            FROM produto p
-            WHERE p.ativo = 1
-        SQL;
+        SELECT
+            p.id_produto,
+            p.imagem_url,
+            p.nome,
+            p.descricao,
+            p.preco,
+            p.is_autoral,
+            p.ativo,
+            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
+        FROM produto p
+        LEFT JOIN avaliacao_produto a
+            ON a.id_produto = p.id_produto
+        WHERE p.ativo = 1
+    SQL;
 
         if ($categoriaId !== null) {
+
             $sql .= <<<'SQL'
 
-                AND EXISTS (
-                    SELECT 1
-                    FROM produto_categoria pc_filtro
-                    WHERE pc_filtro.id_produto = p.id_produto
-                      AND pc_filtro.id_categoria = ?
-                )
-            SQL;
+            AND EXISTS (
+                SELECT 1
+                FROM produto_categoria pc_filtro
+                WHERE pc_filtro.id_produto = p.id_produto
+                  AND pc_filtro.id_categoria = ?
+            )
+        SQL;
 
             $params[] = $categoriaId;
         } elseif ($categoria !== null) {
+
             $sql .= <<<'SQL'
 
-                AND EXISTS (
-                    SELECT 1
-                    FROM produto_categoria pc_filtro
-                    INNER JOIN categoria c_filtro
-                        ON c_filtro.id_categoria = pc_filtro.id_categoria
-                    WHERE pc_filtro.id_produto = p.id_produto
-                      AND LOWER(c_filtro.nome) = LOWER(?)
-                )
-            SQL;
+            AND EXISTS (
+                SELECT 1
+                FROM produto_categoria pc_filtro
+                INNER JOIN categoria c_filtro
+                    ON c_filtro.id_categoria = pc_filtro.id_categoria
+                WHERE pc_filtro.id_produto = p.id_produto
+                  AND LOWER(c_filtro.nome) = LOWER(?)
+            )
+        SQL;
 
             $params[] = $categoria;
         }
 
-        $sql .= ' ORDER BY p.id_produto DESC';
+        $sql .= <<<'SQL'
+
+        GROUP BY
+            p.id_produto,
+            p.imagem_url,
+            p.nome,
+            p.descricao,
+            p.preco,
+            p.is_autoral,
+            p.ativo
+
+        ORDER BY p.id_produto DESC
+    SQL;
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
 
-        $produtos = $stmt->fetchAll();
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if ($produtos === []) {
             return [];
@@ -179,13 +197,17 @@ class ProdutoService
         );
 
         foreach ($produtos as &$produto) {
+
             $idProduto = (int) $produto['id_produto'];
 
             $produto['id_produto'] = $idProduto;
             $produto['preco'] = (float) $produto['preco'];
+            $produto['estrelas'] = (int) $produto['estrelas'];
             $produto['is_autoral'] = (bool) $produto['is_autoral'];
             $produto['ativo'] = (bool) $produto['ativo'];
-            $produto['categorias'] = $categoriasPorProduto[$idProduto] ?? [];
+
+            $produto['categorias'] =
+                $categoriasPorProduto[$idProduto] ?? [];
         }
 
         unset($produto);
