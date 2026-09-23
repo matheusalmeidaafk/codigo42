@@ -17,7 +17,8 @@ class ProdutoService
         $this->db = $database->conectar();
     }
 
-   public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo) {
+    public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo)
+    {
         if (empty($nome)) {
             throw new Exception("Nome do produto é obrigatório.");
         }
@@ -38,12 +39,22 @@ class ProdutoService
         return new Produto($id, $imagemUrl, $nome, $descricao, $preco, $ativo);
     }
 
-    public function listar() : array {
-        $sql = "SELECT * FROM produto";
+    public function listar(): array
+    {
+        $sql = "
+        SELECT
+            p.*,
+            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
+        FROM produto p
+        LEFT JOIN avaliacao_produto a
+            ON a.id_produto = p.id_produto
+        WHERE p.ativo = TRUE
+        GROUP BY p.id_produto
+    ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
