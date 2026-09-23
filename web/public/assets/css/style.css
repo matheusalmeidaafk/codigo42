@@ -138,6 +138,7 @@ body {
     flex: 1;
     font-size: 0.58rem;
   }
+}
 /* ========================================
    MENU PRINCIPAL
 ======================================== */
@@ -423,5 +424,4 @@ body {
     width: 150px;
     height: 60px;
     object-fit: cover;
-}
 }
