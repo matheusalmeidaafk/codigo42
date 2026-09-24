@@ -39,22 +39,43 @@ class ProdutoService
         return new Produto($id, $imagemUrl, $nome, $descricao, $preco, $ativo);
     }
 
-    public function listar(): array
-    {
-        $sql = "
+   public function listar(): array
+{
+    $sql = "
         SELECT
             p.*,
-            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
+            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas,
+
+            d.porcentagem_desconto,
+
+            CASE
+                WHEN d.porcentagem_desconto IS NOT NULL
+                THEN ROUND(
+                    p.preco - (p.preco * d.porcentagem_desconto / 100),
+                    2
+                )
+                ELSE p.preco
+            END AS preco_final
+
         FROM produto p
+
         LEFT JOIN avaliacao_produto a
             ON a.id_produto = p.id_produto
+
+        LEFT JOIN desconto d
+            ON d.id_produto = p.id_produto
+            AND d.ativo = TRUE
+
         WHERE p.ativo = TRUE
-        GROUP BY p.id_produto
+
+        GROUP BY
+            p.id_produto,
+            d.porcentagem_desconto
     ";
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
