@@ -77,3 +77,8 @@ function buscarCategoriasApi(): array
 {
     return requisitarApi('/categorias');
 }
+
+function buscarFiltrosApi(): array
+{
+    return requisitarApi('/produtos/filtros');
+}

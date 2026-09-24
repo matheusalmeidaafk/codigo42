@@ -66,9 +66,7 @@ function renderFiltroCheckboxes(
 
 <?php
 }
-?>
 
-<?php
 
 $filtros = $filtros ?? [];
 
@@ -84,6 +82,9 @@ $precoMax = (float) ($filtros['precoMax'] ?? 0);
 
 <aside class="filtros-produtos">
 
+    <!-- PRODUTOS -->
+    <!-- Categorias pai -->
+
     <?php if (!empty($tipos)): ?>
 
         <?php
@@ -97,6 +98,8 @@ $precoMax = (float) ($filtros['precoMax'] ?? 0);
 
     <?php endif; ?>
 
+
+    <!-- CORES -->
 
     <?php if (!empty($cores)): ?>
 
@@ -112,6 +115,8 @@ $precoMax = (float) ($filtros['precoMax'] ?? 0);
     <?php endif; ?>
 
 
+    <!-- TAMANHOS -->
+
     <?php if (!empty($tamanhos)): ?>
 
         <?php
@@ -125,6 +130,8 @@ $precoMax = (float) ($filtros['precoMax'] ?? 0);
 
     <?php endif; ?>
 
+
+    <!-- PREÇO -->
 
     <?php if ($precoMax > $precoMin): ?>
 
@@ -179,13 +186,15 @@ $precoMax = (float) ($filtros['precoMax'] ?? 0);
                     <div class="d-flex justify-content-between small">
 
                         <span>
-                            R$ <span id="valorPrecoMin">
+                            R$
+                            <span id="valorPrecoMin">
                                 <?= number_format($precoMin, 2, ',', '.') ?>
                             </span>
                         </span>
 
                         <span>
-                            R$ <span id="valorPrecoMax">
+                            R$
+                            <span id="valorPrecoMax">
                                 <?= number_format($precoMax, 2, ',', '.') ?>
                             </span>
                         </span>
@@ -199,7 +208,6 @@ $precoMax = (float) ($filtros['precoMax'] ?? 0);
         </div>
 
     <?php endif; ?>
-
 
     <?php if (!empty($categorias)): ?>
 

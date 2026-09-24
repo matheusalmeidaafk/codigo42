@@ -10,8 +10,30 @@
 
 <body>
     <?php
-    include_once __DIR__ . "/../components/filtrosProdutos.php";
+
+    require_once __DIR__ . '/../services/produtoApi.php';
+
+    $filtros = buscarFiltrosApi();
+
     ?>
+
+    <div class="container">
+        <div class="row">
+
+            <aside class="col-md-3">
+
+                <?php include __DIR__ . '/../components/filtrosProdutos.php'; ?>
+
+            </aside>
+
+            <main class="col-md-9">
+
+                <!-- produtos -->
+
+            </main>
+
+        </div>
+    </div>
 </body>
 
 </html>

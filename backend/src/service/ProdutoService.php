@@ -270,12 +270,13 @@ class ProdutoService
 
         return $categoriasPorProduto;
     }
-    
-    public function pesquisar(string $pesquisa) : array {
+
+    public function pesquisar(string $pesquisa): array
+    {
         $sql = "SELECT * FROM produto WHERE nome LIKE ?";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(["%".$pesquisa."%"]);
+        $stmt->execute(["%" . $pesquisa . "%"]);
 
         return $stmt->fetchAll();
     }
@@ -284,77 +285,97 @@ class ProdutoService
     {
         $filtros = [];
 
+        // PRODUTOS = categorias pai
         $sql = "
-        SELECT DISTINCT tipo
-        FROM produto
-        WHERE ativo = 1
-        AND tipo IS NOT NULL
-        AND tipo <> ''
-        ORDER BY tipo
+        SELECT
+            c.nome
+        FROM categoria c
+        WHERE c.id_categoria_pai IS NULL
+        ORDER BY c.nome
     ";
 
-        $stmt = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
         $filtros['tipos'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 
+        // CATEGORIAS = categorias filhas
         $sql = "
-        SELECT DISTINCT cor
-        FROM produto
-        WHERE ativo = 1
-        AND cor IS NOT NULL
-        AND cor <> ''
-        ORDER BY cor
+        SELECT
+            c.nome
+        FROM categoria c
+        WHERE c.id_categoria_pai IS NOT NULL
+        ORDER BY c.nome
     ";
 
-        $stmt = $this->db->query($sql);
-
-        $filtros['cores'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-
-        $sql = "
-        SELECT DISTINCT tamanho
-        FROM produto
-        WHERE ativo = 1
-        AND tamanho IS NOT NULL
-        AND tamanho <> ''
-        ORDER BY tamanho
-    ";
-
-        $stmt = $this->db->query($sql);
-
-        $filtros['tamanhos'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-
-        $sql = "
-        SELECT DISTINCT categoria
-        FROM produto
-        WHERE ativo = 1
-        AND categoria IS NOT NULL
-        AND categoria <> ''
-        ORDER BY categoria
-    ";
-
-        $stmt = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
         $filtros['categorias'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 
+        // CORES
         $sql = "
-        SELECT
-            MIN(preco) AS precoMin,
-            MAX(preco) AS precoMax
-        FROM produto
-        WHERE ativo = 1
+        SELECT DISTINCT pv.cor
+        FROM produto_variacao pv
+        INNER JOIN produto p
+            ON p.id_produto = pv.id_produto
+        WHERE p.ativo = 1
+          AND pv.ativo = 1
+          AND pv.cor IS NOT NULL
+          AND pv.cor <> ''
+        ORDER BY pv.cor
     ";
 
-        $stmt = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
 
-        $precos = $stmt->fetch(PDO::FETCH_ASSOC);
+        $filtros['cores'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        $filtros['precoMin'] = (float) $precos['precoMin'];
-        $filtros['precoMax'] = (float) $precos['precoMax'];
 
+        // TAMANHOS
+        $sql = "
+        SELECT DISTINCT pv.tamanho
+        FROM produto_variacao pv
+        INNER JOIN produto p
+            ON p.id_produto = pv.id_produto
+        WHERE p.ativo = 1
+          AND pv.ativo = 1
+          AND pv.tamanho IS NOT NULL
+          AND pv.tamanho <> ''
+        ORDER BY pv.tamanho
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $filtros['tamanhos'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+
+        // PREÇO
+        $sql = "
+        SELECT
+            MIN(preco_final) AS precoMin,
+            MAX(preco_final) AS precoMax
+        FROM (
+            SELECT
+                COALESCE(pv.preco, p.preco) AS preco_final
+            FROM produto p
+            LEFT JOIN produto_variacao pv
+                ON pv.id_produto = p.id_produto
+                AND pv.ativo = 1
+            WHERE p.ativo = 1
+        ) AS precos
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $precos = $stmt->fetch();
+
+        $filtros['precoMin'] = (float) ($precos['precoMin'] ?? 0);
+        $filtros['precoMax'] = (float) ($precos['precoMax'] ?? 0);
 
         return $filtros;
     }
