@@ -9,6 +9,18 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/produto.css">
+
+    <nav class="navbar">
+    <div class="container-fluid">
+        <form class="d-flex" role="search">
+            <input class="form-control" type="search" aria-label="Buscar">
+            <button class="btn btn-outline-success" type="submit">
+                Buscar
+            </button>
+        </form>
+    </div>
+</nav>
+
 </head>
 
 <body>
