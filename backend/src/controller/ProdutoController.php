@@ -25,6 +25,7 @@ class ProdutoController {
                 $dados["nome"],
                 $dados["descricao"],
                 $dados["preco"],
+                $dados["isAutoral"],
                 true
             );
 

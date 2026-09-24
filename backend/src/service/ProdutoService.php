@@ -17,7 +17,7 @@ class ProdutoService
         $this->db = $database->conectar();
     }
 
-    public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo)
+    public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo, bool $isAutoral)
     {
         if (empty($nome)) {
             throw new Exception("Nome do produto é obrigatório.");
@@ -28,15 +28,18 @@ class ProdutoService
         if (empty($preco)) {
             throw new Exception("Preço do produto é obrigatório.");
         }
+        if (empty($isAutoral)) {
+            throw new Exception("A autoralidade do produto é obrigatória.");
+        }
 
-        $sql = "INSERT INTO produto (imagem_url, nome, descricao, preco, ativo) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO produto (imagem_url, nome, descricao, preco, ativo, is_autoral) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
 
-        $stmt->execute([$imagemUrl, $nome, $descricao, $preco, $ativo]);
+        $stmt->execute([$imagemUrl, $nome, $descricao, $preco, $ativo, $isAutoral]);
 
         $id = $this->db->lastInsertId();
 
-        return new Produto($id, $imagemUrl, $nome, $descricao, $preco, $ativo);
+        return new Produto($id, $imagemUrl, $nome, $descricao, $preco, $ativo, $isAutoral);
     }
 
     public function listar(): array
