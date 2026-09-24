@@ -12,7 +12,7 @@ class Database {
     public function conectar(): PDO {
         $dsn = "mysql:host={$this->host};dbname={$this->database};charset=utf8mb4";
 
-        return new PDO(
+        return new PDO (
             $dsn,
             $this->username,
             $this->password,

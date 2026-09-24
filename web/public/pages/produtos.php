@@ -1,149 +1,86 @@
 <?php
 
-require_once '../../components/productCard.php';
+function renderProductCard(array $produto): void
+{
+    $nomeProduto = htmlspecialchars(
+        $produto['nome'] ?? '',
+        ENT_QUOTES,
+        'UTF-8'
+    );
 
-$produtos = [
+    $descricaoProduto = htmlspecialchars(
+        $produto['descricao'] ?? '',
+        ENT_QUOTES,
+        'UTF-8'
+    );
 
-    [
-        'nome' => 'Camiseta Dev',
-        'descricao' => 'Camiseta personalizada para desenvolvedores.',
-        'preco' => 59.90,
-        'imagem' => 'https://placehold.co/600x400?text=Camiseta+Dev',
-        'estoque' => 10
-    ],
+    $precoProduto = (float) ($produto['preco'] ?? 0);
 
-    [
-        'nome' => 'Xícara Dev',
-        'descricao' => 'Xícara personalizada para programadores.',
-        'preco' => 39.90,
-        'imagem' => 'https://placehold.co/600x400?text=Xicara+Dev',
-        'estoque' => 5
-    ],
+    // Aceita o padrão futuro do banco e também o mock antigo.
+    $imagemProduto = htmlspecialchars(
+        $produto['imagem_url']
+            ?? $produto['imagem']
+            ?? 'https://placehold.co/300x300?text=Produto',
+        ENT_QUOTES,
+        'UTF-8'
+    );
 
-    [
-        'nome' => 'Adesivo Dev',
-        'descricao' => 'Adesivo personalizado para notebooks.',
-        'preco' => 9.90,
-        'imagem' => 'https://placehold.co/600x400?text=Adesivo+Dev',
-        'estoque' => 0
-    ]
-
-];
-
+    $categoriaProduto = htmlspecialchars(
+        strtolower($produto['categoria'] ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
 ?>
 
-<!DOCTYPE html>
+    <div
+        class="produto-item"
+        data-categoria="<?= $categoriaProduto ?>">
 
-<html lang="pt-BR">
+        <article class="card produto-card h-100 rounded-0">
 
-<head>
+            <div class="produto-imagem-container">
 
-    <meta charset="UTF-8">
+                <img
+                    src="<?= $imagemProduto ?>"
+                    class="card-img-top produto-imagem rounded-0"
+                    alt="<?= $nomeProduto ?>">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+            </div>
 
-    <title>Produtos | Ecommerce</title>
+            <div class="card-body p-2 d-flex flex-column">
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+                <h3 class="card-title produto-nome mb-1">
+                    <?= $nomeProduto ?>
+                </h3>
 
-</head>
+                <p class="card-text produto-descricao text-secondary mb-1">
+                    <?= $descricaoProduto ?>
+                </p>
 
-<body>
+                <div class="mt-auto">
 
-    <header>
+                    <p class="produto-preco mb-1">
+                        R$ <?= number_format(
+                                $precoProduto,
+                                2,
+                                ',',
+                                '.'
+                            ) ?>
+                    </p>
 
-        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-
-            <div class="container">
-
-                <a
-                    class="navbar-brand"
-                    href="#">
-                    Ecommerce
-                </a>
-
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div
-                    class="collapse navbar-collapse"
-                    id="navbarMenu">
-
-                    <ul class="navbar-nav ms-auto">
-
-                        <li class="nav-item">
-                            <a
-                                class="nav-link active"
-                                href="#">
-                                Produtos
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="#">
-                                Carrinho
-                            </a>
-                        </li>
-
-                    </ul>
+                    <button
+                        type="button"
+                        class="btn btn-success btn-sm rounded-0 w-100 produto-comprar">
+                        Adicionar ao carrinho
+                    </button>
 
                 </div>
 
             </div>
 
-        </nav>
+        </article>
 
-    </header>
+    </div>
 
-    <main class="container py-5">
-
-        <div class="mb-5">
-
-            <h1 class="display-5 fw-bold">
-                Nossos produtos
-            </h1>
-
-            <p class="lead text-muted">
-                Encontre camisetas, xícaras e adesivos personalizados.
-            </p>
-
-        </div>
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-
-            <?php foreach ($produtos as $produto): ?>
-
-                <?php renderProductCard($produto); ?>
-
-            <?php endforeach; ?>
-
-        </div>
-
-    </main>
-
-    <footer class="bg-dark text-white mt-5">
-
-        <div class="container py-4 text-center">
-
-            <p class="mb-0">
-                Ecommerce - Produtos personalizados
-            </p>
-
-        </div>
-
-    </footer>
-
-</body>
-
-</html>
+<?php
+}
