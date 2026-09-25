@@ -71,6 +71,7 @@ class ProdutoService
         ";
 
             $params = $categorias;
+            
         }
         if (!empty($precoMin)) {
             $sql .= "AND p.preco >= ?";
