@@ -1,0 +1,427 @@
+.seta {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.proximo {
+  transform: rotate(180deg);
+}
+
+body {
+  background-color: #fff;
+}
+
+/* Cabeçalho das vitrines */
+
+.vitrine-titulo {
+  font-size: 1.6rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* Botões dos filtros */
+
+.filtros-produto .btn {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+}
+
+/* Área onde ficam os produtos */
+
+.vitrine-conteudo {
+  padding: 0.5rem 2rem;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.vitrine-track {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.vitrine-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Card */
+
+.vitrine-track .produto-item {
+  flex: 0 0 145px;
+  width: 145px;
+}
+
+.produto-card {
+  border: 1px solid #aaa;
+  font-size: 0.75rem;
+}
+
+.produto-imagem-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+.produto-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produto-nome {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.produto-descricao {
+  font-size: 0.6rem;
+  line-height: 1.1;
+}
+
+.produto-preco {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #198754;
+}
+
+.produto-comprar {
+  font-size: 0.58rem;
+  padding: 0.2rem 0.25rem;
+}
+
+/* Setas */
+
+.vitrine-seta {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+
+  border: 0;
+  padding: 0.4rem;
+
+  font-size: 1.2rem;
+
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.vitrine-anterior {
+  left: 0;
+}
+
+.vitrine-proximo {
+  right: 0;
+}
+
+/* Responsividade */
+
+@media (max-width: 576px) {
+  .vitrine-titulo {
+    font-size: 1.3rem;
+  }
+
+  .vitrine-track .produto-item {
+    flex-basis: 125px;
+    width: 125px;
+  }
+
+  .filtros-produto {
+    width: 100%;
+  }
+
+  .filtros-produto .btn {
+    flex: 1;
+    font-size: 0.58rem;
+  }
+}
+/* ========================================
+   MENU PRINCIPAL
+======================================== */
+#menu-header {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    position: relative;
+
+    height: 25px;
+
+
+    z-index: 1000;
+}
+
+
+/* O menu cresce junto com a categoria */
+
+#menu-header:has(.categoria-menu:hover) {
+    height: 50px;
+}
+
+
+/* ========================================
+   CATEGORIA
+======================================== */
+
+.categoria-menu {
+    flex: 1 1 0;
+    min-width: 0;
+
+    height: 25px;
+
+    position: static;
+
+    transition:
+        flex 0.3s ease,
+        height 0.3s ease;
+}
+
+
+/* ========================================
+   LINK DA CATEGORIA
+======================================== */
+
+.categoria-link {
+
+    display: flex;
+
+    width: 100%;
+    height: 25px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 10px;
+
+    color: white;
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        height 0.3s ease,
+        background-color 0.3s ease;
+}
+
+
+/* ========================================
+   CATEGORIA EM HOVER
+======================================== */
+
+.categoria-menu:hover {
+
+    height: 50px;
+}
+
+
+.categoria-menu:hover .categoria-link {
+
+    height: 50px;
+
+    background-color: #343a40;
+}
+
+
+/* ========================================
+   SUBCATEGORIAS
+======================================== */
+
+.subcategorias {
+
+    /* Sai completamente do fluxo */
+    position: absolute;
+
+    top: 50px;
+    left: 0;
+
+    width: 100%;
+
+    /* Fundo do mega menu */
+    background-color: #212529;
+
+
+    /* Caixa */
+    box-sizing: border-box;
+
+    /* Inicialmente escondido */
+    display: none;
+
+    /* Fica acima dos outros elementos */
+    z-index: 2000;
+    
+}
+
+
+/* ========================================
+   MOSTRAR SUBCATEGORIAS
+======================================== */
+
+.categoria-menu:hover .subcategorias {
+    display: grid;
+
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-columns: 200px;
+
+    width: 100%;
+
+    column-gap: 8px;
+    row-gap: 8px;
+
+    box-sizing: border-box;
+}
+
+
+/* ========================================
+   LINKS DAS SUBCATEGORIAS
+======================================== */
+
+.subcategoria-link {
+
+    display: block;
+    min-width: 0;
+    width: 200px;
+
+    padding: 3px 8px;
+
+    color: #f8f9fa;
+    text-decoration: none;
+    font-size: 14px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    border-radius: 4px;
+
+    transition:
+        background-color 0.2s ease,
+        padding-left 0.2s ease;
+}
+
+
+/* ========================================
+   HOVER SUBCATEGORIA
+======================================== */
+
+.subcategoria-link:hover {
+
+    background-color: #343a40;
+
+    padding-left: 15px;
+}
+
+/* =========================
+   CORES
+========================= */
+
+.categoria-menu:nth-child(1) .categoria-link {
+    background-color: #198754;
+}
+
+.categoria-menu:nth-child(2) .categoria-link {
+    background-color: #ffc107;
+}
+
+.categoria-menu:nth-child(3) .categoria-link {
+    background-color: #dc3545;
+}
+
+.subcategoria-link::before {
+    content: "•";
+
+    color: #f8f9fa;
+}
+
+/* ========================================
+   CATEGORIA
+======================================== */
+
+.categoria-menu {
+    /*
+       Normalmente, todas possuem o mesmo tamanho:
+       33,33% cada
+    */
+    flex: 1 1 0;
+
+    min-width: 0;
+
+    height: 25px;
+
+    position: static;
+
+    transition:
+        flex 0.3s ease,
+        height 0.3s ease;
+}
+
+
+/* ========================================
+   QUANDO UMA CATEGORIA ESTIVER SELECIONADA
+======================================== */
+
+/*
+   Todas as categorias passam a dividir
+   os 50% restantes entre si.
+*/
+
+#menu-header:has(.categoria-menu:hover) .categoria-menu {
+    flex: 0.5 1 0;
+}
+
+
+/*
+   A categoria selecionada ocupa 50%.
+*/
+
+#menu-header:has(.categoria-menu:hover) .categoria-menu:hover {
+    flex: 1 1 0;
+}
+
+
+/* ========================================
+   LINK DA CATEGORIA
+======================================== */
+
+.categoria-link {
+    display: flex;
+
+    width: 100%;
+    height: 25px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 10px;
+
+    color: white;
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        height 0.3s ease,
+        background-color 0.3s ease;
+}
+
+
+/* ========================================
+   CATEGORIA EM HOVER
+======================================== */
+
+.categoria-menu:hover {
+    height: 50px;
+    font-size: 20px;
+}
+
+.categoria-menu:hover .categoria-link {
+    height: 50px;
+}
+.logo {
+    width: 150px;
+    height: 60px;
+    object-fit: cover;
+}

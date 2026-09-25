@@ -44,24 +44,4 @@ class CategoriaService
 
         return $categorias;
     }
-    
-    public function getCategoriaPai() : array {
-        $sql = "SELECT * FROM categoria WHERE id_categoria_pai is null";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-
-    
-    public function getSubcategoria(int $idCategoriaPai) : array {
-        $sql = "SELECT * FROM categoria WHERE id_categoria_pai = ?";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$idCategoriaPai]);
-
-        return $stmt->fetchAll();
-    }
-    
 }

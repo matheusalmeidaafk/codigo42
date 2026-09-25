@@ -34,37 +34,4 @@ class CategoriaController
             );
         }
     }
-
-    public function getCategoriaPai() : void {
-        try {
-            $categorias = $this->service->getCategoriaPai();
-
-            http_response_code(200);
-
-            echo json_encode($categorias);
-        } catch (Exception $e) {
-            http_response_code(400);
-
-            echo json_encode([
-                "erro" => $e->getMessage()
-            ]);
-        }
-    }
-    public function getSubcategoria(int $idCategoriaPai) : void {
-        try {
-            $categorias = $this->service->getSubcategoria($idCategoriaPai);
-
-            http_response_code(200);
-
-            echo json_encode($categorias);
-        } catch (Exception $e) {
-            http_response_code(400);
-
-            echo json_encode([
-                "erro" => $e->getMessage()
-            ]);
-        }
-    }
-
-
 }
