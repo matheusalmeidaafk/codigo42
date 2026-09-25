@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=Homenaje&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+  font-family: "Homenaje", sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  gap: 50px
+}
+
+header {
+  .searchBar {
+    font-family: "Inter", sans-serif;
+  }
+
+  .sobre {
+    font-family: "Inter", sans-serif;
+  }
+}
+
+footer {
+  font-family: "Inter", sans-serif;
+}
+
 .seta {
   width: 50px;
   height: 50px;
@@ -139,26 +163,27 @@ body {
     font-size: 0.58rem;
   }
 }
+
 /* ========================================
    MENU PRINCIPAL
 ======================================== */
 #menu-header {
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    position: relative;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  position: relative;
 
-    height: 25px;
+  height: 25px;
 
 
-    z-index: 1000;
+  z-index: 1000;
 }
 
 
 /* O menu cresce junto com a categoria */
 
 #menu-header:has(.categoria-menu:hover) {
-    height: 50px;
+  height: 50px;
 }
 
 
@@ -167,16 +192,16 @@ body {
 ======================================== */
 
 .categoria-menu {
-    flex: 1 1 0;
-    min-width: 0;
+  flex: 1 1 0;
+  min-width: 0;
 
-    height: 25px;
+  height: 25px;
 
-    position: static;
+  position: static;
 
-    transition:
-        flex 0.3s ease,
-        height 0.3s ease;
+  transition:
+    flex 0.3s ease,
+    height 0.3s ease;
 }
 
 
@@ -186,24 +211,24 @@ body {
 
 .categoria-link {
 
-    display: flex;
+  display: flex;
 
-    width: 100%;
-    height: 25px;
+  width: 100%;
+  height: 25px;
 
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-    padding: 0 10px;
+  padding: 0 10px;
 
-    color: white;
-    text-decoration: none;
+  color: white;
+  text-decoration: none;
 
-    white-space: nowrap;
+  white-space: nowrap;
 
-    transition:
-        height 0.3s ease,
-        background-color 0.3s ease;
+  transition:
+    height 0.3s ease,
+    background-color 0.3s ease;
 }
 
 
@@ -213,15 +238,15 @@ body {
 
 .categoria-menu:hover {
 
-    height: 50px;
+  height: 50px;
 }
 
 
 .categoria-menu:hover .categoria-link {
 
-    height: 50px;
+  height: 50px;
 
-    background-color: #343a40;
+  background-color: #343a40;
 }
 
 
@@ -231,27 +256,27 @@ body {
 
 .subcategorias {
 
-    /* Sai completamente do fluxo */
-    position: absolute;
+  /* Sai completamente do fluxo */
+  position: absolute;
 
-    top: 50px;
-    left: 0;
+  top: 50px;
+  left: 0;
 
-    width: 100%;
+  width: 100%;
 
-    /* Fundo do mega menu */
-    background-color: #212529;
+  /* Fundo do mega menu */
+  background-color: #212529;
 
 
-    /* Caixa */
-    box-sizing: border-box;
+  /* Caixa */
+  box-sizing: border-box;
 
-    /* Inicialmente escondido */
-    display: none;
+  /* Inicialmente escondido */
+  display: none;
 
-    /* Fica acima dos outros elementos */
-    z-index: 2000;
-    
+  /* Fica acima dos outros elementos */
+  z-index: 2000;
+
 }
 
 
@@ -260,18 +285,18 @@ body {
 ======================================== */
 
 .categoria-menu:hover .subcategorias {
-    display: grid;
+  display: grid;
 
-    grid-auto-flow: column;
-    grid-template-rows: repeat(3, auto);
-    grid-auto-columns: 200px;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(3, auto);
+  grid-auto-columns: 200px;
 
-    width: 100%;
+  width: 100%;
 
-    column-gap: 8px;
-    row-gap: 8px;
+  column-gap: 8px;
+  row-gap: 8px;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 
@@ -281,25 +306,25 @@ body {
 
 .subcategoria-link {
 
-    display: block;
-    min-width: 0;
-    width: 200px;
+  display: block;
+  min-width: 0;
+  width: 200px;
 
-    padding: 3px 8px;
+  padding: 3px 8px;
 
-    color: #f8f9fa;
-    text-decoration: none;
-    font-size: 14px;
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  color: #f8f9fa;
+  text-decoration: none;
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
-    border-radius: 4px;
+  border-radius: 4px;
 
-    transition:
-        background-color 0.2s ease,
-        padding-left 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    padding-left 0.2s ease;
 }
 
 
@@ -309,9 +334,9 @@ body {
 
 .subcategoria-link:hover {
 
-    background-color: #343a40;
+  background-color: #343a40;
 
-    padding-left: 15px;
+  padding-left: 15px;
 }
 
 /* =========================
@@ -319,21 +344,21 @@ body {
 ========================= */
 
 .categoria-menu:nth-child(1) .categoria-link {
-    background-color: #198754;
+  background-color: #198754;
 }
 
 .categoria-menu:nth-child(2) .categoria-link {
-    background-color: #ffc107;
+  background-color: #ffc107;
 }
 
 .categoria-menu:nth-child(3) .categoria-link {
-    background-color: #dc3545;
+  background-color: #dc3545;
 }
 
 .subcategoria-link::before {
-    content: "•";
+  content: "•";
 
-    color: #f8f9fa;
+  color: #f8f9fa;
 }
 
 /* ========================================
@@ -341,21 +366,21 @@ body {
 ======================================== */
 
 .categoria-menu {
-    /*
+  /*
        Normalmente, todas possuem o mesmo tamanho:
        33,33% cada
     */
-    flex: 1 1 0;
+  flex: 1 1 0;
 
-    min-width: 0;
+  min-width: 0;
 
-    height: 25px;
+  height: 25px;
 
-    position: static;
+  position: static;
 
-    transition:
-        flex 0.3s ease,
-        height 0.3s ease;
+  transition:
+    flex 0.3s ease,
+    height 0.3s ease;
 }
 
 
@@ -369,7 +394,7 @@ body {
 */
 
 #menu-header:has(.categoria-menu:hover) .categoria-menu {
-    flex: 0.5 1 0;
+  flex: 0.5 1 0;
 }
 
 
@@ -378,7 +403,7 @@ body {
 */
 
 #menu-header:has(.categoria-menu:hover) .categoria-menu:hover {
-    flex: 1 1 0;
+  flex: 1 1 0;
 }
 
 
@@ -387,24 +412,24 @@ body {
 ======================================== */
 
 .categoria-link {
-    display: flex;
+  display: flex;
 
-    width: 100%;
-    height: 25px;
+  width: 100%;
+  height: 25px;
 
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-    padding: 0 10px;
+  padding: 0 10px;
 
-    color: white;
-    text-decoration: none;
+  color: white;
+  text-decoration: none;
 
-    white-space: nowrap;
+  white-space: nowrap;
 
-    transition:
-        height 0.3s ease,
-        background-color 0.3s ease;
+  transition:
+    height 0.3s ease,
+    background-color 0.3s ease;
 }
 
 
@@ -413,15 +438,16 @@ body {
 ======================================== */
 
 .categoria-menu:hover {
-    height: 50px;
-    font-size: 20px;
+  height: 50px;
+  font-size: 20px;
 }
 
 .categoria-menu:hover .categoria-link {
-    height: 50px;
+  height: 50px;
 }
+
 .logo {
-    width: 150px;
-    height: 60px;
-    object-fit: cover;
+  width: 150px;
+  height: 60px;
+  object-fit: cover;
 }

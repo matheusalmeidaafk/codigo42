@@ -9,7 +9,7 @@
             </div>
 
             <div class="col-8 col-md-6">
-                <form class="d-flex mx-auto" role="search">
+                <form class="d-flex mx-auto searchBar" role="search">
                     <input class="form-control me-2 bg-dark text-light border-secondary" type="search"
                         placeholder="Search" aria-label="Search">
 
@@ -22,7 +22,7 @@
             <div class="col-12 col-md-3 mt-3 mt-md-0">
                 <div class="d-flex justify-content-md-end justify-content-center align-items-center gap-3">
 
-                    <a href="" class="text-light text-decoration-none fw-semibold">
+                    <a href="" class="text-light text-decoration-none fw-semibold sobre">
                         Sobre
                     </a>
 
