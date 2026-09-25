@@ -103,4 +103,69 @@ class ProdutoService
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    private function categoriaExiste(int $categoriaId): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT 1 FROM categoria WHERE id_categoria = ? LIMIT 1'
+        );
+
+        $stmt->execute([$categoriaId]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+    private function buscarCategoriasDosProdutos(array $produtoIds): array
+    {
+        $produtoIds = array_values(array_unique(array_map(
+            'intval',
+            $produtoIds
+        )));
+
+        if ($produtoIds === []) {
+            return [];
+        }
+
+        $placeholders = implode(
+            ', ',
+            array_fill(0, count($produtoIds), '?')
+        );
+
+        $sql = "
+            SELECT
+                pc.id_produto,
+                c.id_categoria,
+                c.nome
+            FROM produto_categoria pc
+            INNER JOIN categoria c
+                ON c.id_categoria = pc.id_categoria
+            WHERE pc.id_produto IN ({$placeholders})
+            ORDER BY c.nome
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($produtoIds);
+
+        $categoriasPorProduto = [];
+
+        foreach ($stmt->fetchAll() as $categoria) {
+            $idProduto = (int) $categoria['id_produto'];
+
+            $categoriasPorProduto[$idProduto][] = [
+                'id_categoria' => (int) $categoria['id_categoria'],
+                'nome' => $categoria['nome'],
+            ];
+        }
+
+        return $categoriasPorProduto;
+    }
+    
+    public function pesquisar(string $pesquisa) : array {
+        $sql = "SELECT * FROM produto WHERE nome LIKE ?";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(["%".$pesquisa."%"]);
+ 
+        return $stmt->fetchAll();
+    }
 }
