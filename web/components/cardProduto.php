@@ -18,11 +18,12 @@ function CardProduto(
     <article class="card border-0 rounded-0 overflow-hidden w-100">
 
         <div class="produto-card-imagem w-100 border border-dark border-2">
+
             <img
                 src="<?= htmlspecialchars($imagem) ?>"
                 alt="<?= htmlspecialchars($titulo) ?>"
-                class="w-100 h-100 object-fit-cover"
-            >
+                class="w-100 h-100 object-fit-cover">
+
         </div>
 
         <div class="row g-0 bg-dark text-white">
@@ -31,9 +32,10 @@ function CardProduto(
 
                 <div
                     class="lh-sm ps-1 text-center"
-                    style="height: 40px;"
-                >
+                    style="height: 40px;">
+
                     <?= htmlspecialchars($titulo) ?>
+
                 </div>
 
                 <div class="d-flex justify-content-center mt-1">
@@ -46,12 +48,12 @@ function CardProduto(
                             height="15"
                             viewBox="0 0 24 24"
                             fill="<?= $i <= $estrelas
-                                ? 'var(--bs-teal)'
-                                : 'var(--bs-secondary)' ?>"
-                        >
+                                        ? 'var(--bs-teal)'
+                                        : 'var(--bs-secondary)' ?>">
+
                             <path
-                                d="M12 2.5L14.9 8.4L21.5 9.3L16.7 13.9L17.8 20.5L12 17.4L6.2 20.5L7.3 13.9L2.5 9.3L9.1 8.4L12 2.5Z"
-                            />
+                                d="M12 2.5L14.9 8.4L21.5 9.3L16.7 13.9L17.8 20.5L12 17.4L6.2 20.5L7.3 13.9L2.5 9.3L9.1 8.4L12 2.5Z" />
+
                         </svg>
 
                     <?php endfor; ?>
@@ -76,7 +78,7 @@ function CardProduto(
 
                     </div>
 
-                    <div class="produto-preco-linha d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap bg-success-subtle">
+                    <div class="produto-preco-linha produto-preco-normal d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap">
 
                         <span>
                             Por:
@@ -90,7 +92,7 @@ function CardProduto(
 
                 <?php else: ?>
 
-                    <div class="produto-preco-linha d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap mt-auto bg-success-subtle">
+                    <div class="produto-preco-linha produto-preco-normal d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap mt-auto">
 
                         <span>
                             Preço:

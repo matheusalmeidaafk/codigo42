@@ -63,14 +63,14 @@ try {
 
     <main class="py-4">
 
-        <section class="container-xxl px-0">
+        <section class="container-fluid px-0">
 
             <div
                 class="mx-auto w-100"
-                style="max-width: 1316px;">
+                style="max-width: 1416px;">
 
                 <div
-                    class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    class="vitrine-largura d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
 
                     <h2 class="fs-2 fw-normal lh-1 mb-0">
                         PRODUTOS

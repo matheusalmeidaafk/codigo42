@@ -12,6 +12,13 @@ body {
   background-color: #fff;
 }
 
+.vitrine-largura {
+  width: calc(100% - 100px);
+  max-width: 1316px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .vitrine-titulo {
   font-size: 1.6rem;
   font-weight: 300;
@@ -19,7 +26,7 @@ body {
 }
 
 .filtros-produto .btn {
-  font-size: 0.65rem;
+  font-size: 1rem;
   padding: 0.2rem 0.45rem;
 }
 
@@ -49,7 +56,10 @@ body {
 
 .produto-preco-linha {
   font-size: 0.9rem;
-  background-color: var(--bs-teal) !important;
+}
+
+.produto-preco-normal {
+  background-color: var(--bs-teal);
 }
 
 .vitrine-conteudo {
@@ -149,6 +159,10 @@ body {
     height: 35px;
   }
 
+  .vitrine-largura {
+    width: calc(100% - 70px);
+  }
+
   .vitrine-titulo {
     font-size: 1.3rem;
   }
@@ -166,4 +180,8 @@ body {
     flex: 1;
     font-size: 0.58rem;
   }
+}
+
+.produto-preco-normal {
+  background-color: var(--bs-teal);
 }
