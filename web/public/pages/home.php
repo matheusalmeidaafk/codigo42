@@ -26,6 +26,8 @@ try {
         $categoriaSelecionada
     );
 
+    echo $produtos;
+
 } catch (Throwable $e) {
 
     $erroApi = 'Não foi possível carregar os produtos agora.';

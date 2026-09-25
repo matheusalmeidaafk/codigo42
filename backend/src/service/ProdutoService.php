@@ -6,6 +6,7 @@ use App\Config\OnlineDB;
 use App\Model\Produto;
 use Exception;
 use PDO;
+use Throwable;
 
 class ProdutoService
 {
@@ -17,91 +18,201 @@ class ProdutoService
         $this->db = $database->conectar();
     }
 
-    public function criar(?string $imagemUrl, string $nome, string $descricao, float $preco, bool $ativo, bool $isAutoral)
-    {
-        if (empty($nome)) {
-            throw new Exception("Nome do produto é obrigatório.");
-        }
-        if (empty($descricao)) {
-            throw new Exception("Descricao do produto é obrigatória.");
-        }
-        if (empty($preco)) {
-            throw new Exception("Preço do produto é obrigatório.");
-        }
-        if (empty($isAutoral)) {
-            throw new Exception("A autoralidade do produto é obrigatória.");
+    public function criar(
+        string $imagemUrl,
+        string $nome,
+        string $descricao,
+        float $preco,
+        bool $ativo,
+        array $categoriaIds = []
+    ): Produto {
+        if ($imagemUrl === '') {
+            throw new Exception('Imagem do produto é obrigatória.');
         }
 
-        $sql = "INSERT INTO produto (imagem_url, nome, descricao, preco, ativo, is_autoral) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
+        if ($nome === '') {
+            throw new Exception('Nome do produto é obrigatório.');
+        }
 
-        $stmt->execute([$imagemUrl, $nome, $descricao, $preco, $ativo, $isAutoral]);
+        if ($descricao === '') {
+            throw new Exception('Descrição do produto é obrigatória.');
+        }
 
-        $id = $this->db->lastInsertId();
+        if ($preco < 0) {
+            throw new Exception('Preço do produto não pode ser negativo.');
+        }
 
-        return new Produto($id, $imagemUrl, $nome, $descricao, $preco, $ativo, $isAutoral);
+        $categoriaIds = array_values(array_unique(array_map(
+            'intval',
+            $categoriaIds
+        )));
+
+        foreach ($categoriaIds as $categoriaId) {
+            if ($categoriaId <= 0 || !$this->categoriaExiste($categoriaId)) {
+                throw new Exception(
+                    "Categoria {$categoriaId} não encontrada."
+                );
+            }
+        }
+
+        $this->db->beginTransaction();
+
+        try {
+            $sql = <<<'SQL'
+                INSERT INTO produto (
+                    imagem_url,
+                    nome,
+                    descricao,
+                    preco,
+                    ativo
+                ) VALUES (?, ?, ?, ?, ?)
+            SQL;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $imagemUrl,
+                $nome,
+                $descricao,
+                $preco,
+                $ativo,
+            ]);
+
+            $id = (int) $this->db->lastInsertId();
+
+            if ($categoriaIds !== []) {
+                $sqlCategoria = <<<'SQL'
+                    INSERT INTO produto_categoria (
+                        id_produto,
+                        id_categoria
+                    ) VALUES (?, ?)
+                SQL;
+
+                $stmtCategoria = $this->db->prepare($sqlCategoria);
+
+                foreach ($categoriaIds as $categoriaId) {
+                    $stmtCategoria->execute([
+                        $id,
+                        $categoriaId,
+                    ]);
+                }
+            }
+
+            $this->db->commit();
+
+            return new Produto(
+                $id,
+                $imagemUrl,
+                $nome,
+                $descricao,
+                $preco,
+                $ativo
+            );
+        } catch (Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $e;
+        }
     }
 
-    public function listar(): array
-    {
-        $sql = "SELECT * FROM produto";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-    public function filtrarCategoria($precoMin, $precoMax, $isAutoral, array $categorias = []): array
-    {
-        $sql = "
-        SELECT p.*
-        FROM produto p
-        INNER JOIN produto_categoria pc
-            ON pc.id_produto = p.id_produto
-        WHERE p.ativo = TRUE
-    ";
+    public function listar(
+        ?string $categoria = null,
+        ?int $categoriaId = null
+    ): array {
 
         $params = [];
 
-        if (!empty($categorias)) {
-            $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+        $sql = <<<'SQL'
+        SELECT
+            p.id_produto,
+            p.imagem_url,
+            p.nome,
+            p.descricao,
+            p.preco,
+            p.is_autoral,
+            p.ativo,
+            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
+        FROM produto p
+        LEFT JOIN avaliacao_produto a
+            ON a.id_produto = p.id_produto
+        WHERE p.ativo = 1
+    SQL;
 
-            $sql .= "
-            AND pc.id_categoria IN ($placeholders)
-        ";
+        if ($categoriaId !== null) {
 
-            $params = $categorias;
+            $sql .= <<<'SQL'
+
+            AND EXISTS (
+                SELECT 1
+                FROM produto_categoria pc_filtro
+                WHERE pc_filtro.id_produto = p.id_produto
+                  AND pc_filtro.id_categoria = ?
+            )
+        SQL;
+
+            $params[] = $categoriaId;
+        } elseif ($categoria !== null) {
+
+            $sql .= <<<'SQL'
+
+            AND EXISTS (
+                SELECT 1
+                FROM produto_categoria pc_filtro
+                INNER JOIN categoria c_filtro
+                    ON c_filtro.id_categoria = pc_filtro.id_categoria
+                WHERE pc_filtro.id_produto = p.id_produto
+                  AND LOWER(c_filtro.nome) = LOWER(?)
+            )
+        SQL;
+
+            $params[] = $categoria;
         }
-        if (!empty($precoMin)) {
-            $sql .= "AND p.preco >= ?";
 
-            array_push($params, (float) $precoMin);
-        }
-        if (!empty($precoMax)) {
-            $sql .= "AND p.preco <= ?";
+        $sql .= <<<'SQL'
 
-            array_push($params, (float) $precoMax);
-        }
-        if ($isAutoral !== null) {
-            $sql .= " AND p.is_autoral = ?";
-            
-            $isAutoral = filter_var(
-                $isAutoral,
-                FILTER_VALIDATE_BOOLEAN,
-                FILTER_NULL_ON_FAILURE
-            );
+        GROUP BY
+            p.id_produto,
+            p.imagem_url,
+            p.nome,
+            p.descricao,
+            p.preco,
+            p.is_autoral,
+            p.ativo
 
-            array_push($params, (bool) $isAutoral);
-        } else if (empty($params)) {
-            return $this->listar();
-        }
-
-        $sql .= " ORDER BY p.id_produto DESC";
+        ORDER BY p.id_produto DESC
+    SQL;
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($produtos === []) {
+            return [];
+        }
+
+        $categoriasPorProduto = $this->buscarCategoriasDosProdutos(
+            array_column($produtos, 'id_produto')
+        );
+
+        foreach ($produtos as &$produto) {
+
+            $idProduto = (int) $produto['id_produto'];
+
+            $produto['id_produto'] = $idProduto;
+            $produto['preco'] = (float) $produto['preco'];
+            $produto['estrelas'] = (int) $produto['estrelas'];
+            $produto['is_autoral'] = (bool) $produto['is_autoral'];
+            $produto['ativo'] = (bool) $produto['ativo'];
+
+            $produto['categorias'] =
+                $categoriasPorProduto[$idProduto] ?? [];
+        }
+
+        unset($produto);
+
+        return $produtos;
     }
 
     private function categoriaExiste(int $categoriaId): bool
@@ -165,7 +276,7 @@ class ProdutoService
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute(["%".$pesquisa."%"]);
- 
+
         return $stmt->fetchAll();
     }
 }
