@@ -9,18 +9,11 @@ function renderCarrosselProdutos(array $produtos): void
     }
 
     $cardsPorSlide = 5;
-    $larguraCard = 260;
-    $gapEntreCards = 4;
 
-    $larguraCarrossel =
-        ($cardsPorSlide * $larguraCard)
-        + (($cardsPorSlide - 1) * $gapEntreCards);
-
-    $gruposProdutos =
-        array_chunk(
-            $produtos,
-            $cardsPorSlide
-        );
+    $gruposProdutos = array_chunk(
+        $produtos,
+        $cardsPorSlide
+    );
 ?>
 
     <div class="py-2">
@@ -29,13 +22,10 @@ function renderCarrosselProdutos(array $produtos): void
             id="carrosselProdutos"
             class="carousel slide">
 
-            <div
-                class="position-relative mx-auto"
-                style="width: <?= $larguraCarrossel ?>px; max-width: 100%;">
+            <div class="carrossel-area">
 
                 <button
-                    class="btn border-0 p-0 position-absolute top-50 translate-middle-y z-3"
-                    style="left: -60px;"
+                    class="btn border-0 p-0 carrossel-seta"
                     type="button"
                     data-bs-target="#carrosselProdutos"
                     data-bs-slide="prev">
@@ -58,18 +48,25 @@ function renderCarrosselProdutos(array $produtos): void
                         <div
                             class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
 
-                            <div
-                                class="d-flex flex-nowrap justify-content-start gap-1">
+                            <div class="d-flex flex-nowrap gap-1">
 
                                 <?php foreach ($grupo as $produto): ?>
 
-                                    <div class="flex-shrink-0">
+                                    <div class="produto-carrossel-item flex-shrink-0">
 
                                         <?php
                                         CardProduto(
                                             $produto['nome'],
-                                            (int) $produto['estrelas'],
-                                            (float) $produto['preco'],
+                                            (int) ($produto['estrelas'] ?? 0),
+                                            (float) ($produto['preco'] ?? 0),
+                                            (float) (
+                                                $produto['preco_final']
+                                                ?? $produto['preco']
+                                                ?? 0
+                                            ),
+                                            isset($produto['porcentagem_desconto'])
+                                                ? (float) $produto['porcentagem_desconto']
+                                                : null,
                                             $produto['imagem_url']
                                                 ?? 'https://placehold.co/600x600?text=Sem+Imagem'
                                         );
@@ -88,8 +85,7 @@ function renderCarrosselProdutos(array $produtos): void
                 </div>
 
                 <button
-                    class="btn border-0 p-0 position-absolute top-50 translate-middle-y z-3"
-                    style="right: -60px;"
+                    class="btn border-0 p-0 carrossel-seta"
                     type="button"
                     data-bs-target="#carrosselProdutos"
                     data-bs-slide="next">

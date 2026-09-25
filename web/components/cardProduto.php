@@ -15,9 +15,9 @@ function CardProduto(
         && $porcentagemDesconto > 0;
 ?>
 
-    <article class="card border-0 rounded-0 overflow-hidden" style="width: 260px;">
+    <article class="card border-0 rounded-0 overflow-hidden w-100">
 
-        <div class="w-100 border border-dark border-2" style="height: 300px;">
+        <div class="produto-card-imagem w-100 border border-dark border-2">
             <img
                 src="<?= htmlspecialchars($imagem) ?>"
                 alt="<?= htmlspecialchars($titulo) ?>"
@@ -64,10 +64,8 @@ function CardProduto(
 
                 <?php if ($temDesconto): ?>
 
-                    <div
-                        class="d-flex align-items-center justify-content-between px-2 py-1 text-nowrap mt-auto"
-                        style="font-size: 1.05rem;"
-                    >
+                    <div class="produto-preco-linha d-flex align-items-center justify-content-between px-2 py-1 text-nowrap mt-auto">
+
                         <span class="text-secondary">
                             De:
                         </span>
@@ -75,12 +73,11 @@ function CardProduto(
                         <span class="text-secondary text-decoration-line-through">
                             R$ <?= number_format($precoOriginal, 2, ',', '.') ?>
                         </span>
+
                     </div>
 
-                    <div
-                        class="d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap"
-                        style="background-color: var(--bs-teal); font-size: 1.05rem;"
-                    >
+                    <div class="produto-preco-linha d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap bg-success-subtle">
+
                         <span>
                             Por:
                         </span>
@@ -88,14 +85,13 @@ function CardProduto(
                         <span>
                             R$ <?= number_format($precoFinal, 2, ',', '.') ?>
                         </span>
+
                     </div>
 
                 <?php else: ?>
 
-                    <div
-                        class="d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap mt-auto"
-                        style="background-color: var(--bs-teal); font-size: 1.05rem;"
-                    >
+                    <div class="produto-preco-linha d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap mt-auto bg-success-subtle">
+
                         <span>
                             Preço:
                         </span>
@@ -103,6 +99,7 @@ function CardProduto(
                         <span>
                             R$ <?= number_format($precoOriginal, 2, ',', '.') ?>
                         </span>
+
                     </div>
 
                 <?php endif; ?>
