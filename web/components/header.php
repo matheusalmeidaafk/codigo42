@@ -55,200 +55,181 @@
 
 <script>
     function renderizarCategorias(categorias) {
-    const listaCategorias = document.getElementById("menu-header");
-    
-    listaCategorias.innerHTML = ""; 
-        const subcategoriasTeste = [
-            [
-                "Celulares",
-                "Computadores",
-                "Televisores",
-                "Monitores",
-                "Notebooks",
-                "Tablets",
-                "Fones",
-                "Teclados",
-                "Mouse",
-                "Impressoras"
-            ],
-
-            [
-                "Camisetas",
-                "Calças",
-                "Tênis",
-                "Jaquetas",
-                "Moletons",
-                "Bonés",
-                "Bermudas",
-                "Meias",
-                "Vestidos"
-            ],
-
-            [
-                "Parafusos",
-                "Molas",
-                "Ímãs",
-                "Núcleos",
-                "Porcas",
-                "Arruelas",
-                "Ferramentas"
-            ]
-        ];
-
-        categorias.forEach((categoria, index) => {
-
-            const coluna = document.createElement("div");
-
-            coluna.className = "categoria-menu";
-
-            const subcategorias = subcategoriasTeste[index] || [];
-
-            coluna.innerHTML = `
-        <a href="#" class="categoria-link">
-            ${categoria.nome}
-        </a>
-
-        <div class="subcategorias">
-            ${subcategorias.map(subcategoria => `
-                <a href="#" class="subcategoria-link">
-                    ${subcategoria}
-                </a>
-            `).join("")}
-        </div>
-    `;
-
-            listaCategorias.appendChild(coluna);
-        });
-
-}
-    async function carregarCategorias() {
-
-    const listaCategorias = document.getElementById("menu-header");
-
-    const categoriasEstaticas = [
-        {
-            id_categoria: 1,
-            nome: "Canecas",
-            id_categoria_pai: null
-        },
-        {
-            id_categoria: 2,
-            nome: "Adesivos",
-            id_categoria_pai: null
-        },
-        {
-            id_categoria: 3,
-            nome: "Camisetas",
-            id_categoria_pai: null
-        }
-    ]
-
-    renderizarCategorias(categoriasEstaticas);
-    
-    try {
-
-        const resposta = await fetch("http://localhost:8080/categorias");
-
-        if (!resposta.ok) {
-            throw new Error(`Erro HTTP: ${resposta.status}`);
-        }
-
-
-        const subcategoriasTeste = [
-            [
-                "Celulares",
-                "Computadores",
-                "Televisores",
-                "Monitores",
-                "Notebooks",
-                "Tablets",
-                "Fones",
-                "Teclados",
-                "Mouse",
-                "Impressoras"
-            ],
-
-            [
-                "Camisetas",
-                "Calças",
-                "Tênis",
-                "Jaquetas",
-                "Moletons",
-                "Bonés",
-                "Bermudas",
-                "Meias",
-                "Vestidos"
-            ],
-
-            [
-                "Parafusos",
-                "Molas",
-                "Ímãs",
-                "Núcleos",
-                "Porcas",
-                "Arruelas",
-                "Ferramentas"
-            ]
-        ];
-
-
-        const categorias = await resposta.json();
-
-        console.log(categorias);
-        
-
-        if (!categorias || categorias.length === 0) {
-            listaCategorias.innerHTML = `
-                <div class="col-12">
-                    <div class="alert alert-secondary text-center">
-                        Nenhuma categoria disponível no momento.
-                    </div>
-                </div>
-            `;
-            return;
-        }
+        const listaCategorias = document.getElementById("menu-header");
 
         listaCategorias.innerHTML = "";
 
-        categorias.forEach((categoria, index) => {
-
+        categorias.forEach((categoria) => {
             const coluna = document.createElement("div");
 
             coluna.className = "categoria-menu";
 
-            const subcategorias = subcategoriasTeste[index] || [];
-
             coluna.innerHTML = `
-        <a href="#" class="categoria-link">
-            ${categoria.nome}
-        </a>
-
-        <div class="subcategorias">
-            ${subcategorias.map(subcategoria => `
-                <a href="#" class="subcategoria-link">
-                    ${subcategoria}
+                <a href="#" 
+                   class="categoria-link"
+                   data-id="${categoria.id_categoria}">
+                    ${categoria.nome}
                 </a>
-            `).join("")}
-        </div>
-    `;
+
+                <div class="subcategorias"></div>
+            `;
+
+            const link = coluna.querySelector(".categoria-link");
+            const subcategorias = coluna.querySelector(".subcategorias");
+
+            let carregada = false;
+            let carregando = false;
+
+            link.addEventListener("mouseenter", async () => {
+
+                // Evita fazer a mesma requisição novamente
+                if (carregada || carregando) {
+                    return;
+                }
+
+                carregando = true;
+
+                try {
+                    const idCategoria = categoria.id_categoria;
+
+                    const resposta = await fetch(
+                        `http://localhost:8080/subcategoria/${idCategoria}`
+                    );
+
+                    if (!resposta.ok) {
+                        throw new Error(
+                            `Erro HTTP: ${resposta.status}`
+                        );
+                    }
+
+                    const categoriasFilhas = await resposta.json();
+
+                    subcategorias.innerHTML = "";
+
+                    if (!categoriasFilhas || categoriasFilhas.length === 0) {
+                        carregada = true;
+                        return;
+                    }
+
+                    categoriasFilhas.forEach((subcategoria) => {
+
+                        const linkSubcategoria =
+                            document.createElement("a");
+
+                        linkSubcategoria.href =
+                            `#`;
+
+                        linkSubcategoria.className =
+                            "subcategoria-link";
+
+                        linkSubcategoria.textContent =
+                            subcategoria.nome;
+
+                        subcategorias.appendChild(
+                            linkSubcategoria
+                        );
+                    });
+
+                    carregada = true;
+
+                } catch (erro) {
+
+                    console.error(
+                        `Erro ao carregar subcategorias da categoria ${categoria.id_categoria}:`,
+                        erro
+                    );
+
+                    subcategorias.innerHTML = `
+                        <span class="subcategoria-erro">
+                            Não foi possível carregar.
+                        </span>
+                    `;
+
+                } finally {
+                    carregando = false;
+                }
+            });
 
             listaCategorias.appendChild(coluna);
         });
-
-    } catch (erro) {
-
-        console.error("Erro ao carregar categorias:", erro);
-
-        listaCategorias.innerHTML = `
-            <div class="col-12">
-                <div class="alert alert-danger text-center">
-                    <strong>Categorias indisponíveis.</strong><br>
-                    Não foi possível carregar as categorias no momento.
-                </div>
-            </div>
-        `;
     }
-}
 
-carregarCategorias();
+
+    async function carregarCategorias() {
+
+        const listaCategorias =
+            document.getElementById("menu-header");
+
+        const categoriasEstaticas = [
+            {
+                id_categoria: 1,
+                nome: "Canecas",
+                id_categoria_pai: null
+            },
+            {
+                id_categoria: 2,
+                nome: "Adesivos",
+                id_categoria_pai: null
+            },
+            {
+                id_categoria: 3,
+                nome: "Camisetas",
+                id_categoria_pai: null
+            }
+        ];
+
+        // Renderiza temporariamente as categorias estáticas
+        renderizarCategorias(categoriasEstaticas);
+
+        try {
+
+            const resposta = await fetch(
+                "http://localhost:8080/categoriasPai"
+            );
+
+            if (!resposta.ok) {
+                throw new Error(
+                    `Erro HTTP: ${resposta.status}`
+                );
+            }
+
+            const categorias = await resposta.json();
+
+            console.log("Categorias:", categorias);
+
+            if (!categorias || categorias.length === 0) {
+
+                listaCategorias.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-secondary text-center">
+                            Nenhuma categoria disponível no momento.
+                        </div>
+                    </div>
+                `;
+
+                return;
+            }
+
+            renderizarCategorias(categorias);
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao carregar categorias:",
+                erro
+            );
+
+            listaCategorias.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger text-center">
+                        <strong>Categorias indisponíveis.</strong><br>
+                        Não foi possível carregar as categorias no momento.
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+
+    carregarCategorias();
 </script>

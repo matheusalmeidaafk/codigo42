@@ -1,4 +1,5 @@
 services:
+
   app:
     build: .
     container_name: codigo42-app
@@ -14,6 +15,7 @@ services:
 
     restart: unless-stopped
 
+
   frontend:
     build:
       context: ./web
@@ -25,11 +27,5 @@ services:
 
     volumes:
       - ./web:/app
-
-    environment:
-      API_URL: http://app
-
-    depends_on:
-      - app
 
     restart: unless-stopped
