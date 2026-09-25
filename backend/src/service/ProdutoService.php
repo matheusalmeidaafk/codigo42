@@ -134,6 +134,7 @@ class ProdutoService
             p.ativo,
             COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
         FROM produto p
+
         LEFT JOIN avaliacao_produto a
             ON a.id_produto = p.id_produto
         WHERE p.ativo = 1
