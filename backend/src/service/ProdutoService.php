@@ -276,7 +276,7 @@ class ProdutoService
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute(["%".$pesquisa."%"]);
-
+ 
         return $stmt->fetchAll();
     }
 }

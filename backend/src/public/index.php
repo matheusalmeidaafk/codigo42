@@ -137,6 +137,16 @@ elseif ($method === 'POST' && $uri === '/produtos') {
 } elseif ($method === 'GET' && $uri === '/produtos') {
     $produtoController->listar();
 }
+elseif (
+    $method === "GET"
+    && preg_match("#^/produtos/([^/]+)$#", $uri, $matches)
+) {
+    $pesquisa = $matches[1];
+
+    $produtoController->pesquisar($pesquisa);
+
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -157,14 +167,16 @@ elseif ($method === 'GET' && $uri === '/categorias') {
 elseif ($method === "GET" && $uri === "/categorias") {
     $categoriaController->listar();
 }
+elseif ($method === "GET" && $uri === "/categoriasPai") {
+    $categoriaController->getCategoriaPai();
+}
 elseif (
-    $method === "GET"
-    && preg_match("#^/produtos/([^/]+)$#", $uri, $matches)
+    $method === 'GET'
+    && preg_match('#^/subcategoria/(\d+)$#', $uri, $matches)
 ) {
-    $pesquisa = $matches[1];
+    $id = (int) $matches[1];
 
-    $produtoController->pesquisar($pesquisa);
-
+    $categoriaController->getSubcategoria($id);
 }
 
 /*

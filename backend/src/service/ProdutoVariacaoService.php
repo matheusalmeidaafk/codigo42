@@ -22,4 +22,14 @@ class ProdutoVariacaoService {
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function getProdutoFiltro(int $idProduto) : array {
+        $sql = "SELECT * FROM produto_variacao WHERE id_produto = ?";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$idProduto]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
 }
