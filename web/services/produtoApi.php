@@ -55,7 +55,8 @@ function requisitarApi(string $rota): array
 
     if (!is_array($dados)) {
         throw new RuntimeException(
-            'A API retornou uma resposta inválida.'
+            'A API retornou uma resposta inválida. Resposta recebida: '
+            . substr($resposta, 0, 500)
         );
     }
 
