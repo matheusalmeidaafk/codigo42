@@ -1,95 +1,65 @@
 <?php
 
-function renderProductCard(array $produto): void
+function renderProductCard($produto)
 {
-    $nomeProduto = htmlspecialchars(
-        $produto['nome'] ?? '',
-        ENT_QUOTES,
-        'UTF-8'
-    );
+    $nomeProduto = $produto['nome'];
+    $descricaoProduto = $produto['descricao'];
+    $precoProduto = $produto['preco'];
+    $imagemProduto = $produto['imagem'];
+    $estoqueProduto = $produto['estoque'];
 
-    $descricaoProduto = htmlspecialchars(
-        $produto['descricao'] ?? '',
-        ENT_QUOTES,
-        'UTF-8'
-    );
-
-    $precoProduto = (float) ($produto['preco'] ?? 0);
-
-    $imagemProduto = htmlspecialchars(
-        $produto['imagem_url']
-            ?? $produto['imagem']
-            ?? 'https://placehold.co/300x300?text=Produto',
-        ENT_QUOTES,
-        'UTF-8'
-    );
-
-    $categoriaIds = [];
-
-    foreach (($produto['categorias'] ?? []) as $categoria) {
-        $categoriaId = (int) ($categoria['id_categoria'] ?? 0);
-
-        if ($categoriaId > 0) {
-            $categoriaIds[] = $categoriaId;
-        }
-    }
-
-    $categoriaIds = array_values(array_unique($categoriaIds));
-
-    $categoriasProduto = htmlspecialchars(
-        implode(',', $categoriaIds),
-        ENT_QUOTES,
-        'UTF-8'
-    );
+    $produtoDisponivel = $estoqueProduto > 0;
 ?>
 
-    <div
-        class="produto-item"
-        data-categorias="<?= $categoriasProduto ?>">
+    <div class="col">
+        <div class="card h-100 shadow-sm">
 
-        <article class="card produto-card h-100 rounded-0">
+            <img
+                src="<?= $imagemProduto ?>"
+                class="card-img-top"
+                alt="<?= $nomeProduto ?>">
 
-            <div class="produto-imagem-container">
-                <img
-                    src="<?= $imagemProduto ?>"
-                    class="card-img-top produto-imagem rounded-0"
-                    alt="<?= $nomeProduto ?>"
-                    loading="lazy">
-            </div>
+            <div class="card-body d-flex flex-column">
 
-            <div class="card-body p-2 d-flex flex-column">
-
-                <h3 class="card-title produto-nome mb-1">
+                <h5 class="card-title">
                     <?= $nomeProduto ?>
-                </h3>
+                </h5>
 
-                <p class="card-text produto-descricao text-secondary mb-1">
+                <p class="card-text">
                     <?= $descricaoProduto ?>
                 </p>
 
-                <div class="mt-auto">
+                <p class="fw-bold fs-5">
+                    R$ <?= number_format($precoProduto, 2, ',', '.') ?>
+                </p>
 
-                    <p class="produto-preco mb-1">
-                        R$ <?= number_format(
-                            $precoProduto,
-                            2,
-                            ',',
-                            '.'
-                        ) ?>
+                <?php if ($produtoDisponivel): ?>
+
+                    <p class="text-success">
+                        <?= $estoqueProduto ?> unidades disponíveis
                     </p>
 
-                    <button
-                        type="button"
-                        class="btn btn-success btn-sm rounded-0 w-100 produto-comprar">
+                    <button class="btn btn-primary mt-auto">
                         Adicionar ao carrinho
                     </button>
 
-                </div>
+                <?php else: ?>
+
+                    <p class="text-danger">
+                        Produto indisponível
+                    </p>
+
+                    <button
+                        class="btn btn-secondary mt-auto"
+                        disabled>
+                        Indisponível
+                    </button>
+
+                <?php endif; ?>
 
             </div>
 
-        </article>
-
+        </div>
     </div>
 
 <?php
