@@ -1,14 +1,3 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Código 42</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/produto.css">
 <?php
 
 require_once __DIR__ . '/../../services/produtoApi.php';
@@ -26,8 +15,7 @@ if (
     && ctype_digit((string) $_GET['categoriaId'])
     && (int) $_GET['categoriaId'] > 0
 ) {
-    $categoriaSelecionada =
-        (int) $_GET['categoriaId'];
+    $categoriaSelecionada = (int) $_GET['categoriaId'];
 }
 
 try {
@@ -37,10 +25,10 @@ try {
     $produtos = buscarProdutosApi(
         $categoriaSelecionada
     );
+
 } catch (Throwable $e) {
 
-    $erroApi =
-        'Não foi possível carregar os produtos agora.';
+    $erroApi = 'Não foi possível carregar os produtos agora.';
 }
 
 ?>
@@ -58,21 +46,36 @@ try {
 
     <title>Código 42</title>
 
+    <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
         rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
         crossorigin="anonymous">
 
+    <!-- CSS geral -->
     <link
         rel="stylesheet"
         href="/assets/css/style.css">
+
+    <!-- CSS do banner -->
+    <link
+        rel="stylesheet"
+        href="/assets/css/banner.css">
 
 </head>
 
 <body>
 
+    <!-- HEADER -->
     <?php require_once __DIR__ . '/../../components/header.php'; ?>
+
+
+    <!-- BANNER -->
+    <?php require __DIR__ . '/../../components/banner.php'; ?>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="py-4">
 
         <section class="container-xxl px-0">
@@ -97,6 +100,7 @@ try {
 
                 </div>
 
+
                 <div id="produtos-container">
 
                     <?php if ($erroApi !== null): ?>
@@ -111,11 +115,13 @@ try {
 
                         </div>
 
+
                     <?php elseif (empty($produtos)): ?>
 
                         <div class="alert alert-warning">
                             Nenhum produto encontrado.
                         </div>
+
 
                     <?php else: ?>
 
@@ -129,16 +135,22 @@ try {
 
         </section>
 
-        <?php require_once __DIR__ . '/../../components/footerHome.php'; ?>
     </main>
-    
 
+
+    <!-- FOOTER -->
+    <?php require_once __DIR__ . '/../../components/footerHome.php'; ?>
+
+
+    <!-- Bootstrap JS -->
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
 
+
+    <!-- JS do projeto -->
     <script src="/assets/js/main.js"></script>
 
 </body>
