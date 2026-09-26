@@ -132,10 +132,34 @@ class ProdutoService
             p.preco,
             p.is_autoral,
             p.ativo,
-            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
+
+            COALESCE(
+                ROUND(AVG(a.estrelas)),
+                0
+            ) AS estrelas,
+
+            d.porcentagem_desconto,
+
+            CASE
+                WHEN d.porcentagem_desconto IS NOT NULL
+                THEN ROUND(
+                    p.preco - (
+                        p.preco * d.porcentagem_desconto / 100
+                    ),
+                    2
+                )
+                ELSE p.preco
+            END AS preco_final
+
         FROM produto p
+
         LEFT JOIN avaliacao_produto a
             ON a.id_produto = p.id_produto
+
+        LEFT JOIN desconto d
+            ON d.id_produto = p.id_produto
+            AND d.ativo = TRUE
+
         WHERE p.ativo = 1
     SQL;
 
@@ -178,7 +202,8 @@ class ProdutoService
             p.descricao,
             p.preco,
             p.is_autoral,
-            p.ativo
+            p.ativo,
+            d.porcentagem_desconto
 
         ORDER BY p.id_produto DESC
     SQL;
@@ -202,9 +227,15 @@ class ProdutoService
 
             $produto['id_produto'] = $idProduto;
             $produto['preco'] = (float) $produto['preco'];
+            $produto['preco_final'] = (float) $produto['preco_final'];
             $produto['estrelas'] = (int) $produto['estrelas'];
             $produto['is_autoral'] = (bool) $produto['is_autoral'];
             $produto['ativo'] = (bool) $produto['ativo'];
+
+            $produto['porcentagem_desconto'] =
+                $produto['porcentagem_desconto'] !== null
+                ? (float) $produto['porcentagem_desconto']
+                : null;
 
             $produto['categorias'] =
                 $categoriasPorProduto[$idProduto] ?? [];
