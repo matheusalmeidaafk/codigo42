@@ -71,7 +71,10 @@ body {
 }
 
 .produto-carrossel-item {
+  flex: 0 0 calc((100% - 16px) / 5);
   width: calc((100% - 16px) / 5);
+  min-width: 0;
+  max-width: calc((100% - 16px) / 5);
 }
 
 .produto-card-imagem {
@@ -125,6 +128,21 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+
+.produto-card-imagem {
+  width: 100%;
+  aspect-ratio: 260 / 300;
+  overflow: hidden;
+}
+
+.produto-card-imagem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .produto-nome {
