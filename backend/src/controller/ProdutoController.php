@@ -83,9 +83,15 @@ class ProdutoController
             
             $isAutoral = $_GET['autoral'] ?? null;
 
+            $cor = $_GET['cor'] ?? '';
+            $tamanhos = $_GET['tamanhos'] ?? '';
 
+            
+            $tamanhos = array_filter(
+                array_map('strval', explode(',', $tamanhos))
+            );
 
-            $produtos = $this->service->filtrarCategoria($precoMin, $precoMax, $isAutoral, $categorias);
+            $produtos = $this->service->filtrarCategoria($precoMin, $precoMax, $isAutoral, $cor, $tamanhos, $categorias);
 
             http_response_code(200);
             
