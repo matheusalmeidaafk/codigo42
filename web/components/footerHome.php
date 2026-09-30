@@ -25,8 +25,11 @@ $colunasFooter = [
         <div class="row gy-4 align-items-start">
 
             <div class="col-12 col-md-4">
-                <img src="/assets/images/logo.png" alt="Código 42" height="120" class="mb-2">
-                <p class="small mb-0">
+
+                <div class="d-flex align-items-center" style="height:50px; overflow:hidden;">
+                <img src="/assets/images/logo.png" alt="Código 42" height="120">
+                </div>
+                <p class="small mb-0 mt-1">
                     Camisetas, canecas e adesivos com identidade.
                     Feitos para quem não quer parecer — quer ser.
                 </p>
