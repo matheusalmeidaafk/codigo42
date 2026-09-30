@@ -67,7 +67,7 @@ function renderCarrosselProdutos(array $produtos): void
                                             isset($produto['porcentagem_desconto'])
                                                 ? (float) $produto['porcentagem_desconto']
                                                 : null,
-                                            $produto['imagem_url']
+                                            $produto['variacao_imagem_url']
                                                 ?? 'https://placehold.co/600x600?text=Sem+Imagem'
                                         );
                                         ?>
