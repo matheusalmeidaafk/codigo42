@@ -246,17 +246,51 @@ class ProdutoService
         return $produtos;
     }
 
-    public function filtrarCategoria($precoMin, $precoMax, $isAutoral, $cor, array $tamanho = [], array $categorias = []): array
-    {
+    public function filtrarCategoria(
+        $precoMin,
+        $precoMax,
+        $isAutoral,
+        $cor,
+        array $tamanho = [],
+        array $categorias = []
+    ): array {
         $sql = "
-        SELECT pv.*, p.*, i.imagem_url
+        SELECT
+            p.*,
+            pv.id_variacao,
+            pv.tamanho,
+            pv.cor,
+            i.imagem_url AS variacao_imagem_url
         FROM produto p
+
         INNER JOIN produto_categoria pc
             ON pc.id_produto = p.id_produto
-        LEFT JOIN produto_variacao pv
+
+        INNER JOIN (
+            SELECT
+                id_variacao,
+                id_produto,
+                tamanho,
+                cor
+            FROM (
+                SELECT
+                    pv.id_variacao,
+                    pv.id_produto,
+                    pv.tamanho,
+                    pv.cor,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY pv.id_produto, pv.cor
+                        ORDER BY pv.id_variacao
+                    ) AS rn
+                FROM produto_variacao pv
+            ) AS variacoes
+            WHERE rn = 1
+        ) pv
             ON pv.id_produto = p.id_produto
+
         LEFT JOIN imagem_variacao i
             ON i.id_variacao = pv.id_variacao
+
         WHERE p.ativo = TRUE
     ";
 
@@ -265,22 +299,21 @@ class ProdutoService
         if (!empty($categorias)) {
             $placeholders = implode(',', array_fill(0, count($categorias), '?'));
 
-            $sql .= "
-            AND pc.id_categoria IN ($placeholders)
-        ";
+            $sql .= " AND pc.id_categoria IN ($placeholders)";
 
             $params = $categorias;
         }
+
         if (!empty($precoMin)) {
-            $sql .= "AND p.preco >= ?";
-
-            array_push($params, (float) $precoMin);
+            $sql .= " AND p.preco >= ?";
+            $params[] = (float) $precoMin;
         }
+
         if (!empty($precoMax)) {
-            $sql .= "AND p.preco <= ?";
-
-            array_push($params, (float) $precoMax);
+            $sql .= " AND p.preco <= ?";
+            $params[] = (float) $precoMax;
         }
+
         if ($isAutoral !== null) {
             $sql .= " AND p.is_autoral = ?";
 
@@ -290,24 +323,20 @@ class ProdutoService
                 FILTER_NULL_ON_FAILURE
             );
 
-            array_push($params, (bool) $isAutoral);
+            $params[] = (bool) $isAutoral;
         }
+
         if (!empty($tamanho)) {
             $placeholders = implode(',', array_fill(0, count($tamanho), '?'));
 
-            $sql .= "
-            AND pv.tamanho IN ($placeholders)
-        ";
+            $sql .= " AND pv.tamanho IN ($placeholders)";
 
             $params = array_merge($params, $tamanho);
         }
+
         if (!empty($cor)) {
-            $sql .= "AND pv.cor = ?";
-
-            array_push($params, $cor);
-
-        } else if (empty($params)) {
-            return $this->listar();
+            $sql .= " AND pv.cor = ?";
+            $params[] = $cor;
         }
 
         $sql .= " ORDER BY p.id_produto DESC";
@@ -317,6 +346,8 @@ class ProdutoService
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
 
 
     private function categoriaExiste(int $categoriaId): bool
