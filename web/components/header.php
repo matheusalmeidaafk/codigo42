@@ -11,10 +11,10 @@
             <div class="col-8 col-md-6">
                 <form class="d-flex mx-auto searchBar" role="search">
                     <input class="form-control me-2 bg-dark text-light border-secondary" type="search"
-                        placeholder="Search" aria-label="Search">
+                        placeholder="Buscar" aria-label="Buscar">
 
                     <button class="btn btn-outline-success" type="submit">
-                        Search
+                        Buscar
                     </button>
                 </form>
             </div>
