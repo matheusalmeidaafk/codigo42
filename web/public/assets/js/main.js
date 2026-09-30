@@ -13,16 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let requisicaoAtual = null;
 
   let categoriaAtual =
-    new URLSearchParams(window.location.search).get("categoriaId") ?? "todos";
-
-  cacheProdutos.set(categoriaAtual, produtosContainer.innerHTML);
+    new URLSearchParams(window.location.search).get("categorias") ?? "todos";
 
   function montarUrlPartial(categoriaId) {
     if (categoriaId === "todos") {
       return "/partials/produtos.php";
     }
 
-    return `/partials/produtos.php?categoriaId=${encodeURIComponent(
+    return `/partials/produtos.php?categorias=${encodeURIComponent(
       categoriaId,
     )}`;
   }
@@ -32,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return "/";
     }
 
-    return `/?categoriaId=${encodeURIComponent(categoriaId)}`;
+    return `/?categorias=${encodeURIComponent(categoriaId)}`;
   }
 
   function atualizarFiltroAtivo(categoriaId) {
@@ -165,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("popstate", () => {
     const parametros = new URLSearchParams(window.location.search);
 
-    const categoriaId = parametros.get("categoriaId") ?? "todos";
+    const categoriaId = parametros.get("categorias") ?? "todos";
 
     carregarProdutos(categoriaId, false);
   });
