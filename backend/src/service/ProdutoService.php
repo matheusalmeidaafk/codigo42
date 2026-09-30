@@ -246,6 +246,79 @@ class ProdutoService
         return $produtos;
     }
 
+    public function filtrarCategoria($precoMin, $precoMax, $isAutoral, $cor, array $tamanho = [], array $categorias = []): array
+    {
+        $sql = "
+        SELECT pv.*, p.*, i.imagem_url
+        FROM produto p
+        INNER JOIN produto_categoria pc
+            ON pc.id_produto = p.id_produto
+        LEFT JOIN produto_variacao pv
+            ON pv.id_produto = p.id_produto
+        LEFT JOIN imagem_variacao i
+            ON i.id_variacao = pv.id_variacao
+        WHERE p.ativo = TRUE
+    ";
+
+        $params = [];
+
+        if (!empty($categorias)) {
+            $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+
+            $sql .= "
+            AND pc.id_categoria IN ($placeholders)
+        ";
+
+            $params = $categorias;
+        }
+        if (!empty($precoMin)) {
+            $sql .= "AND p.preco >= ?";
+
+            array_push($params, (float) $precoMin);
+        }
+        if (!empty($precoMax)) {
+            $sql .= "AND p.preco <= ?";
+
+            array_push($params, (float) $precoMax);
+        }
+        if ($isAutoral !== null) {
+            $sql .= " AND p.is_autoral = ?";
+
+            $isAutoral = filter_var(
+                $isAutoral,
+                FILTER_VALIDATE_BOOLEAN,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            array_push($params, (bool) $isAutoral);
+        }
+        if (!empty($tamanho)) {
+            $placeholders = implode(',', array_fill(0, count($tamanho), '?'));
+
+            $sql .= "
+            AND pv.tamanho IN ($placeholders)
+        ";
+
+            $params = array_merge($params, $tamanho);
+        }
+        if (!empty($cor)) {
+            $sql .= "AND pv.cor = ?";
+
+            array_push($params, $cor);
+
+        } else if (empty($params)) {
+            return $this->listar();
+        }
+
+        $sql .= " ORDER BY p.id_produto DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     private function categoriaExiste(int $categoriaId): bool
     {
         $stmt = $this->db->prepare(
@@ -301,12 +374,13 @@ class ProdutoService
 
         return $categoriasPorProduto;
     }
-    
-    public function pesquisar(string $pesquisa) : array {
+
+    public function pesquisar(string $pesquisa): array
+    {
         $sql = "SELECT * FROM produto WHERE nome LIKE ?";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(["%".$pesquisa."%"]);
+        $stmt->execute(["%" . $pesquisa . "%"]);
 
         return $stmt->fetchAll();
     }
