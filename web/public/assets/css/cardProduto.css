@@ -1,4 +1,5 @@
 .card .hover-card {
+    height: 40%;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 
