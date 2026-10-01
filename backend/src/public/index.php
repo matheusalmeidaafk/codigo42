@@ -155,7 +155,7 @@ elseif (
     $method === "GET"
     && preg_match("#^/produtos/([^/]+)$#", $uri, $matches)
 ) {
-    $pesquisa = $matches[1];
+    $pesquisa = urldecode($matches[1]);
 
     $produtoController->pesquisar($pesquisa);
 

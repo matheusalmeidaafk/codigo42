@@ -1,22 +1,19 @@
+<?php
+/* Header compartilhado: incluir em todas as páginas via require_once. */
+?>
 <header class="bg-dark text-light">
     <div class="container-fluid px-5 py-3">
         <div class="row align-items-center">
 
             <div class="col-4 col-md-3">
-                <a href="../index.php">
-                    <img src="../assets/images/logo.png" alt="Código 42" class="img-fluid logo">
+                <a href="/index.php">
+                    <img src="/assets/images/logo.png" alt="Código 42" class="img-fluid logo">
                 </a>
             </div>
 
             <div class="col-8 col-md-6">
-                <form class="d-flex mx-auto" role="search">
-                    <input class="form-control me-2 bg-dark text-light border-secondary" type="search"
-                        placeholder="Search" aria-label="Search">
-
-                    <button class="btn btn-outline-success" type="submit">
-                        Search
-                    </button>
-                </form>
+                <?php require_once __DIR__ . '/searchBar.php'; ?>
+                <?php renderSearchBar($_GET['q'] ?? ''); ?>
             </div>
 
             <div class="col-12 col-md-3 mt-3 mt-md-0">
@@ -26,7 +23,7 @@
                         Sobre
                     </a>
 
-                    <a href="./pages/login.php" class="text-light">
+                    <a href="/pages/login.php" class="text-light">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                             class="bi bi-person-fill" viewBox="0 0 16 16">
 

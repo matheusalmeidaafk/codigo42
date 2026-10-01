@@ -1,66 +1,114 @@
 <?php
 
-function renderProductCard($produto)
-{
-    $nomeProduto = $produto['nome'];
-    $descricaoProduto = $produto['descricao'];
-    $precoProduto = $produto['preco'];
-    $imagemProduto = $produto['imagem'];
-    $estoqueProduto = $produto['estoque'];
+require_once '../../components/productCard.php';
 
-    $produtoDisponivel = $estoqueProduto > 0;
+$produtos = [
+
+    [
+        'nome' => 'Camiseta Dev',
+        'descricao' => 'Camiseta personalizada para desenvolvedores.',
+        'preco' => 59.90,
+        'imagem' => 'https://placehold.co/600x400?text=Camiseta+Dev',
+        'estoque' => 10
+    ],
+
+    [
+        'nome' => 'Xícara Dev',
+        'descricao' => 'Xícara personalizada para programadores.',
+        'preco' => 39.90,
+        'imagem' => 'https://placehold.co/600x400?text=Xicara+Dev',
+        'estoque' => 5
+    ],
+
+    [
+        'nome' => 'Adesivo Dev',
+        'descricao' => 'Adesivo personalizado para notebooks.',
+        'preco' => 9.90,
+        'imagem' => 'https://placehold.co/600x400?text=Adesivo+Dev',
+        'estoque' => 0
+    ]
+
+];
+
+
+$termoBusca = trim($_GET['q'] ?? '');
+
+if ($termoBusca !== '') {
+    $produtos = array_filter(
+        $produtos,
+        fn($produto) => mb_stripos($produto['nome'], $termoBusca) !== false
+            || mb_stripos($produto['descricao'], $termoBusca) !== false
+    );
+}
+
 ?>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm">
+<!DOCTYPE html>
 
-            <img
-                src="<?= $imagemProduto ?>"
-                class="card-img-top"
-                alt="<?= $nomeProduto ?>">
+<html lang="pt-BR">
 
-            <div class="card-body d-flex flex-column">
+<head>
 
-                <h5 class="card-title">
-                    <?= $nomeProduto ?>
-                </h5>
+    <meta charset="UTF-8">
 
-                <p class="card-text">
-                    <?= $descricaoProduto ?>
-                </p>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-                <p class="fw-bold fs-5">
-                    R$ <?= number_format($precoProduto, 2, ',', '.') ?>
-                </p>
+    <title>Produtos | Ecommerce</title>
 
-                <?php if ($produtoDisponivel): ?>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
-                    <p class="text-success">
-                        <?= $estoqueProduto ?> unidades disponíveis
-                    </p>
+</head>
 
-                    <button class="btn btn-primary mt-auto">
-                        Adicionar ao carrinho
-                    </button>
+<body>
 
-                <?php else: ?>
+    <?php require_once '../../components/header.php'; ?>
 
-                    <p class="text-danger">
-                        Produto indisponível
-                    </p>
+    <main class="container py-5">
 
-                    <button
-                        class="btn btn-secondary mt-auto"
-                        disabled>
-                        Indisponível
-                    </button>
+        <div class="mb-5">
 
-                <?php endif; ?>
+            <h1 class="display-5 fw-bold">
+                <?= $termoBusca !== '' ? 'Resultados para &quot;' . htmlspecialchars($termoBusca, ENT_QUOTES, 'UTF-8') . '&quot;' : 'Nossos produtos' ?>
+            </h1>
 
-            </div>
+            <p class="lead text-muted">
+                Encontre camisetas, xícaras e adesivos personalizados.
+            </p>
 
         </div>
-    </div>
 
-<?php
-}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+            <?php foreach ($produtos as $produto): ?>
+
+                <?php renderProductCard($produto); ?>
+
+            <?php endforeach; ?>
+
+            <?php if (empty($produtos)): ?>
+                <p class="text-muted">Nenhum produto encontrado.</p>
+            <?php endif; ?>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-dark text-white mt-5">
+
+        <div class="container py-4 text-center">
+
+            <p class="mb-0">
+                Ecommerce - Produtos personalizados
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+
+</html>
