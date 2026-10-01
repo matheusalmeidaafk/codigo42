@@ -14,26 +14,18 @@ function renderCarrosselProdutos(array $produtos): void
         $produtos,
         $cardsPorSlide
     );
-?>
+    ?>
 
     <div class="py-2">
 
-        <div
-            id="carrosselProdutos"
-            class="carousel slide">
+        <div id="carrosselProdutos" class="carousel slide">
 
             <div class="carrossel-area">
 
-                <button
-                    class="btn border-0 p-0 carrossel-seta"
-                    type="button"
-                    data-bs-target="#carrosselProdutos"
+                <button class="btn border-0 p-0 carrossel-seta" type="button" data-bs-target="#carrosselProdutos"
                     data-bs-slide="prev">
 
-                    <img
-                        src="/assets/images/banner/arrow.png"
-                        class="seta"
-                        alt="Anterior">
+                    <img src="/assets/images/banner/arrow.png" class="seta" alt="Anterior">
 
                     <span class="visually-hidden">
                         Anterior
@@ -45,8 +37,7 @@ function renderCarrosselProdutos(array $produtos): void
 
                     <?php foreach ($gruposProdutos as $indice => $grupo): ?>
 
-                        <div
-                            class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
+                        <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
 
                             <div class="d-flex flex-nowrap gap-1">
 
@@ -65,10 +56,11 @@ function renderCarrosselProdutos(array $produtos): void
                                                 ?? 0
                                             ),
                                             isset($produto['porcentagem_desconto'])
-                                                ? (float) $produto['porcentagem_desconto']
-                                                : null,
-                                            $produto['imagem_url']
-                                                ?? 'https://placehold.co/600x600?text=Sem+Imagem'
+                                            ? (float) $produto['porcentagem_desconto']
+                                            : null,
+                                            $produto['variacao_imagem_url']
+                                            ?? 'https://placehold.co/600x600?text=Sem+Imagem',
+                                            $produto['tamanhos'] ?? []
                                         );
                                         ?>
 
@@ -84,16 +76,10 @@ function renderCarrosselProdutos(array $produtos): void
 
                 </div>
 
-                <button
-                    class="btn border-0 p-0 carrossel-seta"
-                    type="button"
-                    data-bs-target="#carrosselProdutos"
+                <button class="btn border-0 p-0 carrossel-seta" type="button" data-bs-target="#carrosselProdutos"
                     data-bs-slide="next">
 
-                    <img
-                        src="/assets/images/banner/arrow.png"
-                        class="seta proximo"
-                        alt="Próximo">
+                    <img src="/assets/images/banner/arrow.png" class="seta proximo" alt="Próximo">
 
                     <span class="visually-hidden">
                         Próximo
@@ -107,5 +93,5 @@ function renderCarrosselProdutos(array $produtos): void
 
     </div>
 
-<?php
+    <?php
 }

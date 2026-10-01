@@ -6,22 +6,48 @@ function CardProduto(
     float $precoOriginal,
     float $precoFinal,
     ?float $porcentagemDesconto,
-    string $imagem
+    string $imagem,
+    array $tamanhos = []
 ): void {
 
     $estrelas = max(0, min(5, $estrelas));
 
     $temDesconto = $porcentagemDesconto !== null
         && $porcentagemDesconto > 0;
-?>
+    ?>
 
     <article class="card border-0 rounded-0 overflow-hidden w-100">
 
+        <div
+            class="hover-card d-flex flex-column justify-content-end align-items-center position-absolute bottom-0 start-0 w-100 border border-dark border-2 p-2 opacity-0 invisible z-3">
+
+            <h2 class="">
+                Tamanho:
+            </h2>
+            <div class="d-flex justify-content-center gap-2 mb-2">
+                <?php if (!empty($tamanhos)): ?>
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                        <?php foreach ($tamanhos as $tamanho): ?>
+                            <button type="button" class="btn btn-sm bg-white border rounded-2 px-3 py-1 tamanho-btn"
+                                data-tamanho="<?= htmlspecialchars($tamanho) ?>">
+                                <?= htmlspecialchars($tamanho) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+
+            <button class="btn btn-success w-75">
+                Adicionar ao carrinho
+            </button>
+
+        </div>
+
+
         <div class="produto-card-imagem w-100 border border-dark border-2">
 
-            <img
-                src="<?= htmlspecialchars($imagem) ?>"
-                alt="<?= htmlspecialchars($titulo) ?>"
+            <img src="<?= htmlspecialchars($imagem) ?>" alt="<?= htmlspecialchars($titulo) ?>"
                 class="w-100 h-100 object-fit-cover">
 
         </div>
@@ -30,9 +56,7 @@ function CardProduto(
 
             <div class="col-6 p-2">
 
-                <div
-                    class="lh-sm ps-1 text-center"
-                    style="height: 40px;">
+                <div class="lh-sm ps-1 text-center" style="height: 40px;">
 
                     <?= htmlspecialchars($titulo) ?>
 
@@ -42,14 +66,9 @@ function CardProduto(
 
                     <?php for ($i = 1; $i <= 5; $i++): ?>
 
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="15"
-                            height="15"
-                            viewBox="0 0 24 24"
-                            fill="<?= $i <= $estrelas
-                                        ? 'var(--bs-teal)'
-                                        : 'var(--bs-secondary)' ?>">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="<?= $i <= $estrelas
+                            ? 'var(--bs-teal)'
+                            : 'var(--bs-secondary)' ?>">
 
                             <path
                                 d="M12 2.5L14.9 8.4L21.5 9.3L16.7 13.9L17.8 20.5L12 17.4L6.2 20.5L7.3 13.9L2.5 9.3L9.1 8.4L12 2.5Z" />
@@ -66,7 +85,8 @@ function CardProduto(
 
                 <?php if ($temDesconto): ?>
 
-                    <div class="produto-preco-linha d-flex align-items-center justify-content-between px-2 py-1 text-nowrap mt-auto">
+                    <div
+                        class="produto-preco-linha d-flex align-items-center justify-content-between px-2 py-1 text-nowrap mt-auto">
 
                         <span class="text-secondary">
                             De:
@@ -78,7 +98,8 @@ function CardProduto(
 
                     </div>
 
-                    <div class="produto-preco-linha produto-preco-normal d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap">
+                    <div
+                        class="produto-preco-linha produto-preco-normal d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap">
 
                         <span>
                             Por:
@@ -92,7 +113,8 @@ function CardProduto(
 
                 <?php else: ?>
 
-                    <div class="produto-preco-linha produto-preco-normal d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap mt-auto">
+                    <div
+                        class="produto-preco-linha produto-preco-normal d-flex align-items-center justify-content-between text-dark px-2 py-1 text-nowrap mt-auto">
 
                         <span>
                             Preço:
@@ -112,5 +134,22 @@ function CardProduto(
 
     </article>
 
-<?php
+    <script>
+        document.addEventListener("click", function (event) {
+            const botao = event.target.closest(".tamanho-btn");
+
+            if (!botao) return;
+
+            const grupo = botao.parentElement;
+
+            grupo.querySelectorAll(".tamanho-btn").forEach((btn) => {
+                btn.classList.remove("selecionado");
+            });
+
+            botao.classList.add("selecionado");
+        });
+    </script>
+
+    <?php
 }
+

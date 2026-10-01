@@ -246,6 +246,135 @@ class ProdutoService
         return $produtos;
     }
 
+    public function filtrarCategoria(
+        $precoMin,
+        $precoMax,
+        $isAutoral,
+        $cor,
+        array $tamanho = [],
+        array $categorias = []
+    ): array {
+        $sql = "
+        SELECT
+            p.*,
+            pv.id_variacao,
+            pv.tamanho,
+            pv.cor,
+            i.imagem_url AS variacao_imagem_url
+        FROM produto p
+
+        INNER JOIN produto_categoria pc
+            ON pc.id_produto = p.id_produto
+
+        INNER JOIN (
+            SELECT
+                id_variacao,
+                id_produto,
+                tamanho,
+                cor
+            FROM (
+                SELECT
+                    pv.id_variacao,
+                    pv.id_produto,
+                    pv.tamanho,
+                    pv.cor,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY pv.id_produto, pv.cor
+                        ORDER BY pv.id_variacao
+                    ) AS rn
+                FROM produto_variacao pv
+            ) AS variacoes
+            WHERE rn = 1
+        ) pv
+            ON pv.id_produto = p.id_produto
+
+        LEFT JOIN imagem_variacao i
+            ON i.id_variacao = pv.id_variacao
+
+        WHERE p.ativo = TRUE
+    ";
+
+        $params = [];
+
+        if (!empty($categorias)) {
+            $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+
+            $sql .= " AND pc.id_categoria IN ($placeholders)";
+
+            $params = $categorias;
+        }
+
+        if (!empty($precoMin)) {
+            $sql .= " AND p.preco >= ?";
+            $params[] = (float) $precoMin;
+        }
+
+        if (!empty($precoMax)) {
+            $sql .= " AND p.preco <= ?";
+            $params[] = (float) $precoMax;
+        }
+
+        if ($isAutoral !== null) {
+            $sql .= " AND p.is_autoral = ?";
+
+            $isAutoral = filter_var(
+                $isAutoral,
+                FILTER_VALIDATE_BOOLEAN,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            $params[] = (bool) $isAutoral;
+        }
+
+        if (!empty($tamanho)) {
+            $placeholders = implode(',', array_fill(0, count($tamanho), '?'));
+
+            $sql .= " AND pv.tamanho IN ($placeholders)";
+
+            $params = array_merge($params, $tamanho);
+        }
+
+        if (!empty($cor)) {
+            $sql .= " AND pv.cor = ?";
+            $params[] = $cor;
+        }
+
+        $sql .= " ORDER BY p.id_produto DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($produtos as &$produto) {
+
+            $sqlTamanhos = "
+        SELECT DISTINCT tamanho
+        FROM produto_variacao
+        WHERE id_produto = ?
+          AND tamanho IS NOT NULL
+          AND tamanho <> ''
+        ORDER BY tamanho
+    ";
+
+            $stmtTamanhos = $this->db->prepare($sqlTamanhos);
+            $stmtTamanhos->execute([
+                $produto['id_produto']
+            ]);
+
+            $produto['tamanhos'] = $stmtTamanhos->fetchAll(
+                PDO::FETCH_COLUMN
+            );
+        }
+
+        unset($produto);
+
+        return $produtos;
+    }
+
+
+
+
     private function categoriaExiste(int $categoriaId): bool
     {
         $stmt = $this->db->prepare(
@@ -301,12 +430,13 @@ class ProdutoService
 
         return $categoriasPorProduto;
     }
-    
-    public function pesquisar(string $pesquisa) : array {
+
+    public function pesquisar(string $pesquisa): array
+    {
         $sql = "SELECT * FROM produto WHERE nome LIKE ?";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(["%".$pesquisa."%"]);
+        $stmt->execute(["%" . $pesquisa . "%"]);
 
         return $stmt->fetchAll();
     }

@@ -5,9 +5,9 @@ require_once __DIR__ . '/../../components/carrosselProdutos.php';
 
 $categoriaId = null;
 
-if (isset($_GET['categoriaId'])) {
+if (isset($_GET['categorias'])) {
 
-    $valorCategoria = (string) $_GET['categoriaId'];
+    $valorCategoria = (string) $_GET['categorias'];
 
     if (
         !ctype_digit($valorCategoria)
