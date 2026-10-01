@@ -344,7 +344,32 @@ class ProdutoService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($produtos as &$produto) {
+
+            $sqlTamanhos = "
+        SELECT DISTINCT tamanho
+        FROM produto_variacao
+        WHERE id_produto = ?
+          AND tamanho IS NOT NULL
+          AND tamanho <> ''
+        ORDER BY tamanho
+    ";
+
+            $stmtTamanhos = $this->db->prepare($sqlTamanhos);
+            $stmtTamanhos->execute([
+                $produto['id_produto']
+            ]);
+
+            $produto['tamanhos'] = $stmtTamanhos->fetchAll(
+                PDO::FETCH_COLUMN
+            );
+        }
+
+        unset($produto);
+
+        return $produtos;
     }
 
 

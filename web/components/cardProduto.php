@@ -7,6 +7,7 @@ function CardProduto(
     float $precoFinal,
     ?float $porcentagemDesconto,
     string $imagem,
+    array $tamanhos = []
 ): void {
 
     $estrelas = max(0, min(5, $estrelas));
@@ -18,12 +19,31 @@ function CardProduto(
     <article class="card border-0 rounded-0 overflow-hidden w-100">
 
         <div
-            class="hover-card d-flex justify-content-center align-items-center position-absolute bottom-0 start-0 w-100 border border-dark border-2 p-2 opacity-0 invisible z-3">
-            
+            class="hover-card d-flex flex-column justify-content-end align-items-center position-absolute bottom-0 start-0 w-100 border border-dark border-2 p-2 opacity-0 invisible z-3">
+
+            <h2 class="">
+                Tamanho:
+            </h2>
+            <div class="d-flex justify-content-center gap-2 mb-2">
+                <?php if (!empty($tamanhos)): ?>
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                        <?php foreach ($tamanhos as $tamanho): ?>
+                            <button type="button" class="btn btn-sm bg-white border rounded-2 px-3 py-1 tamanho-btn"
+                                data-tamanho="<?= htmlspecialchars($tamanho) ?>">
+                                <?= htmlspecialchars($tamanho) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+
             <button class="btn btn-success w-75">
                 Adicionar ao carrinho
             </button>
+
         </div>
+
 
         <div class="produto-card-imagem w-100 border border-dark border-2">
 
@@ -114,5 +134,22 @@ function CardProduto(
 
     </article>
 
+    <script>
+        document.addEventListener("click", function (event) {
+            const botao = event.target.closest(".tamanho-btn");
+
+            if (!botao) return;
+
+            const grupo = botao.parentElement;
+
+            grupo.querySelectorAll(".tamanho-btn").forEach((btn) => {
+                btn.classList.remove("selecionado");
+            });
+
+            botao.classList.add("selecionado");
+        });
+    </script>
+
     <?php
 }
+
