@@ -132,10 +132,34 @@ class ProdutoService
             p.preco,
             p.is_autoral,
             p.ativo,
-            COALESCE(ROUND(AVG(a.estrelas)), 0) AS estrelas
+
+            COALESCE(
+                ROUND(AVG(a.estrelas)),
+                0
+            ) AS estrelas,
+
+            d.porcentagem_desconto,
+
+            CASE
+                WHEN d.porcentagem_desconto IS NOT NULL
+                THEN ROUND(
+                    p.preco - (
+                        p.preco * d.porcentagem_desconto / 100
+                    ),
+                    2
+                )
+                ELSE p.preco
+            END AS preco_final
+
         FROM produto p
+
         LEFT JOIN avaliacao_produto a
             ON a.id_produto = p.id_produto
+
+        LEFT JOIN desconto d
+            ON d.id_produto = p.id_produto
+            AND d.ativo = TRUE
+
         WHERE p.ativo = 1
     SQL;
 
@@ -178,7 +202,8 @@ class ProdutoService
             p.descricao,
             p.preco,
             p.is_autoral,
-            p.ativo
+            p.ativo,
+            d.porcentagem_desconto
 
         ORDER BY p.id_produto DESC
     SQL;
@@ -202,9 +227,15 @@ class ProdutoService
 
             $produto['id_produto'] = $idProduto;
             $produto['preco'] = (float) $produto['preco'];
+            $produto['preco_final'] = (float) $produto['preco_final'];
             $produto['estrelas'] = (int) $produto['estrelas'];
             $produto['is_autoral'] = (bool) $produto['is_autoral'];
             $produto['ativo'] = (bool) $produto['ativo'];
+
+            $produto['porcentagem_desconto'] =
+                $produto['porcentagem_desconto'] !== null
+                ? (float) $produto['porcentagem_desconto']
+                : null;
 
             $produto['categorias'] =
                 $categoriasPorProduto[$idProduto] ?? [];
@@ -214,6 +245,79 @@ class ProdutoService
 
         return $produtos;
     }
+
+    public function filtrarCategoria($precoMin, $precoMax, $isAutoral, $cor, array $tamanho = [], array $categorias = []): array
+    {
+        $sql = "
+        SELECT pv.*, p.*, i.imagem_url
+        FROM produto p
+        INNER JOIN produto_categoria pc
+            ON pc.id_produto = p.id_produto
+        LEFT JOIN produto_variacao pv
+            ON pv.id_produto = p.id_produto
+        LEFT JOIN imagem_variacao i
+            ON i.id_variacao = pv.id_variacao
+        WHERE p.ativo = TRUE
+    ";
+
+        $params = [];
+
+        if (!empty($categorias)) {
+            $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+
+            $sql .= "
+            AND pc.id_categoria IN ($placeholders)
+        ";
+
+            $params = $categorias;
+        }
+        if (!empty($precoMin)) {
+            $sql .= "AND p.preco >= ?";
+
+            array_push($params, (float) $precoMin);
+        }
+        if (!empty($precoMax)) {
+            $sql .= "AND p.preco <= ?";
+
+            array_push($params, (float) $precoMax);
+        }
+        if ($isAutoral !== null) {
+            $sql .= " AND p.is_autoral = ?";
+
+            $isAutoral = filter_var(
+                $isAutoral,
+                FILTER_VALIDATE_BOOLEAN,
+                FILTER_NULL_ON_FAILURE
+            );
+
+            array_push($params, (bool) $isAutoral);
+        }
+        if (!empty($tamanho)) {
+            $placeholders = implode(',', array_fill(0, count($tamanho), '?'));
+
+            $sql .= "
+            AND pv.tamanho IN ($placeholders)
+        ";
+
+            $params = array_merge($params, $tamanho);
+        }
+        if (!empty($cor)) {
+            $sql .= "AND pv.cor = ?";
+
+            array_push($params, $cor);
+
+        } else if (empty($params)) {
+            return $this->listar();
+        }
+
+        $sql .= " ORDER BY p.id_produto DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
     private function categoriaExiste(int $categoriaId): bool
     {

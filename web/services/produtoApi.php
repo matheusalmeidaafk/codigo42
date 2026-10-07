@@ -68,7 +68,7 @@ function buscarProdutosApi(?int $categoriaId = null): array
     $rota = '/produtos';
 
     if ($categoriaId !== null) {
-        $rota .= '?categoriaId=' . $categoriaId;
+        $rota .= '?categorias=' . $categoriaId;
     }
 
     return requisitarApi($rota);

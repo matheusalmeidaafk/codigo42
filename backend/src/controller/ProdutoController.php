@@ -70,48 +70,39 @@ class ProdutoController
         }
     }
 
-    public function listar(): void
-    {
+     public function listar() : void {
         try {
-            $categoria = isset($_GET['categoria'])
-                ? trim((string) $_GET['categoria'])
-                : null;
+            $categorias = $_GET['categorias'] ?? '';
 
-            $categoriaId = null;
-
-            if (isset($_GET['categoriaId'])) {
-                if (
-                    !ctype_digit((string) $_GET['categoriaId'])
-                    || (int) $_GET['categoriaId'] <= 0
-                ) {
-                    throw new Exception('categoriaId inválido.');
-                }
-
-                $categoriaId = (int) $_GET['categoriaId'];
-            }
-
-            if ($categoria === '') {
-                $categoria = null;
-            }
-
-            $produtos = $this->service->listar(
-                $categoria,
-                $categoriaId
+            $categorias = array_filter(
+                array_map('intval', explode(',', $categorias))
             );
+
+            $precoMin = $_GET['precoMin'] ?? '';
+            $precoMax = $_GET['precoMax'] ?? '';
+            
+            $isAutoral = $_GET['autoral'] ?? null;
+
+            $cor = $_GET['cor'] ?? '';
+            $tamanhos = $_GET['tamanhos'] ?? '';
+
+            
+            $tamanhos = array_filter(
+                array_map('strval', explode(',', $tamanhos))
+            );
+
+            $produtos = $this->service->filtrarCategoria($precoMin, $precoMax, $isAutoral, $cor, $tamanhos, $categorias);
 
             http_response_code(200);
+            
+            echo json_encode($produtos);
 
-            echo json_encode(
-                $produtos,
-                JSON_UNESCAPED_UNICODE
-            );
         } catch (Exception $e) {
             http_response_code(400);
 
-            echo json_encode(
-                ['erro' => $e->getMessage()],
-                JSON_UNESCAPED_UNICODE
-            );
+            echo json_encode([
+                "erro" => $e->getMessage()
+            ]);
         }
     }
 
