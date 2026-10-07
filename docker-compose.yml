@@ -13,6 +13,18 @@ services:
     env_file:
       - ./backend/.env
 
+    command: >
+      sh -c "
+        echo '====================================' &&
+        echo ' Código 42 - Iniciando Backend' &&
+        echo '====================================' &&
+        echo '' &&
+        echo '[SWAGGER] Verificando documentação...' &&
+        php /var/www/html/docs/gerar-swagger.php &&
+        echo '[BACKEND] Iniciando Apache...' &&
+        apache2-foreground
+      "
+
     restart: unless-stopped
 
 
