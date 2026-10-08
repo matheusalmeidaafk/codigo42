@@ -1,62 +1,58 @@
-const precoMinInput = document.getElementById('precoMin');
-const precoMaxInput = document.getElementById('precoMax');
+document.addEventListener("DOMContentLoaded", () => {
 
-const valorPrecoMin = document.getElementById('valorPrecoMin');
-const valorPrecoMax = document.getElementById('valorPrecoMax');
+    /*
+     * ============================================================
+     * ELEMENTOS DO FILTRO
+     * ============================================================
+     */
 
-const faixaPreco = document.getElementById('faixaPreco');
-
-
-function formatarPreco(valor) {
-    return Number(valor).toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
+    const precoMinInput = document.getElementById("precoMin");
+    const precoMaxInput = document.getElementById("precoMax");
 
 
-function atualizarPreco() {
+    /*
+     * ============================================================
+     * PREÇO
+     * ============================================================
+     *
+     * O componente de filtro pode ser reutilizado em páginas
+     * diferentes. Portanto, se os campos não existirem,
+     * simplesmente não executamos essa parte.
+     */
 
-    const min = Number(precoMinInput.value);
-    const max = Number(precoMaxInput.value);
+    if (precoMinInput && precoMaxInput) {
 
-    valorPrecoMin.textContent = formatarPreco(min);
-    valorPrecoMax.textContent = formatarPreco(max);
+        precoMinInput.addEventListener("input", () => {
 
+            const min = parseFloat(precoMinInput.value);
+            const max = parseFloat(precoMaxInput.value);
 
-    const limiteMin = Number(precoMinInput.min);
-    const limiteMax = Number(precoMinInput.max);
+            if (
+                !isNaN(min)
+                && !isNaN(max)
+                && min > max
+            ) {
+                precoMaxInput.value = min;
+            }
 
-    const porcentagemMin =
-        ((min - limiteMin) / (limiteMax - limiteMin)) * 100;
-
-    const porcentagemMax =
-        ((max - limiteMin) / (limiteMax - limiteMin)) * 100;
-
-
-    faixaPreco.style.left = `${porcentagemMin}%`;
-    faixaPreco.style.width = `${porcentagemMax - porcentagemMin}%`;
-}
+        });
 
 
-precoMinInput.addEventListener('input', function () {
+        precoMaxInput.addEventListener("input", () => {
 
-    if (Number(precoMinInput.value) > Number(precoMaxInput.value)) {
-        precoMinInput.value = precoMaxInput.value;
+            const min = parseFloat(precoMinInput.value);
+            const max = parseFloat(precoMaxInput.value);
+
+            if (
+                !isNaN(min)
+                && !isNaN(max)
+                && max < min
+            ) {
+                precoMinInput.value = max;
+            }
+
+        });
+
     }
 
-    atualizarPreco();
 });
-
-
-precoMaxInput.addEventListener('input', function () {
-
-    if (Number(precoMaxInput.value) < Number(precoMinInput.value)) {
-        precoMaxInput.value = precoMinInput.value;
-    }
-
-    atualizarPreco();
-});
-
-
-atualizarPreco();

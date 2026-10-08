@@ -31,6 +31,11 @@ button[aria-expanded="false"] .filtro-seta {
     border-radius: 10px;
 }
 
+#precoMax:active,
+#precoMin:active {
+    z-index: 4;
+}
+
 #faixaPreco {
     position: absolute;
     top: 50%;

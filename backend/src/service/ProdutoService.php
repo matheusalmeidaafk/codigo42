@@ -105,7 +105,8 @@ class ProdutoService
                 $nome,
                 $descricao,
                 $preco,
-                $ativo
+                $ativo,
+                true
             );
         } catch (Throwable $e) {
             if ($this->db->inTransaction()) {
