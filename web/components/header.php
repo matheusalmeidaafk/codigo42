@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . '/searchBar.php'; ?>
+
 <header class="bg-dark text-light">
     <div class="container-fluid px-5 py-3">
         <div class="row align-items-center">
@@ -9,19 +11,7 @@
             </div>
 
             <div class="col-8 col-md-6">
-                <form class="d-flex mx-auto searchBar" role="search">
-                    <input class="form-control me-2 bg-dark text-light border-secondary" type="search"
-                        placeholder="Search" aria-label="Search">
-
-                    <button class="btn btn-outline-success d-flex align-items-center gap-2" type="submit">
-                        Buscar
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-search" viewBox="0 0 16 16">
-                            <path
-                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                        </svg>
-                    </button>
-                </form>
+                <?php renderSearchBar(); ?>
             </div>
 
             <div class="col-12 col-md-3 mt-3 mt-md-0">
