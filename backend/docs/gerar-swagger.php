@@ -2,26 +2,6 @@
 
 declare(strict_types=1);
 
-/*
-|--------------------------------------------------------------------------
-| CÓDIGO 42 - SINCRONIZADOR AUTOMÁTICO DO SWAGGER
-|--------------------------------------------------------------------------
-|
-| Responsabilidades:
-|
-| 1. Ler src/public/index.php
-| 2. Detectar rotas da API
-| 3. Ler docs/openapi.yaml
-| 4. Adicionar rotas novas automaticamente
-| 5. Remover rotas automáticas que não existem mais
-| 6. Preservar toda documentação criada manualmente
-|
-| Rotas geradas automaticamente recebem:
-|
-| x-auto-generated: true
-|
-*/
-
 $arquivoRotas = __DIR__ . '/../src/public/index.php';
 $arquivoSwagger = __DIR__ . '/openapi.yaml';
 
@@ -30,25 +10,11 @@ $rotasIgnoradas = [
     '/docs/openapi.yaml'
 ];
 
-
-/*
-|--------------------------------------------------------------------------
-| INÍCIO
-|--------------------------------------------------------------------------
-*/
-
 echo PHP_EOL;
 echo "==================================================" . PHP_EOL;
 echo "       Código 42 - Sincronizador Swagger" . PHP_EOL;
 echo "==================================================" . PHP_EOL;
 echo PHP_EOL;
-
-
-/*
-|--------------------------------------------------------------------------
-| VERIFICAR ARQUIVOS
-|--------------------------------------------------------------------------
-*/
 
 if (!file_exists($arquivoRotas)) {
     erro("index.php não encontrado: {$arquivoRotas}");
@@ -61,13 +27,6 @@ if (!file_exists($arquivoSwagger)) {
 echo "[OK] index.php encontrado." . PHP_EOL;
 echo "[OK] openapi.yaml encontrado." . PHP_EOL;
 
-
-/*
-|--------------------------------------------------------------------------
-| LER ARQUIVOS
-|--------------------------------------------------------------------------
-*/
-
 $conteudoRotas = file_get_contents($arquivoRotas);
 $conteudoSwagger = file_get_contents($arquivoSwagger);
 
@@ -79,13 +38,6 @@ if ($conteudoSwagger === false) {
     erro("Não foi possível ler o openapi.yaml.");
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| DETECTAR ROTAS DA API
-|--------------------------------------------------------------------------
-*/
-
 echo PHP_EOL;
 echo "[SWAGGER] Analisando index.php..." . PHP_EOL;
 echo PHP_EOL;
@@ -96,7 +48,6 @@ $rotasApi = extrairRotasApi(
 );
 
 foreach ($rotasApi as $rota) {
-
     echo "[ROTA] "
         . str_pad($rota['metodo'], 7)
         . " "
@@ -111,13 +62,6 @@ echo "[OK] "
     . " rota(s) encontrada(s) na API."
     . PHP_EOL;
 
-
-/*
-|--------------------------------------------------------------------------
-| REMOVER ROTAS AUTOMÁTICAS ANTIGAS
-|--------------------------------------------------------------------------
-*/
-
 echo PHP_EOL;
 echo "--------------------------------------------------" . PHP_EOL;
 echo " Verificando rotas removidas" . PHP_EOL;
@@ -131,14 +75,7 @@ $rotasAutomaticas = extrairRotasAutomaticas(
 $rotasRemovidas = [];
 
 foreach ($rotasAutomaticas as $rotaAutomatica) {
-
-    if (
-        !rotaExisteNaApi(
-            $rotaAutomatica,
-            $rotasApi
-        )
-    ) {
-
+    if (!rotaExisteNaApi($rotaAutomatica, $rotasApi)) {
         echo "[REMOVIDA] "
             . str_pad($rotaAutomatica['metodo'], 7)
             . " "
@@ -158,27 +95,9 @@ if (empty($rotasRemovidas)) {
     echo "[OK] Nenhuma rota automática precisa ser removida." . PHP_EOL;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| RELER ROTAS DO SWAGGER
-|--------------------------------------------------------------------------
-|
-| Como podemos ter removido alguma rota acima,
-| analisamos novamente o conteúdo atualizado.
-|
-*/
-
 $rotasSwagger = extrairRotasSwagger(
     $conteudoSwagger
 );
-
-
-/*
-|--------------------------------------------------------------------------
-| PROCURAR ROTAS NOVAS
-|--------------------------------------------------------------------------
-*/
 
 echo PHP_EOL;
 echo "--------------------------------------------------" . PHP_EOL;
@@ -189,14 +108,7 @@ echo PHP_EOL;
 $rotasNovas = [];
 
 foreach ($rotasApi as $rota) {
-
-    if (
-        rotaExisteNoSwagger(
-            $rota,
-            $rotasSwagger
-        )
-    ) {
-
+    if (rotaExisteNoSwagger($rota, $rotasSwagger)) {
         echo "[OK]   "
             . str_pad($rota['metodo'], 7)
             . " "
@@ -215,32 +127,14 @@ foreach ($rotasApi as $rota) {
     $rotasNovas[] = $rota;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| ADICIONAR ROTAS NOVAS
-|--------------------------------------------------------------------------
-*/
-
 if (!empty($rotasNovas)) {
-
     echo PHP_EOL;
     echo "[SWAGGER] Adicionando rotas novas..." . PHP_EOL;
     echo PHP_EOL;
 
-    /*
-     * Agrupa métodos pelo mesmo path.
-     *
-     * Exemplo:
-     *
-     * GET  /pedidos
-     * POST /pedidos
-     */
-
     $rotasAgrupadas = [];
 
     foreach ($rotasNovas as $rota) {
-
         $path = $rota['rota'];
 
         if (!isset($rotasAgrupadas[$path])) {
@@ -250,36 +144,13 @@ if (!empty($rotasNovas)) {
         $rotasAgrupadas[$path][] = $rota;
     }
 
-
     foreach ($rotasAgrupadas as $path => $metodos) {
-
-        /*
-         * PATH já existe no Swagger.
-         *
-         * Exemplo:
-         *
-         * /produtos:
-         *   get:
-         *
-         * E agora apareceu:
-         *
-         * PUT /produtos
-         */
-
-        if (
-            pathExisteNoSwagger(
-                $path,
-                $conteudoSwagger
-            )
-        ) {
-
+        if (pathExisteNoSwagger($path, $conteudoSwagger)) {
             foreach ($metodos as $rota) {
-
-                $conteudoSwagger =
-                    adicionarMetodoEmPathExistente(
-                        $conteudoSwagger,
-                        $rota
-                    );
+                $conteudoSwagger = adicionarMetodoEmPathExistente(
+                    $conteudoSwagger,
+                    $rota
+                );
 
                 echo "[ADICIONADA] "
                     . str_pad($rota['metodo'], 7)
@@ -291,14 +162,7 @@ if (!empty($rotasNovas)) {
             continue;
         }
 
-
-        /*
-         * PATH completamente novo.
-         */
-
-        $conteudoSwagger = rtrim(
-            $conteudoSwagger
-        );
+        $conteudoSwagger = rtrim($conteudoSwagger);
 
         $conteudoSwagger .= PHP_EOL;
         $conteudoSwagger .= PHP_EOL;
@@ -309,7 +173,6 @@ if (!empty($rotasNovas)) {
         );
 
         foreach ($metodos as $rota) {
-
             echo "[ADICIONADA] "
                 . str_pad($rota['metodo'], 7)
                 . " "
@@ -319,19 +182,11 @@ if (!empty($rotasNovas)) {
     }
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| SALVAR SOMENTE SE HOUVE ALTERAÇÃO
-|--------------------------------------------------------------------------
-*/
-
 $houveAlteracao =
     !empty($rotasNovas)
     || !empty($rotasRemovidas);
 
 if (!$houveAlteracao) {
-
     echo PHP_EOL;
     echo "==================================================" . PHP_EOL;
     echo "[OK] Swagger já está sincronizado." . PHP_EOL;
@@ -350,18 +205,10 @@ if ($resultado === false) {
     erro("Não foi possível salvar openapi.yaml.");
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| RESULTADO
-|--------------------------------------------------------------------------
-*/
-
 echo PHP_EOL;
 echo "==================================================" . PHP_EOL;
 echo " Swagger sincronizado com sucesso" . PHP_EOL;
 echo "==================================================" . PHP_EOL;
-
 echo PHP_EOL;
 
 echo "Rotas adicionadas: "
@@ -376,14 +223,6 @@ echo PHP_EOL;
 
 exit(0);
 
-
-/*
-|--------------------------------------------------------------------------
-| FUNÇÕES
-|--------------------------------------------------------------------------
-*/
-
-
 function erro(string $mensagem): never
 {
     echo PHP_EOL;
@@ -393,29 +232,11 @@ function erro(string $mensagem): never
     exit(1);
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR ROTAS DA API
-|--------------------------------------------------------------------------
-*/
-
 function extrairRotasApi(
     string $conteudo,
     array $rotasIgnoradas
 ): array {
-
     $rotas = [];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ROTAS ESTÁTICAS
-    |--------------------------------------------------------------------------
-    |
-    | $method === "GET" && $uri === "/produtos"
-    |
-    */
 
     $padraoEstatico =
         '/\$method\s*===\s*["\']'
@@ -435,7 +256,6 @@ function extrairRotasApi(
     );
 
     foreach ($matches as $match) {
-
         adicionarRota(
             $rotas,
             strtoupper($match[1]),
@@ -443,17 +263,6 @@ function extrairRotasApi(
             $rotasIgnoradas
         );
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ROTAS DINÂMICAS
-    |--------------------------------------------------------------------------
-    |
-    | $method === "DELETE"
-    | && preg_match("#^/usuarios/(\d+)$#", $uri, $matches)
-    |
-    */
 
     $padraoDinamico =
         '/\$method\s*===\s*["\']'
@@ -473,10 +282,7 @@ function extrairRotasApi(
     );
 
     foreach ($matches as $match) {
-
-        $metodo = strtoupper(
-            $match[1]
-        );
+        $metodo = strtoupper($match[1]);
 
         $rota = converterRegexParaRota(
             $match[2]
@@ -494,20 +300,12 @@ function extrairRotasApi(
         );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | ORDENAR
-    |--------------------------------------------------------------------------
-    */
-
     usort(
         $rotas,
         function (
             array $a,
             array $b
         ): int {
-
             $comparacao = strcmp(
                 $a['rota'],
                 $b['rota']
@@ -527,37 +325,17 @@ function extrairRotasApi(
     return $rotas;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| ADICIONAR ROTA À LISTA
-|--------------------------------------------------------------------------
-*/
-
 function adicionarRota(
     array &$rotas,
     string $metodo,
     string $rota,
     array $rotasIgnoradas
 ): void {
-
-    if (
-        in_array(
-            $rota,
-            $rotasIgnoradas,
-            true
-        )
-    ) {
+    if (in_array($rota, $rotasIgnoradas, true)) {
         return;
     }
 
-
-    /*
-     * Evita duplicação.
-     */
-
     foreach ($rotas as $existente) {
-
         if (
             $existente['metodo'] === $metodo
             && $existente['rota'] === $rota
@@ -572,40 +350,21 @@ function adicionarRota(
     ];
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| CONVERTER REGEX EM PATH
-|--------------------------------------------------------------------------
-*/
-
 function converterRegexParaRota(
     string $regex
 ): ?string {
-
     $regex = trim($regex);
-
-
-    /*
-     * Remove delimitadores #
-     */
 
     if (
         str_starts_with($regex, '#')
         && str_ends_with($regex, '#')
     ) {
-
         $regex = substr(
             $regex,
             1,
             -1
         );
     }
-
-
-    /*
-     * Remove ^ e $
-     */
 
     $regex = preg_replace(
         '/^\^/',
@@ -619,18 +378,7 @@ function converterRegexParaRota(
         $regex
     );
 
-
-    /*
-     * Parâmetro numérico.
-     */
-
-    if (
-        str_contains(
-            $regex,
-            '(\d+)'
-        )
-    ) {
-
+    if (str_contains($regex, '(\d+)')) {
         $nome = descobrirNomeParametroNumerico(
             $regex
         );
@@ -643,18 +391,7 @@ function converterRegexParaRota(
         );
     }
 
-
-    /*
-     * Parâmetro textual.
-     */
-
-    if (
-        str_contains(
-            $regex,
-            '([^/]+)'
-        )
-    ) {
-
+    if (str_contains($regex, '([^/]+)')) {
         $nome = descobrirNomeParametroTexto(
             $regex
         );
@@ -666,16 +403,10 @@ function converterRegexParaRota(
         );
     }
 
-
-    /*
-     * Regex desconhecida.
-     */
-
     if (
         str_contains($regex, '(')
         || str_contains($regex, ')')
     ) {
-
         echo "[AVISO] Regex não reconhecida: "
             . $regex
             . PHP_EOL;
@@ -686,53 +417,25 @@ function converterRegexParaRota(
     return $regex;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| NOMES DOS PARÂMETROS
-|--------------------------------------------------------------------------
-*/
-
 function descobrirNomeParametroNumerico(
     string $regex
 ): string {
-
-    /*
-     * Atualmente nossas rotas numéricas
-     * utilizam id.
-     */
-
     return 'id';
 }
-
 
 function descobrirNomeParametroTexto(
     string $regex
 ): string {
-
-    if (
-        str_contains(
-            $regex,
-            '/produtos/'
-        )
-    ) {
+    if (str_contains($regex, '/produtos/')) {
         return 'pesquisa';
     }
 
     return 'parametro';
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR ROTAS DO SWAGGER
-|--------------------------------------------------------------------------
-*/
-
 function extrairRotasSwagger(
     string $conteudo
 ): array {
-
     $rotas = [];
 
     $linhas = preg_split(
@@ -744,11 +447,7 @@ function extrairRotasSwagger(
     $rotaAtual = null;
 
     foreach ($linhas as $linha) {
-
-        if (
-            trim($linha) === 'paths:'
-        ) {
-
+        if (trim($linha) === 'paths:') {
             $dentroPaths = true;
 
             continue;
@@ -758,13 +457,6 @@ function extrairRotasSwagger(
             continue;
         }
 
-
-        /*
-         * PATH
-         *
-         *   /produtos:
-         */
-
         if (
             preg_match(
                 '/^\s{2}(\/[^:]+):\s*$/',
@@ -772,20 +464,12 @@ function extrairRotasSwagger(
                 $match
             )
         ) {
-
             $rotaAtual = trim(
                 $match[1]
             );
 
             continue;
         }
-
-
-        /*
-         * MÉTODO
-         *
-         *     get:
-         */
 
         if (
             $rotaAtual !== null
@@ -797,7 +481,6 @@ function extrairRotasSwagger(
                 $match
             )
         ) {
-
             $rotas[] = [
                 'metodo' => strtoupper(
                     $match[1]
@@ -810,24 +493,9 @@ function extrairRotasSwagger(
     return $rotas;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR ROTAS AUTOMÁTICAS
-|--------------------------------------------------------------------------
-|
-| Somente métodos que possuem:
-|
-| x-auto-generated: true
-|
-| podem ser removidos automaticamente.
-|
-*/
-
 function extrairRotasAutomaticas(
     string $conteudo
 ): array {
-
     $rotas = [];
 
     $linhas = preg_split(
@@ -840,13 +508,8 @@ function extrairRotasAutomaticas(
     $metodoAtual = null;
     $metodoAutomatico = false;
 
-
     foreach ($linhas as $linha) {
-
-        if (
-            trim($linha) === 'paths:'
-        ) {
-
+        if (trim($linha) === 'paths:') {
             $dentroPaths = true;
 
             continue;
@@ -856,11 +519,6 @@ function extrairRotasAutomaticas(
             continue;
         }
 
-
-        /*
-         * Novo PATH.
-         */
-
         if (
             preg_match(
                 '/^\s{2}(\/[^:]+):\s*$/',
@@ -868,17 +526,11 @@ function extrairRotasAutomaticas(
                 $match
             )
         ) {
-
-            /*
-             * Salva método anterior.
-             */
-
             if (
                 $pathAtual !== null
                 && $metodoAtual !== null
                 && $metodoAutomatico
             ) {
-
                 adicionarRotaAutomatica(
                     $rotas,
                     $metodoAtual,
@@ -896,11 +548,6 @@ function extrairRotasAutomaticas(
             continue;
         }
 
-
-        /*
-         * Novo método.
-         */
-
         if (
             preg_match(
                 '/^\s{4}'
@@ -910,17 +557,11 @@ function extrairRotasAutomaticas(
                 $match
             )
         ) {
-
-            /*
-             * Salva método anterior.
-             */
-
             if (
                 $pathAtual !== null
                 && $metodoAtual !== null
                 && $metodoAutomatico
             ) {
-
                 adicionarRotaAutomatica(
                     $rotas,
                     $metodoAtual,
@@ -937,11 +578,6 @@ function extrairRotasAutomaticas(
             continue;
         }
 
-
-        /*
-         * Marcador automático.
-         */
-
         if (
             $metodoAtual !== null
             && preg_match(
@@ -949,22 +585,15 @@ function extrairRotasAutomaticas(
                 $linha
             )
         ) {
-
             $metodoAutomatico = true;
         }
     }
-
-
-    /*
-     * Último método do arquivo.
-     */
 
     if (
         $pathAtual !== null
         && $metodoAtual !== null
         && $metodoAutomatico
     ) {
-
         adicionarRotaAutomatica(
             $rotas,
             $metodoAtual,
@@ -975,15 +604,12 @@ function extrairRotasAutomaticas(
     return $rotas;
 }
 
-
 function adicionarRotaAutomatica(
     array &$rotas,
     string $metodo,
     string $path
 ): void {
-
     foreach ($rotas as $rota) {
-
         if (
             $rota['metodo'] === $metodo
             && $rota['rota'] === $path
@@ -998,20 +624,11 @@ function adicionarRotaAutomatica(
     ];
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| VERIFICAÇÕES
-|--------------------------------------------------------------------------
-*/
-
 function rotaExisteNaApi(
     array $rota,
     array $rotasApi
 ): bool {
-
     foreach ($rotasApi as $rotaApi) {
-
         if (
             $rotaApi['metodo'] === $rota['metodo']
             && $rotaApi['rota'] === $rota['rota']
@@ -1023,14 +640,11 @@ function rotaExisteNaApi(
     return false;
 }
 
-
 function rotaExisteNoSwagger(
     array $rota,
     array $rotasSwagger
 ): bool {
-
     foreach ($rotasSwagger as $swagger) {
-
         if (
             $swagger['metodo'] === $rota['metodo']
             && $swagger['rota'] === $rota['rota']
@@ -1042,30 +656,20 @@ function rotaExisteNoSwagger(
     return false;
 }
 
-
 function pathExisteNoSwagger(
     string $path,
     string $conteudo
 ): bool {
-
     return localizarBlocoPath(
         $conteudo,
         $path
     ) !== null;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| LOCALIZAR PATH
-|--------------------------------------------------------------------------
-*/
-
 function localizarBlocoPath(
     string $conteudo,
     string $path
 ): ?array {
-
     $pathEscapado = preg_quote(
         $path,
         '~'
@@ -1097,22 +701,13 @@ function localizarBlocoPath(
     ];
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| GERAR NOVO PATH
-|--------------------------------------------------------------------------
-*/
-
 function gerarBlocoPath(
     string $path,
     array $rotas
 ): string {
-
     $yaml = "  {$path}:" . PHP_EOL;
 
     foreach ($rotas as $rota) {
-
         $yaml .= gerarBlocoMetodo(
             $rota
         );
@@ -1121,17 +716,9 @@ function gerarBlocoPath(
     return $yaml;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| GERAR MÉTODO AUTOMÁTICO
-|--------------------------------------------------------------------------
-*/
-
 function gerarBlocoMetodo(
     array $rota
 ): string {
-
     $metodo = strtolower(
         $rota['metodo']
     );
@@ -1141,65 +728,34 @@ function gerarBlocoMetodo(
     $yaml = '';
 
     $yaml .= "    {$metodo}:" . PHP_EOL;
-
-    /*
-     * ESSENCIAL:
-     *
-     * É essa marca que permite apagar
-     * posteriormente somente documentação
-     * criada automaticamente.
-     */
-
     $yaml .= "      x-auto-generated: true" . PHP_EOL;
-
     $yaml .= "      tags:" . PHP_EOL;
     $yaml .= "        - Auto" . PHP_EOL;
-
     $yaml .= "      summary: Rota detectada automaticamente" . PHP_EOL;
-
     $yaml .= "      description: >-" . PHP_EOL;
     $yaml .= "        Esta rota foi detectada automaticamente a partir do index.php." . PHP_EOL;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PARÂMETROS DO PATH
-    |--------------------------------------------------------------------------
-    */
 
     $parametros = extrairParametrosPath(
         $path
     );
 
     if (!empty($parametros)) {
-
         $yaml .= "      parameters:" . PHP_EOL;
 
         foreach ($parametros as $parametro) {
-
             $yaml .= "        - name: {$parametro}" . PHP_EOL;
             $yaml .= "          in: path" . PHP_EOL;
             $yaml .= "          required: true" . PHP_EOL;
             $yaml .= "          schema:" . PHP_EOL;
 
             if ($parametro === 'id') {
-
                 $yaml .= "            type: integer" . PHP_EOL;
                 $yaml .= "            format: int32" . PHP_EOL;
-
             } else {
-
                 $yaml .= "            type: string" . PHP_EOL;
             }
         }
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | BODY GENÉRICO
-    |--------------------------------------------------------------------------
-    */
 
     if (
         in_array(
@@ -1212,7 +768,6 @@ function gerarBlocoMetodo(
             true
         )
     ) {
-
         $yaml .= "      requestBody:" . PHP_EOL;
         $yaml .= "        required: false" . PHP_EOL;
         $yaml .= "        content:" . PHP_EOL;
@@ -1221,13 +776,6 @@ function gerarBlocoMetodo(
         $yaml .= "              type: object" . PHP_EOL;
         $yaml .= "              additionalProperties: true" . PHP_EOL;
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RESPONSES
-    |--------------------------------------------------------------------------
-    */
 
     $yaml .= "      responses:" . PHP_EOL;
 
@@ -1245,17 +793,9 @@ function gerarBlocoMetodo(
     return $yaml;
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| EXTRAIR PARÂMETROS
-|--------------------------------------------------------------------------
-*/
-
 function extrairParametrosPath(
     string $path
 ): array {
-
     preg_match_all(
         '/\{([^}]+)\}/',
         $path,
@@ -1265,25 +805,16 @@ function extrairParametrosPath(
     return $matches[1] ?? [];
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| ADICIONAR MÉTODO EM PATH EXISTENTE
-|--------------------------------------------------------------------------
-*/
-
 function adicionarMetodoEmPathExistente(
     string $conteudo,
     array $rota
 ): string {
-
     $bloco = localizarBlocoPath(
         $conteudo,
         $rota['rota']
     );
 
     if ($bloco === null) {
-
         echo "[AVISO] Path não localizado: "
             . $rota['rota']
             . PHP_EOL;
@@ -1295,11 +826,6 @@ function adicionarMetodoEmPathExistente(
         $rota['metodo']
     );
 
-
-    /*
-     * Segurança contra duplicação.
-     */
-
     if (
         preg_match(
             '/^ {4}'
@@ -1310,11 +836,6 @@ function adicionarMetodoEmPathExistente(
     ) {
         return $conteudo;
     }
-
-
-    /*
-     * Acrescenta método.
-     */
 
     $novoBloco =
         rtrim($bloco['conteudo'])
@@ -1329,18 +850,10 @@ function adicionarMetodoEmPathExistente(
     );
 }
 
-
-/*
-|--------------------------------------------------------------------------
-| REMOVER MÉTODO AUTOMÁTICO
-|--------------------------------------------------------------------------
-*/
-
 function removerMetodoAutomatico(
     string $conteudo,
     array $rota
 ): string {
-
     $bloco = localizarBlocoPath(
         $conteudo,
         $rota['rota']
@@ -1360,18 +873,6 @@ function removerMetodoAutomatico(
         $metodo,
         '~'
     );
-
-
-    /*
-     * Captura somente o método específico.
-     *
-     * Começa em:
-     *
-     *     get:
-     *
-     * e termina no próximo método de quatro
-     * espaços ou no fim do path.
-     */
 
     $padraoMetodo =
         '~'
@@ -1395,21 +896,12 @@ function removerMetodoAutomatico(
 
     $conteudoMetodo = $matchMetodo[0][0];
 
-
-    /*
-     * Segurança:
-     *
-     * Só remove se realmente foi gerado
-     * automaticamente.
-     */
-
     if (
         !preg_match(
             '/^ {6}x-auto-generated:\s*true\s*$/mi',
             $conteudoMetodo
         )
     ) {
-
         echo "[PROTEGIDA] "
             . $rota['metodo']
             . " "
@@ -1419,11 +911,6 @@ function removerMetodoAutomatico(
         return $conteudo;
     }
 
-
-    /*
-     * Remove método.
-     */
-
     $novoConteudoPath = substr_replace(
         $conteudoPath,
         '',
@@ -1431,26 +918,13 @@ function removerMetodoAutomatico(
         strlen($conteudoMetodo)
     );
 
-
-    /*
-     * Verifica se ainda existe algum método HTTP
-     * dentro do path.
-     */
-
     $possuiMetodos =
         preg_match(
             '/^ {4}(get|post|put|patch|delete):\s*$/mi',
             $novoConteudoPath
         ) === 1;
 
-
-    /*
-     * Se não sobrou nenhum método,
-     * remove o PATH inteiro.
-     */
-
     if (!$possuiMetodos) {
-
         return substr_replace(
             $conteudo,
             '',
@@ -1458,12 +932,6 @@ function removerMetodoAutomatico(
             strlen($bloco['conteudo'])
         );
     }
-
-
-    /*
-     * Caso ainda existam outros métodos,
-     * substitui somente o conteúdo do path.
-     */
 
     return substr_replace(
         $conteudo,
