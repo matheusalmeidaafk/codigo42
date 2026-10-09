@@ -7,6 +7,7 @@ use App\Controller\ProdutoController;
 use App\Middleware\AuthMiddleware;
 use App\Controller\AuthController;
 use App\Controller\UsuarioController;
+use App\Controller\BannerController;
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
@@ -47,6 +48,7 @@ $usuarioController = new UsuarioController();
 $authController = new AuthController();
 $produtoController = new ProdutoController();
 $categoriaController = new CategoriaController();
+$bannerController = new BannerController();
 
 /*
 |--------------------------------------------------------------------------
@@ -193,6 +195,31 @@ elseif (
     $id = (int) $matches[1];
 
     $categoriaController->getSubcategoria($id);
+}
+
+/*
+|--------------------------------------------------------------------------
+| BANNERS
+|--------------------------------------------------------------------------
+*/
+
+elseif ($method === "POST" && $uri === "/banners") {
+
+    $bannerController->criarBanner();
+
+} elseif ($method === "GET" && $uri === "/banners") {
+
+    $bannerController->listar();
+
+} elseif (
+    $method === "DELETE"
+    && preg_match("#^/banners/(\d+)$#", $uri, $matches)
+) {
+
+    $id = (int) $matches[1];
+
+    $bannerController->deletar($id);
+
 }
 
 /*
