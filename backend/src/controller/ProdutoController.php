@@ -30,6 +30,7 @@ class ProdutoController
             $nome = trim((string) ($dados['nome'] ?? ''));
             $descricao = trim((string) ($dados['descricao'] ?? ''));
             $precoInformado = $dados['preco'] ?? null;
+            $isAutoral = $dados['preco'] ?? false;
 
             if (!is_numeric($precoInformado)) {
                 throw new Exception('Preço do produto deve ser numérico.');
@@ -43,6 +44,7 @@ class ProdutoController
                 $descricao,
                 (float) $precoInformado,
                 true,
+                $isAutoral,
                 $categoriaIds
             );
 

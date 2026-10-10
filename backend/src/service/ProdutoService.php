@@ -24,6 +24,7 @@ class ProdutoService
         string $descricao,
         float $preco,
         bool $ativo,
+        bool $isAutoral,
         array $categoriaIds = []
     ): Produto {
         if ($imagemUrl === '') {
@@ -105,7 +106,8 @@ class ProdutoService
                 $nome,
                 $descricao,
                 $preco,
-                $ativo
+                $ativo,
+                $isAutoral
             );
         } catch (Throwable $e) {
             if ($this->db->inTransaction()) {
@@ -198,7 +200,7 @@ class ProdutoService
         GROUP BY
             p.id_produto,
             p.imagem_url,
-            p.nome,
+        p.nome,
             p.descricao,
             p.preco,
             p.is_autoral,
@@ -263,9 +265,6 @@ class ProdutoService
             i.imagem_url AS variacao_imagem_url
         FROM produto p
 
-        INNER JOIN produto_categoria pc
-            ON pc.id_produto = p.id_produto
-
         INNER JOIN (
             SELECT
                 id_variacao,
@@ -297,11 +296,21 @@ class ProdutoService
         $params = [];
 
         if (!empty($categorias)) {
-            $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+            $placeholders = implode(
+                ',',
+                array_fill(0, count($categorias), '?')
+            );
 
-            $sql .= " AND pc.id_categoria IN ($placeholders)";
+            $sql .= "
+        AND EXISTS (
+            SELECT 1
+            FROM produto_categoria pc
+            WHERE pc.id_produto = p.id_produto
+              AND pc.id_categoria IN ($placeholders)
+        )
+    ";
 
-            $params = $categorias;
+            $params = array_merge($params, $categorias);
         }
 
         if (!empty($precoMin)) {
