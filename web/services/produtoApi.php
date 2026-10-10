@@ -21,14 +21,49 @@ function requisitarApi(string $rota): array
 
     $url = $apiBaseUrl . '/' . ltrim($rota, '/');
 
+
     $contexto = stream_context_create([
         'http' => [
             'method' => 'GET',
-            'timeout' => 10,
+            'timeout' => 20,
             'ignore_errors' => true,
             'header' => "Accept: application/json\r\n",
         ],
     ]);
+
+    $erroAcesso = null;
+
+    set_error_handler(
+        static function (
+            int $severity,
+            string $message
+        ) use (&$erroAcesso): bool {
+            $erroAcesso = $message;
+            return true;
+        }
+    );
+
+    try {
+        $resposta = file_get_contents(
+            $url,
+            false,
+            $contexto
+        );
+    } finally {
+        restore_error_handler();
+    }
+
+    if ($resposta === false) {
+        error_log(
+            '[API FRONTEND] URL=' . $url .
+                ' | erro=' . ($erroAcesso ?? 'Erro desconhecido')
+        );
+
+        throw new RuntimeException(
+            'Não foi possível acessar a API.'
+        );
+    }
+
 
     $resposta = @file_get_contents(
         $url,
