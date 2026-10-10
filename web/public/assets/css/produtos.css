@@ -1,0 +1,20 @@
+.imagem-produto {
+    height: 550px;
+    object-fit: contain;
+}
+
+.miniatura-produto {
+    height: 130px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+@media (max-width: 767.98px) {
+    .imagem-produto {
+        height: 350px;
+    }
+
+    .miniatura-produto {
+        height: 65px;
+    }
+}
