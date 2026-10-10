@@ -147,9 +147,8 @@ class ProdutoController
             $produtos = $this->service->pesquisar($pesquisa);
 
             http_response_code(200);
-            
-            echo json_encode($produtos);
 
+            echo json_encode($produtos);
         } catch (Exception $e) {
             http_response_code(400);
 
@@ -159,4 +158,22 @@ class ProdutoController
         }
     }
 
+    public function listarFiltros(): void
+    {
+        try {
+
+            $filtros = $this->service->listarFiltros();
+
+            http_response_code(200);
+
+            echo json_encode($filtros);
+        } catch (Exception $e) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                "erro" => $e->getMessage()
+            ]);
+        }
+    }
 }
