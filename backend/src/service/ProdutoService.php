@@ -105,7 +105,8 @@ class ProdutoService
                 $nome,
                 $descricao,
                 $preco,
-                $ativo
+                $ativo,
+                true
             );
         } catch (Throwable $e) {
             if ($this->db->inTransaction()) {
@@ -439,5 +440,104 @@ class ProdutoService
         $stmt->execute(["%" . $pesquisa . "%"]);
 
         return $stmt->fetchAll();
+    }
+
+    public function listarFiltros(): array
+    {
+        $filtros = [];
+
+        // PRODUTOS = categorias pai
+        $sql = "
+        SELECT
+            c.nome
+        FROM categoria c
+        WHERE c.id_categoria_pai IS NULL
+        ORDER BY c.nome
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $filtros['tipos'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+
+        // CATEGORIAS = categorias filhas
+        $sql = "
+        SELECT
+            c.nome
+        FROM categoria c
+        WHERE c.id_categoria_pai IS NOT NULL
+        ORDER BY c.nome
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $filtros['categorias'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+
+        // CORES
+        $sql = "
+        SELECT DISTINCT pv.cor
+        FROM produto_variacao pv
+        INNER JOIN produto p
+            ON p.id_produto = pv.id_produto
+        WHERE p.ativo = 1
+          AND pv.ativo = 1
+          AND pv.cor IS NOT NULL
+          AND pv.cor <> ''
+        ORDER BY pv.cor
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $filtros['cores'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+
+        // TAMANHOS
+        $sql = "
+        SELECT DISTINCT pv.tamanho
+        FROM produto_variacao pv
+        INNER JOIN produto p
+            ON p.id_produto = pv.id_produto
+        WHERE p.ativo = 1
+          AND pv.ativo = 1
+          AND pv.tamanho IS NOT NULL
+          AND pv.tamanho <> ''
+        ORDER BY pv.tamanho
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $filtros['tamanhos'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+
+        // PREÇO
+        $sql = "
+        SELECT
+            MIN(preco_final) AS precoMin,
+            MAX(preco_final) AS precoMax
+        FROM (
+            SELECT
+                COALESCE(pv.preco, p.preco) AS preco_final
+            FROM produto p
+            LEFT JOIN produto_variacao pv
+                ON pv.id_produto = p.id_produto
+                AND pv.ativo = 1
+            WHERE p.ativo = 1
+        ) AS precos
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        $precos = $stmt->fetch();
+
+        $filtros['precoMin'] = (float) ($precos['precoMin'] ?? 0);
+        $filtros['precoMax'] = (float) ($precos['precoMax'] ?? 0);
+
+        return $filtros;
     }
 }

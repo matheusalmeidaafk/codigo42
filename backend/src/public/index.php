@@ -146,6 +146,18 @@ elseif ($method === "POST" && $uri === "/login") {
 | PRODUTOS
 |--------------------------------------------------------------------------
 */
+elseif (
+    $method === "GET"
+    && $uri === "/produtos/filtros"
+) {
+
+    $produtoController->listarFiltros();
+
+} elseif ($method === "GET" && $uri === "/produtos") {
+
+    $produtoController->listar();
+
+}
 
 elseif ($method === "POST" && $uri === "/produtos") {
 
