@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../services/produtoApi.php';
 require_once __DIR__ . '/../../components/navProdutos.php';
 require_once __DIR__ . '/../../components/carrosselProdutos.php';
+require_once __DIR__ . '/../../components/carrosselSugestoes.php';
 
 $produtos = [];
 $categorias = [];
@@ -118,6 +119,24 @@ try {
             </div>
 
         </section>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="container-fluid px-0">
+
+            <div class="mx-auto w-100" style="max-width: 1415px;">
+
+                <?php renderCarrosselSugestoes($produtos); ?>
+
+            </div>
+
+        </section>
+
+    </main>
 
     </main>
 
