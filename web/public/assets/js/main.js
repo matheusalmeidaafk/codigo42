@@ -53,6 +53,66 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
+  // Usa as classes utilitárias do Bootstrap para o estado de carregamento.
+  // Não é necessário criar CSS próprio para o spinner.
+  const containerJaEraRelativo = produtosContainer.classList.contains(
+    "position-relative",
+  );
+
+  function mostrarCarregamento() {
+    produtosContainer.setAttribute("aria-busy", "true");
+    produtosContainer.classList.add("position-relative");
+
+    // Evita criar mais de um indicador quando uma requisição é substituída.
+    if (produtosContainer.querySelector(".indicador-carregamento-produtos")) {
+      return;
+    }
+
+    const indicador = document.createElement("div");
+    indicador.className = [
+      "indicador-carregamento-produtos",
+      "position-absolute",
+      "top-0",
+      "bottom-0",
+      "start-0",
+      "end-0",
+      "z-3",
+      "d-flex",
+      "flex-column",
+      "align-items-center",
+      "justify-content-center",
+      "gap-2",
+      "bg-white",
+      "bg-opacity-75",
+      "rounded",
+      "text-center",
+    ].join(" ");
+    indicador.setAttribute("role", "status");
+    indicador.setAttribute("aria-live", "polite");
+
+    const spinner = document.createElement("span");
+    spinner.className = "spinner-border text-success";
+    spinner.setAttribute("aria-hidden", "true");
+
+    const mensagem = document.createElement("span");
+    mensagem.className = "text-dark fw-medium";
+    mensagem.textContent = "Carregando produtos...";
+
+    indicador.append(spinner, mensagem);
+    produtosContainer.append(indicador);
+  }
+
+  function ocultarCarregamento() {
+    produtosContainer.removeAttribute("aria-busy");
+    produtosContainer
+      .querySelector(".indicador-carregamento-produtos")
+      ?.remove();
+
+    if (!containerJaEraRelativo) {
+      produtosContainer.classList.remove("position-relative");
+    }
+  }
+
   function substituirProdutos(html, categoriaId) {
     const carrosselAtual =
       produtosContainer.querySelector("#carrosselProdutos");
@@ -95,11 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const urlPartial = montarUrlPartial(categoriaId);
 
-    const loadingTimer = setTimeout(() => {
-      produtosContainer.setAttribute("aria-busy", "true");
-
-      produtosContainer.classList.add("opacity-50");
-    }, 150);
+    mostrarCarregamento();
 
     try {
       const resposta = await fetch(urlPartial, {
@@ -138,13 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = filtroSelecionado.href;
       }
     } finally {
-      clearTimeout(loadingTimer);
-
       if (requisicaoAtual === controller) {
-        produtosContainer.removeAttribute("aria-busy");
-
-        produtosContainer.classList.remove("opacity-50");
-
+        ocultarCarregamento();
         requisicaoAtual = null;
       }
     }

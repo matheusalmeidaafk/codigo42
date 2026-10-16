@@ -826,3 +826,80 @@ paths:
 
               schema:
                 $ref: '#/components/schemas/Erro'
+
+  /banners:
+    get:
+      x-auto-generated: true
+      tags:
+        - Auto
+      summary: Rota detectada automaticamente
+      description: >-
+        Esta rota foi detectada automaticamente a partir do index.php.
+      responses:
+        '200':
+          description: Requisição realizada com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Recurso não encontrado
+
+    post:
+      x-auto-generated: true
+      tags:
+        - Auto
+      summary: Rota detectada automaticamente
+      description: >-
+        Esta rota foi detectada automaticamente a partir do index.php.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Requisição realizada com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Recurso não encontrado
+
+  /banners/{id}:
+    delete:
+      x-auto-generated: true
+      tags:
+        - Auto
+      summary: Rota detectada automaticamente
+      description: >-
+        Esta rota foi detectada automaticamente a partir do index.php.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Requisição realizada com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Recurso não encontrado
+
+  /produtos/filtros:
+    get:
+      x-auto-generated: true
+      tags:
+        - Auto
+      summary: Rota detectada automaticamente
+      description: >-
+        Esta rota foi detectada automaticamente a partir do index.php.
+      responses:
+        '200':
+          description: Requisição realizada com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Recurso não encontrado
