@@ -1,36 +1,38 @@
 <?php
 
 require_once __DIR__ . '/../../services/produtoApi.php';
-require_once __DIR__ . '/../../components/navProdutos.php';
-require_once __DIR__ . '/../../components/carrosselProdutos.php';
 
-$produtos = [];
-$categorias = [];
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+$produto = null;
 $erroApi = null;
 
-$categoriaSelecionada = null;
-
-if (
-    isset($_GET['categorias'])
-    && ctype_digit((string) $_GET['categorias'])
-    && (int) $_GET['categorias'] > 0
-) {
-    $categoriaSelecionada = (int) $_GET['categorias'];
-}
-
 try {
+    if (!$id || $id <= 0) {
+        http_response_code(400);
+        throw new RuntimeException('Produto inválido.');
+    }
 
-    $categorias = buscarCategoriasApi();
+    $produto = buscarProdutoPorIdApi($id);
 
-    $produtos = buscarProdutosApi(
-        $categoriaSelecionada
-    );
+    if ($produto === null) {
+        http_response_code(404);
+    }
 } catch (Throwable $e) {
+    if (http_response_code() < 400) {
+        http_response_code(500);
+    }
 
-    $erroApi = 'Não foi possível carregar os produtos agora.';
+    $erroApi = 'Não foi possível carregar este produto.';
 }
+
+$imagem = $produto['imagem_url'] ?? null;
+$nome = $produto['nome'] ?? 'Produto indisponível';
+$descricao = $produto['descricao'] ?? '';
+$preco = isset($produto['preco']) ? (float) $produto['preco'] : null;
 
 ?>
+
 
 <!doctype html>
 <html lang="pt-br">
@@ -48,11 +50,6 @@ try {
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <!-- CSS geral -->
-    <link rel="stylesheet" href="/assets/css/style.css">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <!-- CSS do banner -->
@@ -79,95 +76,67 @@ try {
 
                 <div class="row g-1">
 
-                    <div class="col-2 col-sm-2">
-                        <div class="miniaturas-container w-100">
 
-                            <?php
-                            $imagem = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCFvF40vklp0Go1-gC0qcrVYZJPbnGrZw7R5hmNh608Isv6ytN_NI6zg90&s=10';
-
-                            for ($i = 0; $i < 4; $i++):
-                                ?>
-                                <img src="<?= $imagem ?>" alt="Miniatura <?= $i + 1 ?> da camiseta"
-                                    class="img-fluid border border-secondary-subtle miniatura-produto <?= $i === 0 ? 'border-2 border-dark' : '' ?>"
-                                    data-indice="<?= $i ?>">
-                            <?php endfor; ?>
-
-                        </div>
-                    </div>
-
-                    <div class="col-10 col-sm-10 h-100">
-
-                        <div class="area-imagem-produto border border-secondary-subtle">
-
-                            <img src="<?= $imagem ?>" alt="Camiseta" id="imagemPrincipal"
-                                class="img-fluid w-100 imagem-produto">
-
-                            <!-- Seta esquerda -->
-                            <button type="button"
-                                class="btn position-absolute start-0 top-50 translate-middle-y border-0 p-1"
-                                id="imagemAnterior" aria-label="Imagem anterior">
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="black"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z" />
-                                </svg>
-                            </button>
-
-                            <!-- Seta direita -->
-                            <button type="button"
-                                class="btn position-absolute end-0 top-50 translate-middle-y border-0 p-1"
-                                id="proximaImagem" aria-label="Próxima imagem">
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="black"
-                                    viewBox="0 0 16 16" style="transform: rotate(180deg);">
-                                    <path
-                                        d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z" />
-                                </svg>
-                            </button>
-
+                    <?php if (!empty($imagem)): ?>
+                        <div class="col-2 col-sm-2">
+                            <div class="miniaturas-container w-100">
+                                <img src="<?= htmlspecialchars($imagem, ENT_QUOTES, 'UTF-8') ?>"
+                                    alt="<?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>"
+                                    class="img-fluid border border-secondary-subtle miniatura-produto border-2 border-dark"
+                                    data-indice="0">
+                            </div>
                         </div>
 
-                    </div>
+                        <div class="col-10 col-sm-10 h-100">
+                            <div class="area-imagem-produto border border-secondary-subtle">
+                                <img src="<?= htmlspecialchars($imagem, ENT_QUOTES, 'UTF-8') ?>"
+                                    alt="<?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>" id="imagemPrincipal"
+                                    class="img-fluid w-100 imagem-produto">
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="col-12">
+                            <div
+                                class="area-imagem-produto border border-secondary-subtle d-flex align-items-center justify-content-center">
+                                <p class="text-secondary">Imagem indisponível</p>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                 </div>
 
-                <div class="mt-3 big">
 
-                    <p>
-                        Apresentamos nossas camisetas produzidas com todo o cuidado que você merece:
-                        malha 100% algodão fio 30.1, de toque macio e confortável. O tecido é de alta
-                        qualidade, garantindo resistência, caimento perfeito e aquela sensação de
-                        leveza durante o uso.
-                    </p>
-
-                    <p class="mb-1">Destaques da peça:</p>
-
-                    <ul class="ps-4 mb-0">
-                        <li>Produzida em algodão hidrantado, que proporciona maior durabilidade.</li>
-                        <li>Estampa no modelo DTF, com cores vivas e excelente fixação.</li>
-                        <li>Corte moderno e versátil, que valoriza o corpo sem perder o conforto.</li>
-                        <li>Disponível na cor preta e em diversos tamanhos.</li>
-                    </ul>
-
+                <div class="mt-3">
+                    <?php if (trim($descricao) !== ''): ?>
+                        <p>
+                            <?= nl2br(htmlspecialchars($descricao, ENT_QUOTES, 'UTF-8')) ?>
+                        </p>
+                    <?php else: ?>
+                        <p class="text-secondary">Descrição não disponível.</p>
+                    <?php endif; ?>
                 </div>
+
 
             </section>
 
             <section class="col-12 col-md-4 d-flex flex-column justify-content-start px-0">
 
                 <h1 class="h3 mb-2 align-self-center w-75">
-                    Camiseta Hollow Knight
+                    <?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>
                 </h1>
 
-                <div class="mb-2 align-self-center w-75">
-                    <p class="small text-secondary text-decoration-line-through mb-1">
-                        De: R$ 150,00
-                    </p>
 
-                    <p class="mb-0">
-                        Por: <strong class="fs-5">R$ 100,00</strong>
-                    </p>
+                <div class="mb-2 align-self-center w-75">
+                    <?php if ($preco !== null): ?>
+                        <p class="mb-0">
+                            <strong class="fs-5">
+                                R$
+                                <?= number_format($preco, 2, ',', '.') ?>
+                            </strong>
+                        </p>
+                    <?php else: ?>
+                        <p class="text-secondary">Preço indisponível</p>
+                    <?php endif; ?>
                 </div>
 
                 <fieldset class="border border-secondary rounded p-2 mb-3 align-self-center w-75">
@@ -193,10 +162,6 @@ try {
 
                         <?php endforeach; ?>
 
-                    </div>
-
-                    <div id="avisoTamanho" class="text-danger small d-none mt-2">
-                        Selecione um tamanho.
                     </div>
 
                     <div id="avisoTamanho" class="text-danger small d-none mt-2">
@@ -230,7 +195,8 @@ try {
 
                 <div class="d-flex align-self-center justify-content-between w-75">
 
-                    <button type="button" class="btn btn-compra btn-outline-secondary border-success text-dark align-self-center"
+                    <button type="button"
+                        class="btn btn-compra btn-outline-secondary border-success text-dark align-self-center"
                         id="adicionarCarrinho">
                         Adicionar ao carrinho
                     </button>

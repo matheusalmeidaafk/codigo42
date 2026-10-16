@@ -77,3 +77,16 @@ function buscarCategoriasApi(): array
 {
     return requisitarApi('/categorias');
 }
+
+function buscarProdutoPorIdApi(int $id): ?array
+{
+    $produtos = buscarProdutosApi();
+
+    foreach ($produtos as $produto) {
+        if ((int) ($produto['id_produto'] ?? 0) === $id) {
+            return $produto;
+        }
+    }
+
+    return null;
+}
