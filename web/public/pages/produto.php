@@ -62,7 +62,7 @@ try {
     <link rel="stylesheet" href="/assets/css/cardProduto.css">
 
     <!-- CSS do produto -->
-    <link rel="stylesheet" href="/assets/css/produtos.css">
+    <link rel="stylesheet" href="/assets/css/produto.css">
 </head>
 
 <body>
@@ -75,12 +75,12 @@ try {
 
         <div class="row g-4 mx-auto" style="max-width: 1000px;">
 
-            <section class="col-12 col-md-7">
+            <section class="col-12 col-md-7 px-0">
 
                 <div class="row g-1">
 
                     <div class="col-2 col-sm-2">
-                        <div class="d-flex flex-column gap-1">
+                        <div class="miniaturas-container w-100">
 
                             <?php
                             $imagem = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCFvF40vklp0Go1-gC0qcrVYZJPbnGrZw7R5hmNh608Isv6ytN_NI6zg90&s=10';
@@ -95,9 +95,9 @@ try {
                         </div>
                     </div>
 
-                    <div class="col-10 col-sm-10">
+                    <div class="col-10 col-sm-10 h-100">
 
-                        <div class="position-relative border border-secondary-subtle">
+                        <div class="area-imagem-produto border border-secondary-subtle">
 
                             <img src="<?= $imagem ?>" alt="Camiseta" id="imagemPrincipal"
                                 class="img-fluid w-100 imagem-produto">
@@ -132,7 +132,7 @@ try {
 
                 </div>
 
-                <div class="mt-3 small">
+                <div class="mt-3 big">
 
                     <p>
                         Apresentamos nossas camisetas produzidas com todo o cuidado que você merece:
@@ -154,13 +154,13 @@ try {
 
             </section>
 
-            <section class="col-12 col-md-4 d-flex flex-column justify-content-start">
+            <section class="col-12 col-md-4 d-flex flex-column justify-content-start px-0">
 
-                <h1 class="h3 mb-2">
+                <h1 class="h3 mb-2 align-self-center w-75">
                     Camiseta Hollow Knight
                 </h1>
 
-                <div class="mb-3">
+                <div class="mb-2 align-self-center w-75">
                     <p class="small text-secondary text-decoration-line-through mb-1">
                         De: R$ 150,00
                     </p>
@@ -182,8 +182,8 @@ try {
 
                             <div class="col">
                                 <div class="form-check">
-                                    <input class="form-check-input tamanho" type="checkbox" value="<?= $tamanho ?>"
-                                        id="tamanho<?= $i ?>">
+                                    <input class="form-check-input tamanho" type="radio" name="tamanho"
+                                        value="<?= $tamanho ?>" id="tamanho<?= $i ?>">
 
                                     <label class="form-check-label small" for="tamanho<?= $i ?>">
                                         <?= $tamanho ?>
@@ -193,6 +193,10 @@ try {
 
                         <?php endforeach; ?>
 
+                    </div>
+
+                    <div id="avisoTamanho" class="text-danger small d-none mt-2">
+                        Selecione um tamanho.
                     </div>
 
                     <div id="avisoTamanho" class="text-danger small d-none mt-2">
@@ -224,14 +228,14 @@ try {
 
                 </fieldset>
 
-                <div class="d-flex align-self-center justify-content-between gap-2 w-75">
+                <div class="d-flex align-self-center justify-content-between w-75">
 
-                    <button type="button" class="btn btn-outline-secondary border-success text-dark align-self-center"
+                    <button type="button" class="btn btn-compra btn-outline-secondary border-success text-dark align-self-center"
                         id="adicionarCarrinho">
                         Adicionar ao carrinho
                     </button>
 
-                    <button type="button" class="btn btn-success align-self-center" id="comprar">
+                    <button type="button" class="btn btn-compra btn-success align-self-center" id="comprar">
                         Comprar
                     </button>
 
