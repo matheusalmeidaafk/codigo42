@@ -101,13 +101,13 @@ class ProdutoService
             $this->db->commit();
 
             return new Produto(
-                $id,
-                $imagemUrl,
                 $nome,
                 $descricao,
                 $preco,
                 $ativo,
-                $isAutoral
+                $isAutoral,
+                $id,
+                $imagemUrl,
             );
         } catch (Throwable $e) {
             if ($this->db->inTransaction()) {
@@ -133,7 +133,7 @@ class ProdutoService
             p.descricao,
             p.preco,
             p.is_autoral,
-            p.ativo,
+            p.ativo
 
             COALESCE(
                 ROUND(AVG(a.estrelas)),
@@ -262,10 +262,22 @@ class ProdutoService
             pv.id_variacao,
             pv.tamanho,
             pv.cor,
-            i.imagem_url AS variacao_imagem_url
+            i.imagem_url AS variacao_imagem_url,
+            d.porcentagem_desconto,
+
+            CASE
+                WHEN d.porcentagem_desconto IS NOT NULL THEN
+                    ROUND(
+                        p.preco - (
+                            p.preco * d.porcentagem_desconto / 100
+                        ),
+                        2
+                    )
+                ELSE p.preco
+            END AS preco_final
         FROM produto p
 
-        INNER JOIN (
+        LEFT JOIN (
             SELECT
                 id_variacao,
                 id_produto,
@@ -289,6 +301,10 @@ class ProdutoService
 
         LEFT JOIN imagem_variacao i
             ON i.id_variacao = pv.id_variacao
+        
+        LEFT JOIN desconto d
+            ON d.id_produto = p.id_produto
+            AND d.ativo = TRUE
 
         WHERE p.ativo = TRUE
     ";

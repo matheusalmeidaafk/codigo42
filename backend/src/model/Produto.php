@@ -13,7 +13,7 @@ class Produto {
 
     public bool $ativo;
 
-    public function __construct(?int $id = null, ?string $imagemUrl = null, string $nome, string $descricao, float $preco, bool $ativo, bool $isAutoral) {
+    public function __construct(string $nome, string $descricao, float $preco, bool $ativo, bool $isAutoral, ?int $id = null, ?string $imagemUrl = null) {
         $this->id = $id;
         $this->imagemUrl = $imagemUrl;
         $this->nome = $nome;

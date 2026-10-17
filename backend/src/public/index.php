@@ -178,7 +178,7 @@ elseif (
 
 elseif ($method === "POST" && $uri === "/produtos") {
 
-    $produtoController->criarProduto();
+    if(exigirAutenticacaoAdm()) $produtoController->criarProduto();
 
 } elseif ($method === "GET" && $uri === "/produtos") {
 

@@ -4,6 +4,7 @@ namespace App\Middleware;
 
 use App\Security\JwtService;
 use Exception;
+use Throwable;
 
 class AuthMiddleware
 {
@@ -106,7 +107,7 @@ class AuthMiddleware
             return $this->jwtService
                 ->validarTokenAdm($token);
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
 
             http_response_code(401);
 

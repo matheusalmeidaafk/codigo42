@@ -548,6 +548,8 @@ paths:
         A consulta pode opcionalmente ser filtrada por
         categoria ou pelo ID da categoria.
 
+        
+
       parameters:
 
         - name: categoria
@@ -606,6 +608,9 @@ paths:
         - Produtos
 
       summary: Cadastra um produto
+      
+      security:
+        - bearerAuth: []
 
       description: Cria um novo produto no sistema.
 
