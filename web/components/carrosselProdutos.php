@@ -36,6 +36,7 @@ function renderCarrosselProdutos(
                                     <div class="col-6 md:col-4 produto-carrossel-item flex-shrink-0">
                                         <?php
                                         CardProduto(
+                                            (int) $produto['id_produto'],
                                             (string) ($produto['nome'] ?? 'Produto'),
                                             (int) ($produto['estrelas'] ?? 0),
                                             (float) ($produto['preco'] ?? 0),
