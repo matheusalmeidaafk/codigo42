@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../services/produtoApi.php';
 require_once __DIR__ . '/../../components/navProdutos.php';
 require_once __DIR__ . '/../../components/carrosselProdutos.php';
+require_once __DIR__ . '/../../components/carrosselSugestoes.php';
 
 $produtos = [];
 $categorias = [];
