@@ -548,6 +548,8 @@ paths:
         A consulta pode opcionalmente ser filtrada por
         categoria ou pelo ID da categoria.
 
+        
+
       parameters:
 
         - name: categoria
@@ -606,6 +608,9 @@ paths:
         - Produtos
 
       summary: Cadastra um produto
+      
+      security:
+        - bearerAuth: []
 
       description: Cria um novo produto no sistema.
 
@@ -880,6 +885,52 @@ paths:
           schema:
             type: integer
             format: int32
+      responses:
+        '200':
+          description: Requisição realizada com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Recurso não encontrado
+
+  /cadastroadm:
+    post:
+      x-auto-generated: true
+      tags:
+        - Auto
+      summary: Rota detectada automaticamente
+      description: >-
+        Esta rota foi detectada automaticamente a partir do index.php.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Requisição realizada com sucesso
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Recurso não encontrado
+
+  /loginadm:
+    post:
+      x-auto-generated: true
+      tags:
+        - Auto
+      summary: Rota detectada automaticamente
+      description: >-
+        Esta rota foi detectada automaticamente a partir do index.php.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
       responses:
         '200':
           description: Requisição realizada com sucesso

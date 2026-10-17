@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use App\Controller\AdminController;
 use App\Controller\CategoriaController;
 use App\Controller\ProdutoController;
 use App\Middleware\AuthMiddleware;
@@ -49,6 +50,7 @@ $authController = new AuthController();
 $produtoController = new ProdutoController();
 $categoriaController = new CategoriaController();
 $bannerController = new BannerController();
+$adminController = new AdminController();
 
 /*
 |--------------------------------------------------------------------------
@@ -82,9 +84,7 @@ $uri = str_replace(
 
 if ($method === "GET" && $uri === "/usuarios") {
 
-    exigirAutenticacao();
-
-    $usuarioController->listar();
+    if(exigirAutenticacaoAdm()) $usuarioController->listar();
 
 } elseif ($method === "POST" && $uri === "/cadastro") {
 
@@ -129,6 +129,19 @@ if ($method === "GET" && $uri === "/usuarios") {
 
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
+elseif ($method === "POST" && $uri === "/cadastroadm") {
+
+    $adminController->criar();
+
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | AUTENTICAÇÃO
@@ -139,6 +152,10 @@ elseif ($method === "POST" && $uri === "/login") {
 
     $authController->login();
 
+}
+
+elseif($method === "POST" && $uri === "/loginadm"){
+    $authController->loginAdm();
 }
 
 /*
@@ -161,7 +178,7 @@ elseif (
 
 elseif ($method === "POST" && $uri === "/produtos") {
 
-    $produtoController->criarProduto();
+    if(exigirAutenticacaoAdm()) $produtoController->criarProduto();
 
 } elseif ($method === "GET" && $uri === "/produtos") {
 
@@ -176,6 +193,7 @@ elseif (
     $produtoController->pesquisar($pesquisa);
 
 }
+
 
 
 /*
@@ -293,4 +311,11 @@ function exigirAutenticacao(): object
     $middleware = new AuthMiddleware();
 
     return $middleware->autenticar();
+}
+
+function exigirAutenticacaoAdm(): bool
+{
+    $middleware = new AuthMiddleware();
+
+    return $middleware->autenticarAdm();
 }
