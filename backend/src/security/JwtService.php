@@ -5,6 +5,7 @@ namespace App\Security;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Exception;
+use Throwable;
 
 class JwtService
 {
@@ -15,6 +16,28 @@ class JwtService
     public function __construct()
     {
         $this->secretKey = $_ENV['JWT_SECRET'];
+    }
+
+    public function gerarTokenAdm(
+        int $idAdmin,
+        string $email,
+    ): string {
+
+        $agora = time();
+
+        $payload = [
+            'id' => $idAdmin,
+            'email' => $email,
+            'iat' => $agora,
+            'exp' => $agora + $this->expiration,
+            'tipo' => 'ADM'
+        ];
+
+        return JWT::encode(
+            $payload,
+            $this->secretKey,
+            $this->algorithm
+        );
     }
 
     public function gerarToken(
@@ -28,7 +51,8 @@ class JwtService
             'id' => $idUsuario,
             'email' => $email,
             'iat' => $agora,
-            'exp' => $agora + $this->expiration
+            'exp' => $agora + $this->expiration,
+            'tipo' => 'USUARIO'
         ];
 
         return JWT::encode(
@@ -48,4 +72,15 @@ class JwtService
             )
         );
     }
+
+    public function validarTokenAdm(string $token) : bool 
+    {
+        try {
+            $payload = $this->validarToken($token);
+            return ($payload->tipo ?? null) === 'ADM';
+        } catch (Throwable $t) {
+            return false;
+        }
+    }
+    
 }

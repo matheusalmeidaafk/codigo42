@@ -37,7 +37,7 @@ class UsuarioService
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function criar(?string $imgperfilurl, string $nomeCompleto, string $email, string $telefone, string $cpf, string $senha): Usuario
+    public function criar(?string $imagem_url, string $nomeCompleto, string $email, string $telefone, string $cpf, string $senha): Usuario
     {
         if (empty($nomeCompleto)) {
             throw new Exception("Nome precisa ser informado.");
@@ -61,14 +61,14 @@ class UsuarioService
 
         $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO usuario (imgperfilurl, nome_completo, email, telefone, cpf, senha, ativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO usuario (imagem_url, nome_completo, email, telefone, cpf, senha, ativo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$imgperfilurl, $nomeCompleto, $email, $telefone, $cpf, $senhaHash, true]);
+        $stmt->execute([$imagem_url, $nomeCompleto, $email, $telefone, $cpf, $senhaHash, true]);
 
         $id = (int) $this->db->lastInsertId();
 
-        return new Usuario($id, $imgperfilurl, $nomeCompleto, $email, $telefone, $cpf, $senha, true);
+        return new Usuario($id, $imagem_url, $nomeCompleto, $email, $telefone, $cpf, $senha, true);
     }
 
     public function deletar(int $id): bool {

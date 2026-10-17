@@ -20,7 +20,7 @@ class UsuarioController {
             );
 
             $usuario = $this->service->criar(
-                $dados["imgperfilurl"],
+                $dados["imagem_url"],
                 $dados["nomeCompleto"],
                 $dados["email"],
                 $dados["telefone"],
@@ -32,7 +32,7 @@ class UsuarioController {
 
             echo json_encode([
                 "id" => $usuario->id,
-                "imgperfilurl" => $usuario->imgperfilurl,
+                "imagem_url" => $usuario->imagem_url,
                 "nomeCompleto" => $usuario->nomeCompleto,
                 "email" => $usuario->email,
                 "telefone" => $usuario->telefone,
