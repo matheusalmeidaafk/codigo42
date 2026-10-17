@@ -1,17 +1,17 @@
 <containerTeste>
     <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
 
-        <div class="carousel-inner">
+        <div class="carousel-inner ">
             <div class="carousel-item active">
-                <img src="./assets/images/banner/banner 1.png" class="d-block mx-auto" alt="banner 1">
+                <img src="./assets/images/banner/banner 1.png" class="d-block mx-auto img-fluid" alt="banner 1">
             </div>
 
-            <div class="carousel-item">
-                <img src="./assets/images/banner/banner 2.png" class="d-block mx-auto" alt="banner 2">
+            <div class="carousel-item ">
+                <img src="./assets/images/banner/banner 2.png" class="d-block mx-auto img-fluid" alt="banner 2">
             </div>
 
-            <div class="carousel-item">
-                <img src="./assets/images/banner/banner 3.png" class="d-block mx-auto" alt="banner 3">
+            <div class="carousel-item ">
+                <img src="./assets/images/banner/banner 3.png" class="d-block mx-auto img-fluid" alt="banner 3">
             </div>
         </div>
 

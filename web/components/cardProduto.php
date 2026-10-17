@@ -19,7 +19,7 @@ function CardProduto(
     <article class="card border-0 rounded-0 overflow-hidden w-100">
 
         <div
-            class="hover-card d-flex flex-column justify-content-end align-items-center position-absolute bottom-0 start-0 w-100 border border-dark border-2 p-2 opacity-0 invisible z-3">
+            class=" hover-card d-flex flex-column justify-content-end align-items-center position-absolute bottom-0 start-0 w-100 border border-dark border-2 p-2 opacity-0 invisible z-3">
 
             <h2 class="">
                 Tamanho:

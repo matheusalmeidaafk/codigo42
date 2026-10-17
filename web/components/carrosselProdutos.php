@@ -10,7 +10,6 @@ function renderCarrosselProdutos(
         return;
     }
 
-    // Permite reutilizar o componente mais de uma vez na mesma página sem IDs duplicados.
     if (!preg_match('/^[A-Za-z][A-Za-z0-9_-]*$/', $idCarrossel)) {
         $idCarrossel = 'carrosselProdutos';
     }
@@ -34,7 +33,7 @@ function renderCarrosselProdutos(
                         <div class="carousel-item <?= $indice === 0 ? 'active' : '' ?>">
                             <div class="d-flex flex-nowrap gap-1">
                                 <?php foreach ($grupo as $produto): ?>
-                                    <div class="produto-carrossel-item flex-shrink-0">
+                                    <div class="col-6 md:col-4 produto-carrossel-item flex-shrink-0">
                                         <?php
                                         CardProduto(
                                             (string) ($produto['nome'] ?? 'Produto'),

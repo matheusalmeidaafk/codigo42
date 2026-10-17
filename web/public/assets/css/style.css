@@ -70,12 +70,33 @@ body {
   justify-content: center;
 }
 
+
+/* Desktop: 5 cards */
 .produto-carrossel-item {
-  flex: 0 0 calc((100% - 16px) / 5);
-  width: calc((100% - 16px) / 5);
-  min-width: 0;
-  max-width: calc((100% - 16px) / 5);
+    flex: 0 0 calc((100% - 16px) / 5);
+    width: calc((100% - 16px) / 5);
+    min-width: 0;
+    max-width: calc((100% - 16px) / 5);
 }
+
+/* Tablet: 3 cards */
+@media (max-width: 991.98px) {
+    .produto-carrossel-item {
+        flex-basis: calc((100% - 8px) / 3);
+        width: calc((100% - 8px) / 3);
+        max-width: calc((100% - 8px) / 3);
+    }
+}
+
+/* Celular: 2 cards */
+@media (max-width: 575.98px) {
+    .produto-carrossel-item {
+        flex-basis: calc((100% - 4px) / 2);
+        width: calc((100% - 4px) / 2);
+        max-width: calc((100% - 4px) / 2);
+    }
+}
+
 
 .produto-card-imagem {
   aspect-ratio: 260 / 300;
