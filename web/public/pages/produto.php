@@ -2,6 +2,23 @@
 
 require_once __DIR__ . '/../../services/produtoApi.php';
 
+// Parâmetros opcionais usados pela seção de sugestões.
+$categoriasSugestoes = [];
+if (isset($_GET['categorias']) && is_string($_GET['categorias'])) {
+    foreach (explode(',', $_GET['categorias']) as $categoriaId) {
+        $categoriaId = trim($categoriaId);
+        if (ctype_digit($categoriaId) && (int) $categoriaId > 0) {
+            $categoriasSugestoes[] = (int) $categoriaId;
+        }
+    }
+}
+$categoriasSugestoes = array_values(array_unique($categoriasSugestoes));
+
+$termoRelacionadoSugestoes = isset($_GET['termo']) && is_string($_GET['termo'])
+    ? trim($_GET['termo'])
+    : '';
+
+
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 $produto = null;
@@ -58,14 +75,6 @@ $tamanhos = array_values(array_unique(array_filter(
     fn($tamanho) => is_string($tamanho) && trim($tamanho) !== ''
 )));
 
-echo '<pre>';
-var_dump([
-    'preco' => $produto['preco'] ?? null,
-    'preco_final' => $produto['preco_final'] ?? null,
-    'porcentagem_desconto' => $produto['porcentagem_desconto'] ?? null,
-]);
-echo '</pre>';
-
 ?>
 
 
@@ -95,6 +104,8 @@ echo '</pre>';
 
     <!-- CSS do produto -->
     <link rel="stylesheet" href="/assets/css/produto.css">
+    <!-- CSS da seção de sugestões; mantém os estilos da página original. -->
+    <link rel="stylesheet" href="/assets/css/produtoSugestoes.css">
 </head>
 
 <body>
@@ -285,6 +296,24 @@ echo '</pre>';
 
         </div>
 
+        <!-- Sugestões: adicionadas sem substituir o conteúdo original da página. -->
+        <section
+            id="produto-sugestoes"
+            class="produto-sugestoes container my-5"
+            aria-labelledby="sugestoes-titulo"
+            data-produto-id="<?= (int) ($produto['id_produto'] ?? $produto['id'] ?? $id) ?>"
+            data-categoria-ids="<?= htmlspecialchars(implode(',', $categoriasSugestoes), ENT_QUOTES, 'UTF-8') ?>"
+            data-termo-relacionado="<?= htmlspecialchars($termoRelacionadoSugestoes, ENT_QUOTES, 'UTF-8') ?>"
+        >
+            <h2 id="sugestoes-titulo" class="h4 produto-sugestoes-titulo">
+                Você também pode gostar
+            </h2>
+            <p class="text-center text-secondary" data-sugestoes-status role="status" aria-live="polite">
+                Carregando sugestões...
+            </p>
+            <div data-sugestoes-renderizado></div>
+        </section>
+
     </main>
 
 
@@ -297,13 +326,12 @@ echo '</pre>';
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
-
     <script src="/assets/js/main.js"></script>
 
     <script src="/assets/js/produto.js"></script>
+    <!-- Inicializa o carrossel também quando ele é carregado dinamicamente. -->
+    <script src="/assets/js/carrosselResponsivo.js"></script>
+    <script src="/assets/js/produtoSugestoes.js"></script>
 
 </body>
 

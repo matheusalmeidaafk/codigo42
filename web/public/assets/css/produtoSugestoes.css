@@ -1,0 +1,13 @@
+/* Estilo apenas da seção de sugestões; os cards e o carrossel usam os componentes existentes. */
+.produto-sugestoes {
+    margin-block: 1.5rem;
+}
+
+.produto-sugestoes-titulo {
+    margin-bottom: 1rem;
+}
+
+[data-sugestoes-status]:not(.d-none) {
+    min-height: 2rem;
+    margin-block: 1rem;
+}
