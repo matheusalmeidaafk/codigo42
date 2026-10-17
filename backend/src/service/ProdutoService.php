@@ -261,7 +261,7 @@ class ProdutoService
             p.*,
             pv.id_variacao,
             pv.tamanho,
-            pv.cor,
+            pv.cor, 
             i.imagem_url AS variacao_imagem_url,
             d.porcentagem_desconto,
 
