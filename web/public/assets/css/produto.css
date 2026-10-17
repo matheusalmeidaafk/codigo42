@@ -1,0 +1,54 @@
+.area-imagem-produto {
+    position: relative;
+    width: 100%;
+    height: 550px;
+}
+
+.imagem-produto {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.miniaturas-container {
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.miniatura-produto {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.btn-compra {
+    padding: 8px 18px;
+}
+
+/* Remove as setas da quantidade */
+#quantidade::-webkit-inner-spin-button,
+#quantidade::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#quantidade {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+@media (max-width: 767.98px) {
+    .area-imagem-produto,
+    .miniaturas-container {
+        height: 350px;
+    }
+
+    .miniaturas-container {
+        gap: 4px;
+    }
+}
