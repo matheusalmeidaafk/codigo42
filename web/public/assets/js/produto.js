@@ -1,74 +1,91 @@
-// Galeria
-const miniaturas = document.querySelectorAll('.miniatura-produto');
-const imagemPrincipal = document.getElementById('imagemPrincipal');
 
-let indiceAtual = 0;
+document.addEventListener('DOMContentLoaded', () => {
+    // GALERIA DE IMAGENS
+    const miniaturas = document.querySelectorAll('.miniatura-produto');
+    const imagemPrincipal = document.getElementById('imagemPrincipal');
+    const imagemAnterior = document.getElementById('imagemAnterior');
+    const proximaImagem = document.getElementById('proximaImagem');
 
-function trocarImagem(indice) {
-    indiceAtual = (indice + miniaturas.length) % miniaturas.length;
+    let indiceAtual = 0;
 
-    imagemPrincipal.src = miniaturas[indiceAtual].src;
+    function trocarImagem(indice) {
+        if (!imagemPrincipal || miniaturas.length === 0) return;
 
-    miniaturas.forEach((miniatura, i) => {
-        miniatura.classList.toggle('border-2', i === indiceAtual);
-        miniatura.classList.toggle('border-dark', i === indiceAtual);
-    });
-}
+        indiceAtual = (indice + miniaturas.length) % miniaturas.length;
 
-miniaturas.forEach((miniatura, indice) => {
-    miniatura.addEventListener('click', () => trocarImagem(indice));
-});
+        imagemPrincipal.src = miniaturas[indiceAtual].src;
 
-document.getElementById('imagemAnterior').addEventListener('click', () => {
-    trocarImagem(indiceAtual - 1);
-});
-
-document.getElementById('proximaImagem').addEventListener('click', () => {
-    trocarImagem(indiceAtual + 1);
-});
-
-// Quantidade
-const quantidade = document.getElementById('quantidade');
-
-document.getElementById('diminuir').addEventListener('click', () => {
-    quantidade.value = Math.max(1, (parseInt(quantidade.value, 10) || 1) - 1);
-});
-
-document.getElementById('aumentar').addEventListener('click', () => {
-    quantidade.value = Math.min(99, (parseInt(quantidade.value, 10) || 1) + 1);
-});
-
-quantidade.addEventListener('change', () => {
-    quantidade.value = Math.max(1, Math.min(99, parseInt(quantidade.value, 10) || 1));
-});
-
-// Simulação de compra, sem backend
-function simularCompra() {
-    const tamanhos = [...document.querySelectorAll('.tamanho:checked')]
-        .map(input => input.value);
-
-    const aviso = document.getElementById('avisoTamanho');
-
-    if (tamanhos.length === 0) {
-        aviso.classList.remove('d-none');
-        return;
+        miniaturas.forEach((miniatura, i) => {
+            miniatura.classList.toggle('border-2', i === indiceAtual);
+            miniatura.classList.toggle('border-dark', i === indiceAtual);
+        });
     }
 
-    aviso.classList.add('d-none');
+    miniaturas.forEach((miniatura, indice) => {
+        miniatura.addEventListener('click', () => trocarImagem(indice));
+    });
 
-    const total = Number(quantidade.value) * 100;
+    imagemAnterior?.addEventListener('click', () => {
+        trocarImagem(indiceAtual - 1);
+    });
 
-    alert(
-        'Mock da loja Código 42\\n\\n' +
-        'Camiseta Spike - Cowboy Bebop\\n' +
-        'Tamanhos: ' + tamanhos.join(', ') + '\\n' +
-        'Quantidade: ' + quantidade.value + '\\n' +
-        'Total: R$ ' + total.toFixed(2).replace('.', ',')
-    );
-}
+    proximaImagem?.addEventListener('click', () => {
+        trocarImagem(indiceAtual + 1);
+    });
 
-document.getElementById('adicionarCarrinho')
-    .addEventListener('click', simularCompra);
+    // QUANTIDADE
+    const quantidade = document.getElementById('quantidade');
+    const diminuir = document.getElementById('diminuir');
+    const aumentar = document.getElementById('aumentar');
 
-document.getElementById('comprar')
-    .addEventListener('click', simularCompra);
+    function limitarQuantidade() {
+        if (!quantidade) return;
+
+        let valor = parseInt(quantidade.value, 10);
+
+        if (Number.isNaN(valor)) valor = 1;
+
+        quantidade.value = Math.max(1, Math.min(99, valor));
+    }
+
+    diminuir?.addEventListener('click', () => {
+        if (!quantidade) return;
+
+        limitarQuantidade();
+        quantidade.value = Math.max(1, Number(quantidade.value) - 1);
+    });
+
+    aumentar?.addEventListener('click', () => {
+        if (!quantidade) return;
+
+        limitarQuantidade();
+        quantidade.value = Math.min(99, Number(quantidade.value) + 1);
+    });
+
+    quantidade?.addEventListener('change', limitarQuantidade);
+
+    // VALIDAÇÃO DO TAMANHO
+    function simularCompra() {
+        const tamanhoSelecionado = document.querySelector('.tamanho:checked');
+        const aviso = document.getElementById('avisoTamanho');
+
+        if (!tamanhoSelecionado) {
+            aviso?.classList.remove('d-none');
+            return;
+        }
+
+        aviso?.classList.add('d-none');
+
+        alert(
+            'Código 42\n\n' +
+            'Tamanho: ' + tamanhoSelecionado.value + '\n' +
+            'Quantidade: ' + (quantidade?.value || 1)
+        );
+    }
+
+    document.getElementById('adicionarCarrinho')
+        ?.addEventListener('click', simularCompra);
+
+    document.getElementById('comprar')
+        ?.addEventListener('click', simularCompra);
+});

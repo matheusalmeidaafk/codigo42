@@ -26,10 +26,45 @@ try {
     $erroApi = 'Não foi possível carregar este produto.';
 }
 
-$imagem = $produto['imagem_url'] ?? null;
+$imagem = $produto['variacao_imagem_url']
+    ?? $produto['imagem_url']
+    ?? null;
+
 $nome = $produto['nome'] ?? 'Produto indisponível';
 $descricao = $produto['descricao'] ?? '';
-$preco = isset($produto['preco']) ? (float) $produto['preco'] : null;
+$precoOriginal = isset($produto['preco'])
+    ? (float) $produto['preco']
+    : null;
+
+$precoFinal = isset($produto['preco_final'])
+    ? (float) $produto['preco_final']
+    : $precoOriginal;
+
+$porcentagemDesconto = isset($produto['porcentagem_desconto'])
+    ? (float) $produto['porcentagem_desconto']
+    : null;
+
+$temDesconto = $porcentagemDesconto !== null
+    && $porcentagemDesconto > 0;
+
+$tamanhos = $produto['tamanhos'] ?? [];
+
+if (!is_array($tamanhos)) {
+    $tamanhos = [];
+}
+
+$tamanhos = array_values(array_unique(array_filter(
+    $tamanhos,
+    fn($tamanho) => is_string($tamanho) && trim($tamanho) !== ''
+)));
+
+echo '<pre>';
+var_dump([
+    'preco' => $produto['preco'] ?? null,
+    'preco_final' => $produto['preco_final'] ?? null,
+    'porcentagem_desconto' => $produto['porcentagem_desconto'] ?? null,
+]);
+echo '</pre>';
 
 ?>
 
@@ -125,15 +160,28 @@ $preco = isset($produto['preco']) ? (float) $produto['preco'] : null;
                     <?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>
                 </h1>
 
-
                 <div class="mb-2 align-self-center w-75">
-                    <?php if ($preco !== null): ?>
-                        <p class="mb-0">
-                            <strong class="fs-5">
-                                R$
-                                <?= number_format($preco, 2, ',', '.') ?>
-                            </strong>
-                        </p>
+                    <?php if ($precoFinal !== null): ?>
+
+                        <?php if ($temDesconto): ?>
+                            <p class="mb-0 text-secondary text-decoration-line-through">
+                                De: R$ <?= number_format($precoOriginal, 2, ',', '.') ?>
+                            </p>
+
+                            <p class="mb-0">
+                                <span class="text-success fw-semibold">Por:</span>
+                                <strong class="fs-4">
+                                    R$ <?= number_format($precoFinal, 2, ',', '.') ?>
+                                </strong>
+                            </p>
+                        <?php else: ?>
+                            <p class="mb-0">
+                                <strong class="fs-4">
+                                    R$ <?= number_format($precoFinal, 2, ',', '.') ?>
+                                </strong>
+                            </p>
+                        <?php endif; ?>
+
                     <?php else: ?>
                         <p class="text-secondary">Preço indisponível</p>
                     <?php endif; ?>
@@ -146,26 +194,31 @@ $preco = isset($produto['preco']) ? (float) $produto['preco'] : null;
                     </legend>
 
                     <div class="row row-cols-4 g-1">
+                        <?php if (!empty($tamanhos)): ?>
+                            <?php foreach ($tamanhos as $i => $tamanho): ?>
+                                <div class="col">
+                                    <div class="form-check">
+                                        <input class="form-check-input tamanho" type="radio" name="tamanho"
+                                            value="<?= htmlspecialchars($tamanho, ENT_QUOTES, 'UTF-8') ?>"
+                                            id="tamanho<?= $i ?>">
 
-                        <?php foreach (['P', 'PP', 'M', 'G', 'GG', '3G', '4G'] as $i => $tamanho): ?>
-
-                            <div class="col">
-                                <div class="form-check">
-                                    <input class="form-check-input tamanho" type="radio" name="tamanho"
-                                        value="<?= $tamanho ?>" id="tamanho<?= $i ?>">
-
-                                    <label class="form-check-label small" for="tamanho<?= $i ?>">
-                                        <?= $tamanho ?>
-                                    </label>
+                                        <label class="form-check-label small" for="tamanho<?= $i ?>">
+                                            <?= htmlspecialchars($tamanho, ENT_QUOTES, 'UTF-8') ?>
+                                        </label>
+                                    </div>
                                 </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="col-12">
+                                <p class="small text-secondary mb-0">
+                                    Nenhum tamanho disponível para este produto.
+                                </p>
                             </div>
-
-                        <?php endforeach; ?>
-
+                        <?php endif; ?>
                     </div>
 
                     <div id="avisoTamanho" class="text-danger small d-none mt-2">
-                        Selecione pelo menos um tamanho.
+                        Selecione um tamanho.
                     </div>
 
                 </fieldset>

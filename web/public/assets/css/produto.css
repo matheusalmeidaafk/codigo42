@@ -15,19 +15,24 @@
     height: 550px;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 8px;
+    overflow-y: auto;
 }
 
 .miniatura-produto {
+    display: block;
     width: 100%;
-    flex: 1;
-    min-height: 0;
-    object-fit: cover;
+    height: 100px;
+    flex: 0 0 100px;
+    object-fit: contain;
+    background-color: #fff;
     cursor: pointer;
 }
 
+
 .btn-compra {
-    padding: 8px 18px;
+    padding: 8px 20px;
 }
 
 /* Remove as setas da quantidade */
@@ -50,5 +55,10 @@
 
     .miniaturas-container {
         gap: 4px;
+    }
+
+    .miniatura-produto {
+        height: 70px;
+        flex-basis: 70px;
     }
 }
