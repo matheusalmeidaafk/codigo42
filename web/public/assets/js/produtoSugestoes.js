@@ -130,9 +130,13 @@
             });
         }
 
+        // Fallback: quando a URL não informa categorias nem termo,
+        // usa a listagem geral para que a seção não fique vazia.
         if (buscas.length === 0) {
-            status.textContent = "Não há categorias ou termo relacionado para buscar sugestões.";
-            return;
+            buscas.push({
+                tipo: "geral",
+                promessa: buscarProdutos(`${API_BASE_URL}/produtos`)
+            });
         }
 
         const resultados = await Promise.allSettled(buscas.map((busca) => busca.promessa));
@@ -149,6 +153,7 @@
             buscasConcluidas += 1;
             if (buscas[indice].tipo === "categoria") produtosCategoria = resultado.value;
             if (buscas[indice].tipo === "relacionados") produtosRelacionados = resultado.value;
+            if (buscas[indice].tipo === "geral") produtosCategoria = resultado.value;
         });
 
         if (buscasConcluidas === 0) {
