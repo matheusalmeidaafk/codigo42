@@ -2,44 +2,130 @@ openapi: 3.0.3
 
 info:
   title: Código 42 API
-  description: API REST do sistema Código 42
-  version: 1.0.0
+  description: |
+    Documentação oficial da API REST do sistema Código 42.
+
+    A API possui recursos para autenticação, usuários,
+    produtos e categorias.
+
+    Rotas protegidas utilizam autenticação JWT através
+    do header Authorization:
+
+    Bearer {token}
+  version: 1.1.0
 
 servers:
+  - url: http://localhost:8080
+    description: Servidor Docker
+
   - url: http://localhost/codigo42/backend/src/public
-    description: Servidor local
+    description: Servidor local XAMPP
 
 tags:
   - name: Autenticação
-    description: Operações relacionadas à autenticação
+    description: Login e autenticação JWT
+
   - name: Usuários
-    description: Operações relacionadas aos usuários
+    description: Cadastro, consulta e remoção de usuários
+
+  - name: Produtos
+    description: Cadastro, listagem e pesquisa de produtos
+
+  - name: Categorias
+    description: Consulta de categorias e subcategorias
+
+
+# =========================================================
+# COMPONENTES
+# =========================================================
 
 components:
 
   securitySchemes:
+
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
 
+
   schemas:
 
-    Usuario:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
+    # -----------------------------------------------------
+    # ERRO
+    # -----------------------------------------------------
 
-        nomeCompleto:
+    Erro:
+      type: object
+
+      properties:
+
+        erro:
           type: string
-          example: "Lucas Milhão"
+          example: Dados inválidos.
+
+
+    # -----------------------------------------------------
+    # LOGIN
+    # -----------------------------------------------------
+
+    LoginRequest:
+      type: object
+
+      required:
+        - email
+        - senha
+
+      properties:
 
         email:
           type: string
           format: email
-          example: "lucas@gmail.com"
+          example: lucas@gmail.com
+
+        senha:
+          type: string
+          format: password
+          example: "123456"
+
+
+    LoginResponse:
+      type: object
+
+      properties:
+
+        token:
+          type: string
+          description: Token JWT utilizado nas rotas protegidas
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+
+    # -----------------------------------------------------
+    # USUÁRIO
+    # -----------------------------------------------------
+
+    Usuario:
+      type: object
+
+      properties:
+
+        id:
+          type: integer
+          example: 1
+
+        imgperfilurl:
+          type: string
+          nullable: true
+          example: https://exemplo.com/perfil.jpg
+
+        nomeCompleto:
+          type: string
+          example: Lucas Milhão
+
+        email:
+          type: string
+          format: email
+          example: lucas@gmail.com
 
         telefone:
           type: string
@@ -53,48 +139,194 @@ components:
           type: boolean
           example: true
 
-    LoginRequest:
+
+    CadastroUsuarioRequest:
       type: object
+
       required:
+        - nomeCompleto
         - email
+        - telefone
+        - cpf
         - senha
+
       properties:
+
+        imgperfilurl:
+          type: string
+          nullable: true
+          example: https://exemplo.com/perfil.jpg
+
+        nomeCompleto:
+          type: string
+          example: Lucas Milhão
+
         email:
           type: string
           format: email
-          example: "lucas@gmail.com"
+          example: lucas@gmail.com
+
+        telefone:
+          type: string
+          example: "51999999999"
+
+        cpf:
+          type: string
+          example: "12345678900"
 
         senha:
           type: string
           format: password
           example: "123456"
 
-    LoginResponse:
+
+    # -----------------------------------------------------
+    # PRODUTO
+    # -----------------------------------------------------
+
+    Produto:
       type: object
+
       properties:
-        token:
+
+        id:
+          type: integer
+          example: 1
+
+        imagemUrl:
           type: string
-          example: "eyJhbGciOiJIUzI1NiIs..."
+          nullable: true
+          example: https://exemplo.com/produto.jpg
+
+        nome:
+          type: string
+          example: Camiseta Código 42
+
+        descricao:
+          type: string
+          example: Camiseta oficial Código 42
+
+        preco:
+          type: number
+          format: float
+          example: 59.90
+
+        ativo:
+          type: boolean
+          example: true
+
+        categoriaIds:
+          type: array
+
+          items:
+            type: integer
+
+          example:
+            - 1
+            - 2
+
+
+    CriarProdutoRequest:
+      type: object
+
+      required:
+        - nome
+        - descricao
+        - preco
+
+      properties:
+
+        imagemUrl:
+          type: string
+          nullable: true
+          example: https://exemplo.com/produto.jpg
+
+        nome:
+          type: string
+          example: Camiseta Código 42
+
+        descricao:
+          type: string
+          example: Camiseta oficial Código 42
+
+        preco:
+          type: number
+          format: float
+          example: 59.90
+
+        categoriaId:
+          type: integer
+          description: ID de uma categoria
+          example: 1
+
+        categoriaIds:
+          type: array
+          description: Lista de IDs de categorias
+
+          items:
+            type: integer
+
+          example:
+            - 1
+            - 2
+
+
+    # -----------------------------------------------------
+    # CATEGORIA
+    # -----------------------------------------------------
+
+    Categoria:
+      type: object
+
+      properties:
+
+        id_categoria:
+          type: integer
+          example: 1
+
+        nome:
+          type: string
+          example: Camisetas
+
+        id_categoria_pai:
+          type: integer
+          nullable: true
+          example: null
+
+
+# =========================================================
+# ROTAS
+# =========================================================
 
 paths:
+
+  # =======================================================
+  # AUTENTICAÇÃO
+  # =======================================================
 
   /login:
 
     post:
+
       tags:
         - Autenticação
 
       summary: Realiza login
 
       description: |
-        Autentica um usuário através de email e senha
-        e retorna um token JWT.
+        Autentica um usuário através do email e senha.
+
+        Quando as credenciais são válidas, retorna um
+        token JWT que pode ser utilizado nas rotas protegidas.
 
       requestBody:
+
         required: true
 
         content:
+
           application/json:
+
             schema:
               $ref: '#/components/schemas/LoginRequest'
 
@@ -104,168 +336,139 @@ paths:
           description: Login realizado com sucesso
 
           content:
+
             application/json:
+
               schema:
                 $ref: '#/components/schemas/LoginResponse'
 
         '401':
           description: Email ou senha inválidos
 
-  /auth/me:
-
-    get:
-      tags:
-        - Autenticação
-
-      summary: Obtém o usuário autenticado
-
-      description: |
-        Valida o JWT enviado na requisição e retorna
-        as informações do usuário autenticado.
-
-      security:
-        - bearerAuth: []
-
-      responses:
-
-        '200':
-          description: Usuário autenticado
-
           content:
+
             application/json:
+
               schema:
-                $ref: '#/components/schemas/Usuario'
+                $ref: '#/components/schemas/Erro'
 
-        '401':
-          description: Token não informado, inválido ou expirado
 
-  /usuarios:
+  # =======================================================
+  # USUÁRIOS
+  # =======================================================
 
-    get:
-      tags:
-        - Usuários
-
-      summary: Lista os usuários
-
-      security:
-        - bearerAuth: []
-
-      responses:
-
-        '200':
-          description: Lista de usuários
-
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Usuario'
-
-        '401':
-          description: Usuário não autenticado
+  /cadastro:
 
     post:
+
       tags:
         - Usuários
 
-      summary: Cria um usuário
+      summary: Cadastra um novo usuário
+
+      description: Cria um novo usuário no sistema.
 
       requestBody:
+
         required: true
 
         content:
+
           application/json:
+
             schema:
-              type: object
-
-              required:
-                - nomeCompleto
-                - email
-                - telefone
-                - cpf
-                - senha
-
-              properties:
-
-                nomeCompleto:
-                  type: string
-                  example: "Lucas Milhão"
-
-                email:
-                  type: string
-                  format: email
-                  example: "lucas@gmail.com"
-
-                telefone:
-                  type: string
-                  example: "51999999999"
-
-                cpf:
-                  type: string
-                  example: "12345678900"
-
-                senha:
-                  type: string
-                  format: password
-                  example: "123456"
+              $ref: '#/components/schemas/CadastroUsuarioRequest'
 
       responses:
 
         '201':
           description: Usuário criado com sucesso
 
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Usuario'
+
         '400':
           description: Dados inválidos
 
-  /usuarios/{id}:
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+  /usuarios:
 
     get:
+
       tags:
         - Usuários
 
-      summary: Busca um usuário pelo ID
+      summary: Lista todos os usuários
+
+      description: |
+        Retorna os usuários cadastrados.
+
+        Esta rota exige autenticação JWT.
 
       security:
         - bearerAuth: []
 
-      parameters:
-
-        - name: id
-          in: path
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1
-
       responses:
 
         '200':
-          description: Usuário encontrado
+          description: Usuários encontrados com sucesso
 
           content:
+
             application/json:
+
               schema:
-                $ref: '#/components/schemas/Usuario'
+                type: array
+
+                items:
+                  $ref: '#/components/schemas/Usuario'
+
+        '400':
+          description: Erro ao consultar usuários
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
 
         '401':
-          description: Usuário não autenticado
+          description: Token não informado, inválido ou expirado
 
-        '404':
-          description: Usuário não encontrado
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+  /usuarios/{id}:
 
     delete:
+
       tags:
         - Usuários
 
-      summary: Remove um usuário
+      summary: Remove o próprio usuário
 
       description: |
-        Remove um usuário do sistema.
-        Apenas usuários ADMIN devem possuir permissão
-        para executar esta operação.
+        Remove um usuário através do ID.
+
+        O usuário precisa estar autenticado e somente pode
+        remover a própria conta.
 
       security:
         - bearerAuth: []
@@ -281,7 +484,7 @@ paths:
           schema:
             type: integer
 
-          example: 15
+          example: 1
 
       responses:
 
@@ -289,15 +492,337 @@ paths:
           description: Usuário removido com sucesso
 
           content:
+
             application/json:
+
               example:
-                mensagem: "Usuário removido com sucesso."
+                mensagem: Usuário removido com sucesso.
 
         '401':
-          description: Usuário não autenticado
+          description: Token não informado, inválido ou expirado
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
 
         '403':
-          description: Usuário autenticado, mas sem permissão
+          description: Tentativa de remover outro usuário
+
+          content:
+
+            application/json:
+
+              example:
+                erro: Não pode deletar outros usuários.
 
         '404':
           description: Usuário não encontrado
+
+          content:
+
+            application/json:
+
+              example:
+                erro: Usuário não encontrado.
+
+
+  # =======================================================
+  # PRODUTOS
+  # =======================================================
+
+  /produtos:
+
+    get:
+
+      tags:
+        - Produtos
+
+      summary: Lista os produtos
+
+      description: |
+        Retorna os produtos cadastrados.
+
+        A consulta pode opcionalmente ser filtrada por
+        categoria ou pelo ID da categoria.
+
+      parameters:
+
+        - name: categoria
+          in: query
+          required: false
+
+          description: Nome da categoria utilizada no filtro
+
+          schema:
+            type: string
+
+          example: Camisetas
+
+
+        - name: categoriaId
+          in: query
+          required: false
+
+          description: ID da categoria utilizada no filtro
+
+          schema:
+            type: integer
+            minimum: 1
+
+          example: 1
+
+      responses:
+
+        '200':
+          description: Produtos encontrados com sucesso
+
+          content:
+
+            application/json:
+
+              schema:
+                type: array
+
+                items:
+                  $ref: '#/components/schemas/Produto'
+
+        '400':
+          description: Filtro ou dados inválidos
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+    post:
+
+      tags:
+        - Produtos
+
+      summary: Cadastra um produto
+
+      description: Cria um novo produto no sistema.
+
+      requestBody:
+
+        required: true
+
+        content:
+
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/CriarProdutoRequest'
+
+      responses:
+
+        '201':
+          description: Produto criado com sucesso
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Produto'
+
+        '400':
+          description: Dados do produto inválidos
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+  /produtos/{pesquisa}:
+
+    get:
+
+      tags:
+        - Produtos
+
+      summary: Pesquisa produtos
+
+      description: |
+        Pesquisa produtos utilizando o valor informado
+        na URL.
+
+      parameters:
+
+        - name: pesquisa
+          in: path
+          required: true
+
+          description: Texto utilizado para pesquisar produtos
+
+          schema:
+            type: string
+
+          example: camiseta
+
+      responses:
+
+        '200':
+          description: Pesquisa realizada com sucesso
+
+          content:
+
+            application/json:
+
+              schema:
+                type: array
+
+                items:
+                  $ref: '#/components/schemas/Produto'
+
+        '400':
+          description: Erro ao pesquisar produtos
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+  # =======================================================
+  # CATEGORIAS
+  # =======================================================
+
+  /categorias:
+
+    get:
+
+      tags:
+        - Categorias
+
+      summary: Lista todas as categorias
+
+      description: Retorna todas as categorias cadastradas.
+
+      responses:
+
+        '200':
+          description: Categorias encontradas com sucesso
+
+          content:
+
+            application/json:
+
+              schema:
+                type: array
+
+                items:
+                  $ref: '#/components/schemas/Categoria'
+
+        '400':
+          description: Erro ao consultar categorias
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+  /categoriasPai:
+
+    get:
+
+      tags:
+        - Categorias
+
+      summary: Lista as categorias principais
+
+      description: |
+        Retorna somente categorias que não possuem
+        uma categoria pai.
+
+      responses:
+
+        '200':
+          description: Categorias principais encontradas
+
+          content:
+
+            application/json:
+
+              schema:
+                type: array
+
+                items:
+                  $ref: '#/components/schemas/Categoria'
+
+        '400':
+          description: Erro ao consultar categorias
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'
+
+
+  /subcategoria/{id}:
+
+    get:
+
+      tags:
+        - Categorias
+
+      summary: Lista as subcategorias
+
+      description: |
+        Retorna as categorias filhas da categoria
+        informada.
+
+      parameters:
+
+        - name: id
+          in: path
+          required: true
+
+          description: ID da categoria pai
+
+          schema:
+            type: integer
+            minimum: 1
+
+          example: 1
+
+      responses:
+
+        '200':
+          description: Subcategorias encontradas
+
+          content:
+
+            application/json:
+
+              schema:
+                type: array
+
+                items:
+                  $ref: '#/components/schemas/Categoria'
+
+        '400':
+          description: Erro ao consultar subcategorias
+
+          content:
+
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/Erro'

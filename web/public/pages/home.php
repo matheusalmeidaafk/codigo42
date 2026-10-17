@@ -27,6 +27,8 @@ try {
     );
 } catch (Throwable $e) {
 
+    error_log('[HOME API] ' . $e->getMessage());
+
     $erroApi = 'Não foi possível carregar os produtos agora.';
 }
 
