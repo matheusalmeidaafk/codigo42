@@ -1,4 +1,3 @@
-
 <?php
 
 function requisitarApi(string $rota): array
@@ -34,10 +33,7 @@ function requisitarApi(string $rota): array
     $erroAcesso = null;
 
     set_error_handler(
-        static function (
-            int $severity,
-            string $message
-        ) use (&$erroAcesso): bool {
+        static function (int $severity, string $message) use (&$erroAcesso): bool {
             $erroAcesso = $message;
             return true;
         }
@@ -56,7 +52,7 @@ function requisitarApi(string $rota): array
     if ($resposta === false) {
         error_log(
             '[API FRONTEND] URL=' . $url .
-                ' | erro=' . ($erroAcesso ?? 'Erro desconhecido')
+            ' | erro=' . ($erroAcesso ?? 'Erro desconhecido')
         );
 
         throw new RuntimeException(
@@ -115,7 +111,7 @@ function requisitarApi(string $rota): array
     if (!is_array($dados)) {
         throw new RuntimeException(
             'A API retornou uma resposta inválida. Resposta recebida: '
-                . substr($resposta, 0, 500)
+            . substr($resposta, 0, 500)
         );
     }
 
