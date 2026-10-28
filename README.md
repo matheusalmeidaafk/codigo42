@@ -1,5 +1,10 @@
 ## Documentação do Projeto
 
+	adm@codigo42.local
+
+  123456789
+
+
 Projeto desenvolvido em PHP, executado no ambiendo do Docker com PHP 8.3
 A aplicação utiliza MySQL hospedado na Aiven e Bootstrap 5.3
 
