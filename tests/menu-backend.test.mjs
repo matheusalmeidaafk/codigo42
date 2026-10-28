@@ -10,7 +10,7 @@
 import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 
-const BASE = (process.env.BASE_URL || 'node -v').replace(/\/$/, '');
+const BASE = (process.env.BASE_URL || 'http://localhost:8080').replace(/\/$/, '');
 const ORIGIN_FRONT = 'http://localhost:8081';
 const TEMPO_MAX_MS = 2000;
 

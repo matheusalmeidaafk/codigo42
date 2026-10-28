@@ -133,10 +133,10 @@ class ProdutoService
             p.descricao,
             p.preco,
             p.is_autoral,
-            p.ativo
+            p.ativo,
 
             COALESCE(
-                ROUND(AVG(a.estrelas)),
+                ROUND(AVG(a.estrelas), 1),
                 0
             ) AS estrelas,
 
@@ -230,7 +230,7 @@ class ProdutoService
             $produto['id_produto'] = $idProduto;
             $produto['preco'] = (float) $produto['preco'];
             $produto['preco_final'] = (float) $produto['preco_final'];
-            $produto['estrelas'] = (int) $produto['estrelas'];
+            $produto['estrelas'] = (float) $produto['estrelas'];
             $produto['is_autoral'] = (bool) $produto['is_autoral'];
             $produto['ativo'] = (bool) $produto['ativo'];
 
@@ -259,6 +259,8 @@ class ProdutoService
         $sql = "
         SELECT
             p.*,
+            COALESCE(av.estrelas, 0) AS estrelas,
+            COALESCE(av.total_avaliacoes, 0) AS total_avaliacoes,
             pv.id_variacao,
             pv.tamanho,
             pv.cor, 
@@ -276,6 +278,12 @@ class ProdutoService
                 ELSE p.preco
             END AS preco_final
         FROM produto p
+        LEFT JOIN (
+            SELECT id_produto, ROUND(AVG(estrelas), 1) AS estrelas,
+                   COUNT(*) AS total_avaliacoes
+            FROM avaliacao_produto
+            GROUP BY id_produto
+        ) av ON av.id_produto = p.id_produto
 
         LEFT JOIN (
             SELECT
@@ -294,6 +302,7 @@ class ProdutoService
                         ORDER BY pv.id_variacao
                     ) AS rn
                 FROM produto_variacao pv
+                WHERE pv.ativo = 1
             ) AS variacoes
             WHERE rn = 1
         ) pv
@@ -322,11 +331,11 @@ class ProdutoService
             SELECT 1
             FROM produto_categoria pc
             WHERE pc.id_produto = p.id_produto
-              AND pc.id_categoria IN ($placeholders)
+              AND pc.id_categoria IN (SELECT id_categoria FROM categoria WHERE id_categoria IN ($placeholders) OR id_categoria_pai IN ($placeholders))
         )
     ";
 
-            $params = array_merge($params, $categorias);
+            $params = array_merge($params, $categorias, $categorias);
         }
 
         if (!empty($precoMin)) {
@@ -354,7 +363,7 @@ class ProdutoService
         if (!empty($tamanho)) {
             $placeholders = implode(',', array_fill(0, count($tamanho), '?'));
 
-            $sql .= " AND pv.tamanho IN ($placeholders)";
+            $sql .= " AND EXISTS (SELECT 1 FROM produto_variacao tamanho_filtro WHERE tamanho_filtro.id_produto = p.id_produto AND tamanho_filtro.ativo = 1 AND tamanho_filtro.tamanho IN ($placeholders))";
 
             $params = array_merge($params, $tamanho);
         }
@@ -371,12 +380,15 @@ class ProdutoService
 
         $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $variationQuery = $this->db->prepare('SELECT id_variacao, tamanho, cor, estoque FROM produto_variacao WHERE id_produto = ? AND ativo = 1 ORDER BY id_variacao');
         foreach ($produtos as &$produto) {
 
+            $produto['estrelas'] = (float) $produto['estrelas'];
+            $produto['total_avaliacoes'] = (int) $produto['total_avaliacoes'];
             $sqlTamanhos = "
         SELECT DISTINCT tamanho
         FROM produto_variacao
-        WHERE id_produto = ?
+        WHERE id_produto = ? AND ativo = 1
           AND tamanho IS NOT NULL
           AND tamanho <> ''
         ORDER BY tamanho
@@ -387,6 +399,8 @@ class ProdutoService
                 $produto['id_produto']
             ]);
 
+            $variationQuery->execute([$produto['id_produto']]);
+            $produto['variacoes'] = $variationQuery->fetchAll(PDO::FETCH_ASSOC);
             $produto['tamanhos'] = $stmtTamanhos->fetchAll(
                 PDO::FETCH_COLUMN
             );

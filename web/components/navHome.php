@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg border-bottom px-3 py-2">
         <div class="container">
 
-            <a class="navbar-brand fw-bold" href="/">
+            <a class="navbar-brand fw-bold" href="/pages/home.php">
                 &lt;/Código42&gt;
             </a>
 

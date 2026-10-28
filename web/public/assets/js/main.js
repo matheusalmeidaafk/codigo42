@@ -27,10 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function montarUrlPagina(categoriaId) {
     if (categoriaId === "todos") {
-      return "/";
+      return "/pages/home.php";
     }
 
-    return `/?categorias=${encodeURIComponent(categoriaId)}`;
+    return `/pages/home.php?categorias=${encodeURIComponent(categoriaId)}`;
   }
 
   function atualizarFiltroAtivo(categoriaId) {

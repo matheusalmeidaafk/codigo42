@@ -3,7 +3,7 @@
 function CardProduto(
     int $idProduto,
     string $titulo,
-    int $estrelas,
+    float $estrelas,
     float $precoOriginal,
     float $precoFinal,
     ?float $porcentagemDesconto,
@@ -12,20 +12,19 @@ function CardProduto(
 ): void {
 
     $estrelas = max(0, min(5, $estrelas));
+    
 
     $temDesconto = $porcentagemDesconto !== null
         && $porcentagemDesconto > 0;
     ?>
-    <a href="/pages/produto.php?id=<?= $idProduto ?>" class="text-decoration-none text-reset d-block">
+    <div class="produto-card-wrapper">
 
         <article class="card border-0 rounded-0 overflow-hidden w-100">
 
             <div
                 class=" hover-card d-flex flex-column justify-content-end align-items-center position-absolute bottom-0 start-0 w-100 border border-dark border-2 p-2 opacity-0 invisible z-3">
 
-                <h2 class="">
-                    Tamanho:
-                </h2>
+                <?php if ($tamanhos): ?><h2>Tamanho:</h2><?php endif; ?>
                 <div class="d-flex justify-content-center gap-2 mb-2">
                     <?php if (!empty($tamanhos)): ?>
                         <div class="d-flex gap-2 flex-wrap justify-content-center">
@@ -40,19 +39,24 @@ function CardProduto(
 
                 </div>
 
-                <button class="btn btn-success w-75">
-                    Adicionar ao carrinho
+                <button type="button" class="btn btn-success w-75 js-add-cart"
+                    data-id="<?= $idProduto ?>"
+                    data-nome="<?= htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') ?>"
+                    data-preco="<?= htmlspecialchars((string) $precoFinal, ENT_QUOTES, 'UTF-8') ?>"
+                    data-imagem="<?= htmlspecialchars($imagem, ENT_QUOTES, 'UTF-8') ?>"
+                    data-requer-tamanho="<?= !empty($tamanhos) ? '1' : '0' ?>">
+                    Escolher opções
                 </button>
 
             </div>
 
 
-            <div class="produto-card-imagem w-100 border border-dark border-2">
+            <a href="/pages/produto.php?id=<?= $idProduto ?>" class="produto-card-imagem d-block w-100 border border-dark border-2" aria-label="<?= htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') ?>">
 
                 <img src="<?= htmlspecialchars($imagem) ?>" alt="<?= htmlspecialchars($titulo) ?>"
                     class="w-100 h-100 object-fit-cover">
 
-            </div>
+            </a>
 
             <div class="row g-0 bg-dark text-white">
 
@@ -60,25 +64,12 @@ function CardProduto(
 
                     <div class="lh-sm ps-1 text-center" style="height: 40px;">
 
-                        <?= htmlspecialchars($titulo) ?>
+                        <a class="text-reset text-decoration-none" href="/pages/produto.php?id=<?= $idProduto ?>"><?= htmlspecialchars($titulo) ?></a>
 
                     </div>
 
-                    <div class="d-flex justify-content-center mt-1">
-
-                        <?php for ($i = 1; $i <= 5; $i++): ?>
-
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="<?= $i <= $estrelas
-                                ? 'var(--bs-teal)'
-                                : 'var(--bs-secondary)' ?>">
-
-                                <path
-                                    d="M12 2.5L14.9 8.4L21.5 9.3L16.7 13.9L17.8 20.5L12 17.4L6.2 20.5L7.3 13.9L2.5 9.3L9.1 8.4L12 2.5Z" />
-
-                            </svg>
-
-                        <?php endfor; ?>
-
+                    <div class="card-avaliacao" role="img" aria-label="<?= $estrelas > 0 ? number_format($estrelas, 1, ',', '.') . ' de 5 estrelas' : 'Sem avaliações' ?>" title="<?= $estrelas > 0 ? number_format($estrelas, 1, ',', '.') . ' de 5 estrelas' : 'Sem avaliações' ?>">
+                        <span class="estrelas-base" aria-hidden="true">★★★★★<span class="estrelas-preenchidas" style="width: <?= $estrelas * 20 ?>%">★★★★★</span></span>
                     </div>
 
                 </div>
@@ -135,23 +126,7 @@ function CardProduto(
             </div>
 
         </article>
-    </a>
-
-    <script>
-        document.addEventListener("click", function (event) {
-            const botao = event.target.closest(".tamanho-btn");
-
-            if (!botao) return;
-
-            const grupo = botao.parentElement;
-
-            grupo.querySelectorAll(".tamanho-btn").forEach((btn) => {
-                btn.classList.remove("selecionado");
-            });
-
-            botao.classList.add("selecionado");
-        });
-    </script>
+    </div>
 
     <?php
 }

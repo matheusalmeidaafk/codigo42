@@ -9,6 +9,7 @@ services:
 
     volumes:
       - ./backend:/var/www/html
+      - ./web/public/assets/uploads:/var/www/html/uploads
 
     env_file:
       - ./backend/.env
@@ -19,6 +20,9 @@ services:
         echo ' Código 42 - Iniciando Backend' &&
         echo '====================================' &&
         echo '' &&
+        echo '[COMPOSER] Verificando dependências...' &&
+        (test -f /var/www/html/vendor/autoload.php || composer install --working-dir=/var/www/html --no-interaction --prefer-dist --no-progress) &&
+        chown www-data:www-data /var/www/html/uploads &&
         echo '[SWAGGER] Verificando documentação...' &&
         php /var/www/html/docs/gerar-swagger.php &&
         echo '[BACKEND] Iniciando Apache...' &&

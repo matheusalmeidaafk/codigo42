@@ -4,7 +4,7 @@
     const secao = document.querySelector("#produto-sugestoes");
     if (!secao) return;
 
-    const API_BASE_URL = "http://localhost:8080";
+    const API_BASE_URL = window.CODIGO42_API_URL || `${location.protocol}//${location.hostname}:8080`;
     const URL_CARROSSEL = "/partials/carrosselSugestoes.php";
     const LIMITE_SUGESTOES = 10;
     const produtoAtualId = Number.parseInt(secao.dataset.produtoId || "0", 10);
@@ -34,7 +34,7 @@
             nome: String(produto.nome ?? "Produto"),
             preco: Number.isFinite(preco) ? preco : 0,
             preco_final: Number.isFinite(precoFinal) ? precoFinal : 0,
-            estrelas: Math.max(0, Math.min(5, Number.parseInt(produto.estrelas ?? 0, 10) || 0)),
+            estrelas: Math.max(0, Math.min(5, Number.parseFloat(produto.estrelas ?? 0) || 0)),
             porcentagem_desconto: descontoInformado === null || descontoInformado === undefined
                 ? null
                 : (Number.isFinite(Number(descontoInformado)) ? Number(descontoInformado) : null),

@@ -19,7 +19,7 @@ class UsuarioService
 
     public function listar(): array
     {
-        $sql = "SELECT * FROM usuario";
+        $sql = "SELECT id_usuario, imagem_url, nome_completo, email, telefone, cpf, ativo FROM usuario";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -68,7 +68,24 @@ class UsuarioService
 
         $id = (int) $this->db->lastInsertId();
 
-        return new Usuario($id, $imagem_url, $nomeCompleto, $email, $telefone, $cpf, $senha, true);
+        return new Usuario($nomeCompleto, $email, $telefone, $cpf, '', true, $id, $imagem_url);
+    }
+
+    public function buscarPerfil(int $id): ?array
+    {
+        $stmt = $this->db->prepare('SELECT id_usuario, imagem_url, nome_completo, email, telefone, cpf FROM usuario WHERE id_usuario = ? AND ativo = 1');
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    public function atualizarPerfil(int $id, string $nome, string $email, string $telefone): ?array
+    {
+        if (strlen(trim($nome)) < 2 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Informe nome e e-mail válidos.');
+        }
+        $stmt = $this->db->prepare('UPDATE usuario SET nome_completo = ?, email = ?, telefone = ? WHERE id_usuario = ? AND ativo = 1');
+        $stmt->execute([trim($nome), trim($email), trim($telefone), $id]);
+        return $this->buscarPerfil($id);
     }
 
     public function deletar(int $id): bool {

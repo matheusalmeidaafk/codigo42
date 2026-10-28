@@ -99,7 +99,7 @@ $categoriasApi = array_values(array_unique($categoriasApi));
 $filtrosProdutos = [
     'categorias' => implode(',', $categoriasApi),
     'cor'        => $coresSelecionadas[0] ?? '',   // backend aceita uma cor
-    'tamanhos'   => implode(',', $tamanhosSelecionados),
+    'tamanhos'   => $tamanhosSelecionados,
 ];
 
 if ($precoMinSelecionado > $precoMinDisponivel) {
@@ -299,6 +299,10 @@ $opcoesTamanhos = array_combine($tamanhos, $tamanhos) ?: [];
         event.preventDefault();
 
         const partes = [];
+        const atuais = new URLSearchParams(location.search);
+        for (const chave of ['q', 'ordem', 'limite']) {
+            if (atuais.has(chave)) partes.push(chave + '=' + encodeURIComponent(atuais.get(chave)));
+        }
 
         /* Junta os valores marcados de um grupo em "a,b,c" (sem codificar a vírgula) */
         const adicionarLista = (grupo) => {

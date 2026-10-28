@@ -523,3 +523,123 @@ body {
 .proximo {
     transform: rotate(180deg);
 }
+
+.categoria-menu:focus-within .subcategorias { display: block; }
+
+
+/* ==========================================
+   ADMIN - FORMULÁRIO RESPONSIVO
+========================================== */
+
+#adminModal .modal-dialog {
+    width: calc(100% - 32px);
+    max-width: 850px;
+    margin: 16px auto;
+}
+
+#adminModal .modal-content {
+    max-height: calc(100dvh - 32px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#adminModal #adminForm {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#adminModal .modal-header,
+#adminModal .modal-footer {
+    flex-shrink: 0;
+    padding: 12px 20px;
+    background: #fff;
+}
+
+#adminModal .modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 20px;
+    overscroll-behavior: contain;
+}
+
+#adminModal #adminFormCampos {
+    --bs-gutter-x: 14px;
+    --bs-gutter-y: 10px;
+}
+
+#adminModal .form-label {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+#adminModal .form-control,
+#adminModal .form-select {
+    font-size: 0.9rem;
+    min-height: 36px;
+    padding: 6px 10px;
+}
+
+#adminModal textarea.form-control {
+    min-height: 70px;
+    max-height: 140px;
+    resize: vertical;
+}
+
+#adminModal .modal-footer .btn {
+    min-width: 100px;
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    #adminModal .modal-dialog {
+        width: calc(100% - 20px);
+        max-width: 100%;
+        margin: 10px auto;
+    }
+
+    #adminModal .modal-content {
+        max-height: calc(100dvh - 20px);
+    }
+
+    #adminModal .modal-body {
+        padding: 12px;
+    }
+
+    #adminModal .modal-header,
+    #adminModal .modal-footer {
+        padding: 10px 12px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 576px) {
+    #adminModal .modal-dialog {
+        width: 100%;
+        margin: 0;
+        min-height: 100dvh;
+    }
+
+    #adminModal .modal-content {
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+    }
+
+    #adminModal #adminFormCampos > div {
+        width: 100%;
+    }
+
+    #adminModal .modal-footer {
+        display: flex;
+        gap: 8px;
+    }
+
+    #adminModal .modal-footer .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}

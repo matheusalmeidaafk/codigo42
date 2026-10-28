@@ -10,7 +10,7 @@ class Banner
     public bool $ativo;
 
     public function __construct(
-        ?int $id = null,
+        ?int $id,
         string $bannerUrl,
         ?string $linkUrl = null,
         bool $ativo = true

@@ -19,50 +19,11 @@ function normalizarCategoriaProduto(string $texto): string
 
 function obterCategoriasNavProdutos(array $categorias): array
 {
-    $ordemDesejada = [
-        'camisetas' => 'CAMISETAS',
-        'canecas' => 'CANECAS',
-        'adesivos' => 'ADESIVOS',
-    ];
-
-    $categoriasPorNome = [];
-
-    foreach ($categorias as $categoria) {
-
-        if (($categoria['id_categoria_pai'] ?? null) !== null) {
-            continue;
-        }
-
-        $idCategoria = (int) ($categoria['id_categoria'] ?? 0);
-
-        $nomeCategoria =
-            (string) ($categoria['nome'] ?? '');
-
-        $nomeNormalizado =
-            normalizarCategoriaProduto($nomeCategoria);
-
-        if (
-            $idCategoria <= 0
-            || !isset($ordemDesejada[$nomeNormalizado])
-        ) {
-            continue;
-        }
-
-        $categoriasPorNome[$nomeNormalizado] = [
-            'id' => $idCategoria,
-            'label' => $ordemDesejada[$nomeNormalizado],
-        ];
-    }
-
     $resultado = [];
-
-    foreach ($ordemDesejada as $nome => $label) {
-
-        if (isset($categoriasPorNome[$nome])) {
-            $resultado[] = $categoriasPorNome[$nome];
-        }
+    foreach ($categorias as $categoria) {
+        if (!empty($categoria['id_categoria_pai'])) continue;
+        $resultado[] = ['id' => (int) $categoria['id_categoria'], 'label' => $categoria['nome']];
     }
-
     return $resultado;
 }
 
@@ -91,7 +52,7 @@ function renderNavProdutos(
             aria-label="Categorias de produtos">
 
             <a
-                href="/"
+                href="/pages/home.php"
                 data-categoria-id="todos"
                 class="btn btn-sm filtro-produto <?= $categoriaSelecionada === null
                                                         ? 'btn-dark'
@@ -109,7 +70,7 @@ function renderNavProdutos(
                 ?>
 
                 <a
-                    href="/?categorias=<?= (int) $categoria['id'] ?>"
+                    href="/pages/home.php?categorias=<?= (int) $categoria['id'] ?>"
                     data-categoria-id="<?= (int) $categoria['id'] ?>"
                     class="btn btn-sm filtro-produto <?= $categoriaAtiva
                                                             ? 'btn-dark'

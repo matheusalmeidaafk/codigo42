@@ -30,7 +30,7 @@ class ProdutoController
             $nome = trim((string) ($dados['nome'] ?? ''));
             $descricao = trim((string) ($dados['descricao'] ?? ''));
             $precoInformado = $dados['preco'] ?? null;
-            $isAutoral = $dados['preco'] ?? false;
+            $isAutoral = filter_var($dados['isAutoral'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
             if (!is_numeric($precoInformado)) {
                 throw new Exception('Preço do produto deve ser numérico.');

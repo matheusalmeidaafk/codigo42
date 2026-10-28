@@ -38,7 +38,7 @@ function renderCarrosselProdutos(
                                         CardProduto(
                                             (int) $produto['id_produto'],
                                             (string) ($produto['nome'] ?? 'Produto'),
-                                            (int) ($produto['estrelas'] ?? 0),
+                                            (float) ($produto['estrelas'] ?? 0),
                                             (float) ($produto['preco'] ?? 0),
                                             (float) ($produto['preco_final'] ?? $produto['preco'] ?? 0),
                                             isset($produto['porcentagem_desconto'])

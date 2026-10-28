@@ -19,16 +19,15 @@ if (
 }
 
 try {
-
     $categorias = buscarCategoriasApi();
-
-    $produtos = buscarProdutosApi(
-        $categoriaSelecionada
-    );
 } catch (Throwable $e) {
+    error_log('[HOME CATEGORIAS] ' . $e->getMessage());
+}
 
-    error_log('[HOME API] ' . $e->getMessage());
-
+try {
+    $produtos = buscarProdutosApi($categoriaSelecionada);
+} catch (Throwable $e) {
+    error_log('[HOME PRODUTOS] ' . $e->getMessage());
     $erroApi = 'Não foi possível carregar os produtos agora.';
 }
 
@@ -52,19 +51,19 @@ try {
     <!-- CSS geral -->
     <link rel="stylesheet" href="/assets/css/style.css">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    
 
-    <link rel="stylesheet" href="/assets/css/style.css">
+    
 
     <!-- CSS do banner -->
     <link rel="stylesheet" href="/assets/css/banner.css">
 
     <!-- CSS do card -->
     <link rel="stylesheet" href="/assets/css/cardProduto.css">
+<link rel="stylesheet" href="/assets/css/design.css">
 </head>
 
-<body>
+<body class="pagina-home">
 
     <!-- HEADER -->
     <?php require_once __DIR__ . '/../../components/header.php'; ?>
@@ -133,11 +132,10 @@ try {
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
+    
 
     <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/carrosselResponsivo.js"></script>
 
 </body>
 

@@ -1,0 +1,140 @@
+.carrinho-sidebar {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    z-index: 1100;
+    transition: right 0.3s ease-in-out;
+}
+
+.carrinho-sidebar.open {
+    right: 0;
+}
+
+.carrinho-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.carrinho-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.carrinho-close-btn {
+    cursor: pointer;
+    line-height: 1;
+}
+
+.carrinho-close-btn:hover {
+    color: #000 !important;
+}
+
+.carrinho-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.carrinho-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.carrinho-item-details {
+    flex: 1;
+}
+
+.carrinho-item-title {
+    font-size: 0.9rem;
+    color: #222;
+    margin: 0 0 2px 0;
+    font-weight: 600;
+}
+
+.carrinho-item-subtitle {
+    font-size: 0.75rem;
+    color: #777;
+    margin: 0 0 6px 0;
+}
+
+.carrinho-item-prices {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.carrinho-item-old-price {
+    font-size: 0.75rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.carrinho-item-price {
+    font-size: 0.95rem;
+    color: #111;
+    font-weight: bold;
+}
+
+.carrinho-item-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.carrinho-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.carrinho-item-controls button {
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carrinho-item-controls span {
+    font-size: 0.85rem;
+    min-width: 15px;
+    text-align: center;
+}
+
+.carrinho-item-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    font-size: 0.9rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.carrinho-item-remove:hover {
+    color: #d9534f;
+}

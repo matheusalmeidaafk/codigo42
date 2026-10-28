@@ -106,15 +106,17 @@ $tamanhos = array_values(array_unique(array_filter(
     <link rel="stylesheet" href="/assets/css/produto.css">
     <!-- CSS da seção de sugestões; mantém os estilos da página original. -->
     <link rel="stylesheet" href="/assets/css/produtoSugestoes.css">
+<link rel="stylesheet" href="/assets/css/design.css">
 </head>
 
-<body>
+<body class="pagina-produto">
 
     <!-- HEADER -->
     <?php require_once __DIR__ . '/../../components/header.php'; ?>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="">
+    <main class="produto-detalhe">
+        <nav class="caminho" aria-label="Navegação"><a href="/pages/home.php">Home</a> / <a href="/pages/produtos.php">Produtos</a> / <?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?></nav>
 
         <div class="row g-4 mx-auto" style="max-width: 1000px;">
 
@@ -198,40 +200,16 @@ $tamanhos = array_values(array_unique(array_filter(
                     <?php endif; ?>
                 </div>
 
-                <fieldset class="border border-secondary rounded p-2 mb-3 align-self-center w-75">
-
-                    <legend class="float-none w-auto px-1 fs-6 mb-1">
-                        Tamanhos
-                    </legend>
-
-                    <div class="row row-cols-4 g-1">
-                        <?php if (!empty($tamanhos)): ?>
-                            <?php foreach ($tamanhos as $i => $tamanho): ?>
-                                <div class="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input tamanho" type="radio" name="tamanho"
-                                            value="<?= htmlspecialchars($tamanho, ENT_QUOTES, 'UTF-8') ?>"
-                                            id="tamanho<?= $i ?>">
-
-                                        <label class="form-check-label small" for="tamanho<?= $i ?>">
-                                            <?= htmlspecialchars($tamanho, ENT_QUOTES, 'UTF-8') ?>
-                                        </label>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="col-12">
-                                <p class="small text-secondary mb-0">
-                                    Nenhum tamanho disponível para este produto.
-                                </p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div id="avisoTamanho" class="text-danger small d-none mt-2">
-                        Selecione um tamanho.
-                    </div>
-
+                <fieldset class="border rounded p-3 mb-3 align-self-center w-75">
+                    <legend class="float-none w-auto fs-6">Tamanho e cor</legend>
+                    <label for="variacaoProduto" class="form-label">Escolha uma opção</label>
+                    <select id="variacaoProduto" class="form-select">
+                        <option value="">Selecione...</option>
+                        <?php foreach (($produto['variacoes'] ?? []) as $v): ?>
+                        <option value="<?= (int) $v['id_variacao'] ?>" data-estoque="<?= (int) $v['estoque'] ?>" <?= (int) $v['estoque'] <= 0 ? 'disabled' : '' ?>><?= htmlspecialchars(implode(' / ', array_filter([$v['tamanho'], $v['cor']])) ?: 'Único', ENT_QUOTES, 'UTF-8') ?><?= (int) $v['estoque'] <= 0 ? ' — Esgotado' : '' ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p id="avisoTamanho" class="text-danger small d-none mt-2" role="alert">Selecione uma opção disponível.</p>
                 </fieldset>
 
                 <fieldset class="border border-secondary rounded p-2 mb-3 align-self-center w-75">
@@ -261,7 +239,12 @@ $tamanhos = array_values(array_unique(array_filter(
 
                     <button type="button"
                         class="btn btn-compra btn-outline-secondary border-success text-dark align-self-center"
-                        id="adicionarCarrinho">
+                        id="adicionarCarrinho"
+                        data-id="<?= (int) ($produto['id_produto'] ?? $produto['id'] ?? $id) ?>"
+                        data-nome="<?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>"
+                        data-preco-original="<?= htmlspecialchars((string) ($precoOriginal ?? 0), ENT_QUOTES, 'UTF-8') ?>"
+                        data-preco="<?= htmlspecialchars((string) ($precoFinal ?? 0), ENT_QUOTES, 'UTF-8') ?>"
+                        data-imagem="<?= htmlspecialchars((string) ($imagem ?? ''), ENT_QUOTES, 'UTF-8') ?>">
                         Adicionar ao carrinho
                     </button>
 
@@ -270,6 +253,13 @@ $tamanhos = array_values(array_unique(array_filter(
                     </button>
 
                 </div>
+                <?php if ($produto !== null): ?>
+                <button type="button" id="salvarFavorito" class="btn btn-outline-dark align-self-center mt-2"
+                    data-id="<?= (int) ($produto['id_produto'] ?? $produto['id'] ?? $id) ?>"
+                    data-nome="<?= htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>">
+                    ♡ Salvar nos favoritos
+                </button>
+                <?php endif; ?>
                 <a href="#parceiros" class="small link-primary text-center align-self-center mt-1">
                     Descubra como sua compra ajuda artistas parceiros
                 </a>
@@ -332,6 +322,7 @@ $tamanhos = array_values(array_unique(array_filter(
     <!-- Inicializa o carrossel também quando ele é carregado dinamicamente. -->
     <script src="/assets/js/carrosselResponsivo.js"></script>
     <script src="/assets/js/produtoSugestoes.js"></script>
+    <script src="/assets/js/favoritos.js"></script>
 
 </body>
 

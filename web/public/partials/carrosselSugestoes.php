@@ -56,7 +56,7 @@ foreach (array_slice($dados['produtos'], 0, 10) as $produto) {
         'nome' => $nome,
         'preco' => (float) $preco,
         'preco_final' => (float) $precoFinal,
-        'estrelas' => max(0, min(5, (int) ($produto['estrelas'] ?? 0))),
+        'estrelas' => max(0, min(5, (float) ($produto['estrelas'] ?? 0))),
         'porcentagem_desconto' => is_numeric($desconto) ? (float) $desconto : null,
         'variacao_imagem_url' => $imagem,
         'tamanhos' => array_values(array_filter($tamanhos, 'is_string')),

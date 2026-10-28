@@ -1,4 +1,7 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=Homenaje&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* SETAS ORIGINAIS */
 
 .seta {
     width: 50px;
@@ -10,15 +13,64 @@
     transform: rotate(180deg);
 }
 
+/* INDICADORES ORIGINAIS */
+
 .carousel-indicators [data-bs-target] {
-  background-color: black;
+    background-color: black;
 }
 
 .carousel-indicators .active {
-  background-color: var(--bs-success); 
+    background-color: var(--bs-success);
 }
 
 .indicadores-banner {
     position: static;
     margin: 15px 0 0;
+}
+
+/* TAMANHO DOS BANNERS */
+
+.home-banner {
+    width: 100%;
+    max-width: 1416px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.home-banner .carousel-item img:not(.seta) {
+    display: block;
+    width: 100%;
+    height: clamp(160px, 20vw, 300px);
+    object-fit: contain;
+    object-position: center;
+}
+
+/* TABLETS */
+
+@media (max-width: 768px) {
+    .home-banner .carousel-item img:not(.seta) {
+        height: 200px;
+    }
+
+    .seta {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* CELULARES */
+
+@media (max-width: 576px) {
+    .home-banner .carousel-item img:not(.seta) {
+        height: 140px;
+    }
+
+    .seta {
+        width: 30px;
+        height: 30px;
+    }
+
+    .indicadores-banner {
+        margin: 10px 0 0;
+    }
 }

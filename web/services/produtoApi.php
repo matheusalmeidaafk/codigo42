@@ -65,18 +65,6 @@ function requisitarApi(string $rota): array
     }
 
 
-    $resposta = @file_get_contents(
-        $url,
-        false,
-        $contexto
-    );
-
-    if ($resposta === false) {
-        throw new RuntimeException(
-            "Não foi possível acessar a API em: {$url}"
-        );
-    }
-
     $statusCode = 0;
 
     if (

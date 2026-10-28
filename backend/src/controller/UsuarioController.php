@@ -20,7 +20,7 @@ class UsuarioController {
             );
 
             $usuario = $this->service->criar(
-                $dados["imagem_url"],
+                $dados["imagem_url"] ?? null,
                 $dados["nomeCompleto"],
                 $dados["email"],
                 $dados["telefone"],
@@ -37,7 +37,6 @@ class UsuarioController {
                 "email" => $usuario->email,
                 "telefone" => $usuario->telefone,
                 "cpf" => $usuario->cpf,
-                "senha" => $usuario->senha,
             ]);
 
 
@@ -69,5 +68,34 @@ class UsuarioController {
 
     public function deletar(int $id) : bool {
         return $this->service->deletar($id);
+    }
+
+    public function perfil(object $usuario): void
+    {
+        $perfil = $this->service->buscarPerfil((int) $usuario->id);
+        http_response_code($perfil ? 200 : 404);
+        echo json_encode($perfil ?: ['erro' => 'Usuário não encontrado.']);
+    }
+
+    public function atualizarPerfil(object $usuario): void
+    {
+        try {
+            $dados = json_decode(file_get_contents('php://input'), true);
+            if (!is_array($dados)) throw new Exception('JSON inválido.');
+            $perfil = $this->service->buscarPerfil((int) $usuario->id);
+            if (!$perfil) {
+                http_response_code(404);
+                echo json_encode(['erro' => 'Usuário não encontrado.']);
+                return;
+            }
+            $atualizado = $this->service->atualizarPerfil((int) $usuario->id,
+                (string) ($dados['nome_completo'] ?? $perfil['nome_completo']),
+                (string) ($dados['email'] ?? $perfil['email']),
+                (string) ($dados['telefone'] ?? $perfil['telefone']));
+            echo json_encode($atualizado);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode(['erro' => $e->getMessage()]);
+        }
     }
 }

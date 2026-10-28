@@ -104,8 +104,13 @@ class AuthMiddleware
 
         try {
 
-            return $this->jwtService
-                ->validarTokenAdm($token);
+            $autorizado = $this->jwtService->validarTokenAdm($token);
+            if (!$autorizado) {
+                http_response_code(403);
+                echo json_encode(['erro' => 'Acesso exclusivo para administradores.']);
+                exit;
+            }
+            return true;
 
         } catch (Throwable $e) {
 

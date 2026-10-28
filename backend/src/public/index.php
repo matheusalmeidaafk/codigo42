@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use App\Controller\AdminController;
+use App\Controller\AdminResourceController;
+use App\Controller\AdminUploadController;
 use App\Controller\CategoriaController;
 use App\Controller\ProdutoController;
 use App\Middleware\AuthMiddleware;
@@ -24,7 +26,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 header("Access-Control-Allow-Origin: http://localhost:8081");
 
-header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -51,6 +53,7 @@ $produtoController = new ProdutoController();
 $categoriaController = new CategoriaController();
 $bannerController = new BannerController();
 $adminController = new AdminController();
+$adminResourceController = new AdminResourceController();
 
 /*
 |--------------------------------------------------------------------------
@@ -90,12 +93,18 @@ if ($method === "GET" && $uri === "/usuarios") {
 
     $usuarioController->criar();
 
+} elseif ($method === "GET" && $uri === "/usuarios/me") {
+    $usuarioController->perfil(exigirUsuario());
+
+} elseif ($method === "PUT" && $uri === "/usuarios/me") {
+    $usuarioController->atualizarPerfil(exigirUsuario());
+
 } elseif (
     $method === "DELETE"
     && preg_match("#^/usuarios/(\d+)$#", $uri, $matches)
 ) {
 
-    $usuario = exigirAutenticacao();
+    $usuario = exigirUsuario();
 
     $id = (int) $matches[1];
 
@@ -136,8 +145,7 @@ if ($method === "GET" && $uri === "/usuarios") {
 |--------------------------------------------------------------------------
 */
 elseif ($method === "POST" && $uri === "/cadastroadm") {
-
-    $adminController->criar();
+    if (exigirAutenticacaoAdm()) $adminController->criar();
 
 }
 
@@ -156,6 +164,16 @@ elseif ($method === "POST" && $uri === "/login") {
 
 elseif($method === "POST" && $uri === "/loginadm"){
     $authController->loginAdm();
+}
+
+elseif ($method === 'POST' && $uri === '/admin/upload-imagem') {
+    if (exigirAutenticacaoAdm()) (new AdminUploadController())->imagem();
+}
+
+elseif (preg_match('#^/admin/(produtos|categorias|banners|usuarios)(?:/(\d+))?$#', $uri, $matches)) {
+    if (exigirAutenticacaoAdm()) {
+        $adminResourceController->executar($matches[1], $method, isset($matches[2]) ? (int) $matches[2] : null);
+    }
 }
 
 /*
@@ -234,8 +252,7 @@ elseif (
 */
 
 elseif ($method === "POST" && $uri === "/banners") {
-
-    $bannerController->criarBanner();
+    if (exigirAutenticacaoAdm()) $bannerController->criarBanner();
 
 } elseif ($method === "GET" && $uri === "/banners") {
 
@@ -248,7 +265,7 @@ elseif ($method === "POST" && $uri === "/banners") {
 
     $id = (int) $matches[1];
 
-    $bannerController->deletar($id);
+    if (exigirAutenticacaoAdm()) $bannerController->deletar($id);
 
 }
 
@@ -318,4 +335,15 @@ function exigirAutenticacaoAdm(): bool
     $middleware = new AuthMiddleware();
 
     return $middleware->autenticarAdm();
+}
+
+function exigirUsuario(): object
+{
+    $usuario = exigirAutenticacao();
+    if (($usuario->tipo ?? null) !== 'USUARIO') {
+        http_response_code(403);
+        echo json_encode(['erro' => 'Acesso exclusivo para usuários.']);
+        exit;
+    }
+    return $usuario;
 }

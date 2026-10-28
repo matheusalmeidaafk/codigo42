@@ -1,10 +1,9 @@
+
 .card .hover-card {
     height: 40%;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-
     background-color: rgba(255, 255, 255, 0.40);
-
     transition: opacity .2s ease, visibility .2s ease;
 }
 
@@ -23,4 +22,62 @@
 .tamanho-btn.selecionado {
     border-color: var(--bs-success) !important;
     color: var(--bs-success);
+}
+
+/* Avaliações dos produtos */
+
+.card-avaliacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 2px 0;
+    padding: 4px 0;
+}
+
+.estrelas-base {
+    position: relative;
+    display: inline-block;
+    color: #c5c8cb;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.estrelas-preenchidas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    overflow: hidden;
+    color: #19c798;
+    white-space: nowrap;
+}
+
+/* Responsividade */
+
+@media (max-width: 380px) {
+    .estrelas-base {
+        font-size: 15px;
+    }
+}
+.card-avaliacao .estrelas-base {
+    position: relative;
+    display: inline-block;
+    color: #777;
+    font: 18px/1.2 Arial, sans-serif;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.card-avaliacao .estrelas-preenchidas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    overflow: hidden;
+    color: #ffc107;
+    white-space: nowrap;
 }

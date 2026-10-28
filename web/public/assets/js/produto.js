@@ -65,27 +65,31 @@ document.addEventListener('DOMContentLoaded', () => {
     quantidade?.addEventListener('change', limitarQuantidade);
 
     // VALIDAÇÃO DO TAMANHO
-    function simularCompra() {
-        const tamanhoSelecionado = document.querySelector('.tamanho:checked');
+    function adicionarCompra() {
+        const selected = document.getElementById('variacaoProduto')?.selectedOptions[0];
         const aviso = document.getElementById('avisoTamanho');
-
-        if (!tamanhoSelecionado) {
-            aviso?.classList.remove('d-none');
-            return;
-        }
-
+        if (!selected?.value || Number(selected.dataset.estoque) <= 0) { aviso?.classList.remove('d-none'); return false; }
         aviso?.classList.add('d-none');
-
-        alert(
-            'Código 42\n\n' +
-            'Tamanho: ' + tamanhoSelecionado.value + '\n' +
-            'Quantidade: ' + (quantidade?.value || 1)
-        );
+        const botao = document.getElementById('adicionarCarrinho');
+        if (!botao || typeof window.addToCart !== 'function') return;
+        limitarQuantidade();
+        const size = selected.value;
+        const product = {
+            id: `${botao.dataset.id}:${size}`,
+            name: botao.dataset.nome,
+            subtitle: selected.textContent,
+            stock: Number(selected.dataset.estoque),
+            oldPrice: Number(botao.dataset.precoOriginal),
+            price: Number(botao.dataset.preco) || 0,
+            image: botao.dataset.imagem,
+            quantity: Number(quantidade?.value) || 1
+        };
+        return window.addToCart(product);
     }
 
     document.getElementById('adicionarCarrinho')
-        ?.addEventListener('click', simularCompra);
+        ?.addEventListener('click', adicionarCompra);
 
     document.getElementById('comprar')
-        ?.addEventListener('click', simularCompra);
+        ?.addEventListener('click', () => { if (adicionarCompra()) location.href = '/pages/carrinho.php'; });
 });
